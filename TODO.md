@@ -1,3 +1,0 @@
-- [x] Remove icon links from frontend/public/index.html
-- [x] Remove icons array from frontend/public/manifest.json
-- [x] Delete icon files: favicon.ico, logo192.png, logo512.png
