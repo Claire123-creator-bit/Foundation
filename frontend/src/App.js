@@ -132,6 +132,11 @@ function App() {
       </nav>
 
       {!userRole && activeTab === 'landing' && <LandingPage onGetStarted={() => setActiveTab('signup')} onLogin={() => setActiveTab('login')} />}
+      {!userRole && activeTab === 'about' && <AboutUs />}
+      {!userRole && activeTab === 'contact' && <ContactUs />}
+      {!userRole && activeTab === 'faq' && <FAQ />}
+      {!userRole && activeTab === 'terms' && <Terms />}
+      {!userRole && activeTab === 'privacy' && <Privacy />}
       {!userRole && activeTab === 'signup' && <SignUpPage onSignUpSuccess={handleSignUpSuccess} />}
       {!userRole && activeTab === 'registration' && <EnhancedRegistrationPro signupPhone={signupPhone} onRegistrationSuccess={handleRegistrationSuccess} />}
       {!userRole && activeTab === 'confirmation' && <MembershipConfirmation memberData={memberData} onContinue={handleConfirmationContinue} />}

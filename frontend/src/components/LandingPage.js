@@ -1,6 +1,14 @@
 import React from 'react';
 
 function LandingPage({ onGetStarted, onLogin }) {
+  const handleNavigation = (page) => {
+    window.location.hash = `#${page}`;
+  };
+
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="form-container">
       <div style={{textAlign: 'center', padding: '20px'}}>
@@ -13,11 +21,105 @@ function LandingPage({ onGetStarted, onLogin }) {
         }}>
           Mbogo Welfare Empowerment Foundation
         </h1>
-        <p style={{fontSize: '1.3em', color: '#666', marginBottom: '40px'}}>
+        <p style={{fontSize: '1.3em', color: '#666', marginBottom: '30px'}}>
           Empowering communities through transparency and trust
         </p>
 
         <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '15px',
+          flexWrap: 'wrap',
+          marginBottom: '40px'
+        }}>
+          {[
+            {label: 'About Us', page: 'about'},
+            {label: 'Contact Us', page: 'contact'},
+            {label: 'FAQ', page: 'faq'},
+            {label: 'Terms & Conditions', page: 'terms'},
+            {label: 'Privacy Policy', page: 'privacy'}
+          ].map(item => (
+            <button key={item.page} onClick={() => handleNavigation(item.page)} style={{
+              padding: '12px 24px',
+              background: 'rgba(0, 96, 100, 0.1)',
+              color: '#006064',
+              border: '2px solid rgba(0, 96, 100, 0.3)',
+              borderRadius: '20px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '14px'
+            }}>
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '15px',
+          flexWrap: 'wrap',
+          marginBottom: '40px'
+        }}>
+          {[
+            {label: 'Features', id: 'features'},
+            {label: 'Mission', id: 'about'},
+            {label: 'Benefits', id: 'benefits'}
+          ].map(item => (
+            <button key={item.id} onClick={() => scrollToSection(item.id)} style={{
+              padding: '10px 20px',
+              background: 'transparent',
+              color: '#00838f',
+              border: '1px solid rgba(0, 131, 143, 0.3)',
+              borderRadius: '15px',
+              cursor: 'pointer',
+              fontSize: '13px'
+            }}>
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        <div id="features" style={{
+          padding: '40px 20px',
+          background: 'linear-gradient(135deg, rgba(0,188,212,0.05) 0%, rgba(0,151,167,0.02) 100%)',
+          borderRadius: '20px',
+          marginBottom: '40px'
+        }}>
+          <h2 style={{color: '#006064', marginBottom: '30px', fontSize: '2em'}}>Platform Features</h2>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '20px',
+            marginBottom: '20px'
+          }}>
+            {[
+              {title: 'Member Registration', desc: 'Easy registration with location tracking'},
+              {title: 'Meeting Management', desc: 'Schedule and track meetings & attendance'},
+              {title: 'Bulk Messaging', desc: 'Send SMS to members by category'},
+              {title: 'Data Capture', desc: 'Collect and manage member data'},
+              {title: 'Database Viewer', desc: 'View and manage all records'},
+              {title: 'Admin Dashboard', desc: 'Complete administrative control'}
+            ].map((feature, idx) => (
+              <div key={idx} style={{
+                padding: '20px',
+                background: 'white',
+                borderRadius: '15px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                borderLeft: '4px solid #00bcd4',
+                textAlign: 'left',
+                transition: 'transform 0.3s ease'
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-5px)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
+                <h4 style={{color: '#006064', marginBottom: '10px', fontSize: '1.1em'}}>{feature.title}</h4>
+                <p style={{color: '#666', fontSize: '0.9em', margin: 0}}>{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div id="about" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: '25px',
@@ -75,7 +177,7 @@ function LandingPage({ onGetStarted, onLogin }) {
           </div>
         </div>
 
-        <div style={{
+        <div id="benefits" style={{
           padding: '40px',
           background: 'linear-gradient(135deg, rgba(0,188,212,0.1) 0%, rgba(0,151,167,0.05) 100%)',
           borderRadius: '20px',

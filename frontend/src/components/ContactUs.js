@@ -3,6 +3,10 @@ import React, { useState } from 'react';
 function ContactUs() {
   const [formData, setFormData] = useState({name: '', email: '', message: ''});
 
+  const goBack = () => {
+    window.location.hash = '#landing';
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     alert('Thank you for your message. We will get back to you soon!');
@@ -11,6 +15,17 @@ function ContactUs() {
 
   return (
     <div className="form-container">
+      <button onClick={goBack} style={{
+        marginBottom: '20px',
+        padding: '10px 20px',
+        background: 'linear-gradient(45deg, #006064, #00838f)',
+        color: 'white',
+        border: 'none',
+        borderRadius: '15px',
+        cursor: 'pointer'
+      }}>
+        ← Back to Home
+      </button>
       <h2 className="page-title">Contact Us</h2>
       
       <div className="contact-grid">
