@@ -1,8 +1,23 @@
 import React from 'react';
 
 function AboutUs() {
+  const goBack = () => {
+    window.location.hash = '#landing';
+  };
+
   return (
     <div className="form-container">
+      <button onClick={goBack} style={{
+        marginBottom: '20px',
+        padding: '10px 20px',
+        background: 'linear-gradient(45deg, #006064, #00838f)',
+        color: 'white',
+        border: 'none',
+        borderRadius: '15px',
+        cursor: 'pointer'
+      }}>
+        ← Back to Home
+      </button>
       <h2 className="page-title">About Mbogo Foundation</h2>
       <p>Mbogo Foundation is dedicated to empowering communities through transparency, trust, and democratic participation. We believe in building stronger societies through civic engagement and community development.</p>
       

@@ -1,6 +1,10 @@
 import React from 'react';
 
 function FAQ() {
+  const goBack = () => {
+    window.location.hash = '#landing';
+  };
+
   const faqs = [
     {
       q: "How do I become a member of Mbogo Foundation?",
@@ -26,6 +30,17 @@ function FAQ() {
 
   return (
     <div className="form-container">
+      <button onClick={goBack} style={{
+        marginBottom: '20px',
+        padding: '10px 20px',
+        background: 'linear-gradient(45deg, #006064, #00838f)',
+        color: 'white',
+        border: 'none',
+        borderRadius: '15px',
+        cursor: 'pointer'
+      }}>
+        ← Back to Home
+      </button>
       <h2 className="page-title">Frequently Asked Questions</h2>
       
       {faqs.map((faq, index) => (
