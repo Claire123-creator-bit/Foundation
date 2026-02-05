@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import LandingPage from './components/LandingPage';
 import HomePage from './components/HomePage';
 import AboutUs from './components/AboutUs';
 import ContactUs from './components/ContactUs';
@@ -20,7 +21,7 @@ import Watermark from './components/Watermark';
 
 function App() {
   const [refresh, setRefresh] = useState(false);
-  const [activeTab, setActiveTab] = useState('signup');
+  const [activeTab, setActiveTab] = useState('landing');
   const [userRole, setUserRole] = useState(null);
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState('');
@@ -38,7 +39,7 @@ function App() {
       setUserName(storedUserName || '');
       setActiveTab('dashboard');
     } else {
-      setActiveTab('signup');
+      setActiveTab('landing');
     }
   }, []);
 
@@ -130,6 +131,7 @@ function App() {
         )}
       </nav>
 
+      {!userRole && activeTab === 'landing' && <LandingPage onGetStarted={() => setActiveTab('signup')} onLogin={() => setActiveTab('login')} />}
       {!userRole && activeTab === 'signup' && <SignUpPage onSignUpSuccess={handleSignUpSuccess} />}
       {!userRole && activeTab === 'registration' && <EnhancedRegistrationPro signupPhone={signupPhone} onRegistrationSuccess={handleRegistrationSuccess} />}
       {!userRole && activeTab === 'confirmation' && <MembershipConfirmation memberData={memberData} onContinue={handleConfirmationContinue} />}
