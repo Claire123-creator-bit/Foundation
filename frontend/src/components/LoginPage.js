@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = ({ onLogin, onNavigate }) => {
   const [loginType, setLoginType] = useState('member');
   const [formData, setFormData] = useState({
     username: '',
@@ -43,7 +43,7 @@ const LoginPage = ({ onLogin }) => {
 
   return (
     <div className="form-container">
-      <button onClick={() => window.location.hash = '#landing'} style={{
+      <button type="button" onClick={() => onNavigate('landing')} style={{
         marginBottom: '20px',
         padding: '10px 20px',
         background: 'linear-gradient(45deg, #006064, #00838f)',
@@ -141,7 +141,7 @@ const LoginPage = ({ onLogin }) => {
       <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: 'rgba(0,96,100,0.05)', borderRadius: '10px' }}>
         <p style={{ margin: '0', color: '#666' }}>
           Don't have an account?{' '}
-          <span onClick={() => window.location.hash = '#signup'} style={{
+          <span onClick={() => onNavigate('signup')} style={{
             color: '#006064',
             fontWeight: 'bold',
             cursor: 'pointer',
