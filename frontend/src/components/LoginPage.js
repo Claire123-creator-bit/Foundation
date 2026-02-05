@@ -43,6 +43,18 @@ const LoginPage = ({ onLogin }) => {
 
   return (
     <div className="form-container">
+      <button onClick={() => window.location.hash = '#landing'} style={{
+        marginBottom: '20px',
+        padding: '10px 20px',
+        background: 'linear-gradient(45deg, #006064, #00838f)',
+        color: 'white',
+        border: 'none',
+        borderRadius: '15px',
+        cursor: 'pointer'
+      }}>
+        ← Back to Home
+      </button>
+      
       <h2 className="page-title">Login to Mbogo Foundation</h2>
       
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
@@ -125,6 +137,20 @@ const LoginPage = ({ onLogin }) => {
           {message}
         </div>
       )}
+      
+      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: 'rgba(0,96,100,0.05)', borderRadius: '10px' }}>
+        <p style={{ margin: '0', color: '#666' }}>
+          Don't have an account?{' '}
+          <span onClick={() => window.location.hash = '#signup'} style={{
+            color: '#006064',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            textDecoration: 'underline'
+          }}>
+            Sign up here
+          </span>
+        </p>
+      </div>
     </div>
   );
 };
