@@ -137,10 +137,10 @@ function App() {
       {!userRole && activeTab === 'faq' && <FAQ />}
       {!userRole && activeTab === 'terms' && <Terms />}
       {!userRole && activeTab === 'privacy' && <Privacy />}
-      {!userRole && activeTab === 'signup' && <SignUpPage onSignUpSuccess={handleSignUpSuccess} />}
+      {!userRole && activeTab === 'signup' && <SignUpPage onSignUpSuccess={handleSignUpSuccess} onNavigate={setActiveTab} />}
       {!userRole && activeTab === 'registration' && <EnhancedRegistrationPro signupPhone={signupPhone} onRegistrationSuccess={handleRegistrationSuccess} />}
       {!userRole && activeTab === 'confirmation' && <MembershipConfirmation memberData={memberData} onContinue={handleConfirmationContinue} />}
-      {!userRole && activeTab === 'login' && <LoginPage onLogin={handleLogin} />}
+      {!userRole && activeTab === 'login' && <LoginPage onLogin={handleLogin} onNavigate={setActiveTab} />}
       {userRole && activeTab === 'dashboard' && <UserDashboard />}
       {userRole && activeTab === 'home' && <HomePage />}
       {userRole && activeTab === 'registration' && <EnhancedRegistrationPro onRegistered={() => setRefresh(!refresh)} />}
