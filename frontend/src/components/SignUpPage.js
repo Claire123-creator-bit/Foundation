@@ -45,6 +45,18 @@ const SignUpPage = ({ onSignUpSuccess }) => {
 
   return (
     <div className="form-container">
+      <button onClick={() => window.location.hash = '#landing'} style={{
+        marginBottom: '20px',
+        padding: '10px 20px',
+        background: 'linear-gradient(45deg, #006064, #00838f)',
+        color: 'white',
+        border: 'none',
+        borderRadius: '15px',
+        cursor: 'pointer'
+      }}>
+        ← Back to Home
+      </button>
+      
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
         <h1 style={{ color: '#006064', fontSize: '2.5em', marginBottom: '10px' }}>
           Mbogo Foundation
@@ -102,6 +114,20 @@ const SignUpPage = ({ onSignUpSuccess }) => {
           {message}
         </div>
       )}
+      
+      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: 'rgba(0,96,100,0.05)', borderRadius: '10px' }}>
+        <p style={{ margin: '0', color: '#666' }}>
+          Already have an account?{' '}
+          <span onClick={() => window.location.hash = '#login'} style={{
+            color: '#006064',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            textDecoration: 'underline'
+          }}>
+            Login here
+          </span>
+        </p>
+      </div>
     </div>
   );
 };
