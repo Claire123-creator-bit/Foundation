@@ -16,51 +16,117 @@ function ContactUs() {
   return (
     <div className="form-container">
       <button onClick={goBack} style={{
-        marginBottom: '20px',
-        padding: '10px 20px',
-        background: 'linear-gradient(45deg, #006064, #00838f)',
+        marginBottom: '30px',
+        padding: '12px 30px',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         color: 'white',
         border: 'none',
-        borderRadius: '15px',
-        cursor: 'pointer'
+        borderRadius: '50px',
+        cursor: 'pointer',
+        fontSize: '15px',
+        fontWeight: '600'
       }}>
-        ← Back to Home
+        Back to Home
       </button>
+      
       <h2 className="page-title">Contact Us</h2>
       
-      <div className="contact-grid">
-        <div className="info-card">
-          <h3 className="section-title">Get in Touch</h3>
-          <p><strong>Address:</strong> Mbogo Foundation Office, Nairobi, Kenya</p>
-          <p><strong>Phone:</strong> +254-XXX-XXXX</p>
-          <p><strong>Email:</strong> info@mbogofoundation.org</p>
-          <p><strong>Office Hours:</strong> Mon-Fri 8:00 AM - 5:00 PM</p>
+      <div style={{
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        padding: '40px',
+        borderRadius: '25px',
+        color: 'white',
+        marginBottom: '40px',
+        textAlign: 'center'
+      }}>
+        <h3 style={{fontSize: '2em', marginBottom: '15px', fontWeight: '700'}}>Get In Touch</h3>
+        <p style={{fontSize: '1.2em', lineHeight: '1.8', color: 'rgba(255,255,255,0.95)'}}>
+          We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+        </p>
+      </div>
+
+      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', marginBottom: '40px'}}>
+        <div style={{
+          background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
+          padding: '35px',
+          borderRadius: '25px',
+          boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
+          border: '1px solid rgba(102, 126, 234, 0.1)'
+        }}>
+          <h3 style={{color: '#667eea', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Contact Information</h3>
+          
+          <div style={{marginBottom: '20px'}}>
+            <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Address</h4>
+            <p style={{color: '#4a5568', lineHeight: '1.6'}}>Mbogo Foundation Office<br/>Nairobi, Kenya</p>
+          </div>
+
+          <div style={{marginBottom: '20px'}}>
+            <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Phone</h4>
+            <p style={{color: '#4a5568'}}>+254 707 820 453</p>
+          </div>
+
+          <div style={{marginBottom: '20px'}}>
+            <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Email</h4>
+            <p style={{color: '#4a5568'}}>info@mbogofoundation.org</p>
+          </div>
+
+          <div>
+            <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Office Hours</h4>
+            <p style={{color: '#4a5568'}}>Monday - Friday<br/>8:00 AM - 5:00 PM</p>
+          </div>
         </div>
         
-        <form onSubmit={handleSubmit} className="info-card">
-          <h3 className="section-title">Send Message</h3>
+        <form onSubmit={handleSubmit} style={{
+          background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
+          padding: '35px',
+          borderRadius: '25px',
+          boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
+          border: '1px solid rgba(102, 126, 234, 0.1)'
+        }}>
+          <h3 style={{color: '#667eea', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Send Us a Message</h3>
+          
+          <label style={{display: 'block', marginBottom: '8px'}}>Your Name</label>
           <input 
-            placeholder="Your Name" 
+            placeholder="Enter your full name" 
             value={formData.name}
             onChange={e => setFormData({...formData, name: e.target.value})}
             required 
           />
+          
+          <label style={{display: 'block', marginBottom: '8px'}}>Your Email</label>
           <input 
             type="email"
-            placeholder="Your Email" 
+            placeholder="Enter your email address" 
             value={formData.email}
             onChange={e => setFormData({...formData, email: e.target.value})}
             required 
           />
+          
+          <label style={{display: 'block', marginBottom: '8px'}}>Your Message</label>
           <textarea 
-            placeholder="Your Message"
+            placeholder="Type your message here..."
             value={formData.message}
             onChange={e => setFormData({...formData, message: e.target.value})}
-            rows="5"
+            rows="6"
             required
           />
-          <button type="submit">Send Message</button>
+          
+          <button type="submit" style={{width: '100%', marginTop: '10px'}}>Send Message</button>
         </form>
+      </div>
+
+      <div style={{
+        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
+        padding: '40px',
+        borderRadius: '25px',
+        boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
+        border: '1px solid rgba(102, 126, 234, 0.1)',
+        textAlign: 'center'
+      }}>
+        <h3 style={{color: '#2d3748', fontSize: '1.8em', marginBottom: '15px', fontWeight: '700'}}>Visit Our Office</h3>
+        <p style={{color: '#4a5568', fontSize: '1.1em', lineHeight: '1.8', marginBottom: '20px'}}>
+          We welcome visitors during office hours. Feel free to drop by for a chat or to learn more about our work.
+        </p>
       </div>
     </div>
   );

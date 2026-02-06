@@ -28,7 +28,6 @@ function App() {
   const [signupPhone, setSignupPhone] = useState('');
   const [memberData, setMemberData] = useState(null);
   
-  // Check for stored login info on app load
   useEffect(() => {
     const storedRole = localStorage.getItem('userRole');
     const storedUserId = localStorage.getItem('userId');
@@ -52,7 +51,6 @@ function App() {
     setMemberData(data.member_data);
     setActiveTab('confirmation');
     
-    // Send welcome SMS
     fetch('http://localhost:5000/send-welcome-sms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -104,13 +102,13 @@ function App() {
   return (
     <div className="app-container" style={{ padding: '20px' }}>
       <nav style={{
-        background: 'linear-gradient(45deg, #006064, #00838f)',
-        padding: '15px 0',
-        borderRadius: '12px',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        padding: '20px 0',
+        borderRadius: '25px',
         marginBottom: '30px',
-        boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+        boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)'
       }}>
-        <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 15px 0', fontSize: '1.8em'}}>Mbogo Foundation</h1>
+        <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 20px 0', fontSize: '2.2em', fontWeight: '700'}}>Mbogo Foundation</h1>
         {userRole && (
           <>
             <div style={{textAlign: 'center', color: 'white', marginBottom: '10px'}}>
@@ -159,11 +157,12 @@ function App() {
       {userRole && (
         <footer style={{
           marginTop: '50px',
-          padding: '20px',
+          padding: '30px',
           textAlign: 'center',
-          background: 'linear-gradient(45deg, #006064, #00838f)',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           color: 'white',
-          borderRadius: '12px'
+          borderRadius: '25px',
+          boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)'
         }}>
           <div style={{
             display: 'flex', 
@@ -196,7 +195,7 @@ function App() {
               </span>
             ))}
           </div>
-          <p style={{margin: '0', fontSize: '14px', opacity: '0.9'}}>
+          <p style={{margin: '0', fontSize: '15px', opacity: '0.95', fontWeight: '500'}}>
             &copy; 2025 Mbogo Foundation. Empowering communities through transparency and trust.
           </p>
         </footer>
