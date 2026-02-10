@@ -381,39 +381,27 @@ def sign_in_meeting():
 
 @app.route('/announcements', methods=['GET'])
 def get_announcements():
-
-    announcements = [
-        {
-            'title': 'Community Meeting This Friday',
-            'content': 'Join us for our monthly community meeting to discuss upcoming projects and initiatives.',
-            'priority': 'high',
-            'date': '2025-01-27'
-        },
-        {
-            'title': 'New Registration Process',
-            'content': 'We have updated our registration process to include GPS location capture for better service delivery.',
-            'priority': 'normal',
-            'date': '2025-01-25'
-        }
-    ]
-    return jsonify(announcements)
+    return jsonify([])
 
 @app.route('/my-attendance', methods=['GET'])
 def get_my_attendance():
-
-    attendance_records = [
-        {
-            'meeting_title': 'Monthly Community Meeting',
-            'meeting_date': '2025-01-20',
-            'status': 'Present'
-        },
-        {
-            'meeting_title': 'Youth Leadership Training',
-            'meeting_date': '2025-01-15',
-            'status': 'Present'
-        }
-    ]
-    return jsonify(attendance_records)
+    member_id = request.args.get('member_id')
+    if member_id:
+        records = db.session.query(
+            Attendance.id,
+            Attendance.status,
+            Attendance.recorded_date,
+            Meeting.title.label('meeting_title'),
+            Meeting.date.label('meeting_date')
+        ).join(Meeting, Attendance.meeting_id == Meeting.id)\
+         .filter(Attendance.member_id == member_id).all()
+        
+        return jsonify([{
+            'meeting_title': record.meeting_title,
+            'meeting_date': record.meeting_date,
+            'status': record.status
+        } for record in records])
+    return jsonify([])
 
 @app.route('/admin-login', methods=['POST'])
 def admin_login():
