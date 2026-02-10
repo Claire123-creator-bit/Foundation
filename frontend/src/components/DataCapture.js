@@ -6,7 +6,6 @@ function DataCapture() {
 
   const [members, setMembers] = useState([]);
 
-  // Meeting Registration
   const [meetingForm, setMeetingForm] = useState({
     title: '',
     date: '',
@@ -18,7 +17,6 @@ function DataCapture() {
     meeting_link: ''
   });
 
-  // Attendance Form
   const [attendanceForm, setAttendanceForm] = useState({
     meeting_id: '',
     member_id: '',
@@ -100,17 +98,14 @@ function DataCapture() {
   };
   
   const generateGoogleMeetLink = (meeting) => {
-    // Generate Google Meet link
     const meetTitle = encodeURIComponent(meeting.title);
     const meetDate = meeting.date.replace(/-/g, '');
     const meetTime = meeting.time.replace(':', '');
     
-    // Create Google Calendar event with Meet link
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${meetTitle}&dates=${meetDate}T${meetTime}00/${meetDate}T${meetTime}00&details=Meeting%20organized%20by%20Mbogo%20Foundation&location=Online%20Meeting`;
     
     window.open(googleCalendarUrl, '_blank');
     
-    // Show instructions
     alert('📹 Google Meet Integration:\n\n1. Google Calendar will open\n2. Add the event to create a Meet link\n3. Copy the Meet link and update the meeting\n4. Share the link with members');
   };
 
