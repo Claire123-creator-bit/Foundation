@@ -17,6 +17,7 @@ import AdminDashboard from './components/AdminDashboard';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
 import MembershipConfirmation from './components/MembershipConfirmation';
+import Donate from './components/Donate';
 import Watermark from './components/Watermark';
 
 function App() {
@@ -102,11 +103,11 @@ function App() {
   return (
     <div className="app-container" style={{ padding: '20px' }}>
       <nav style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
         padding: '20px 0',
         borderRadius: '25px',
         marginBottom: '30px',
-        boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)'
+        boxShadow: '0 10px 30px rgba(30, 60, 114, 0.3)'
       }}>
         <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 20px 0', fontSize: '2.2em', fontWeight: '700'}}>Mbogo Foundation</h1>
         {userRole && (
@@ -117,12 +118,12 @@ function App() {
             </div>
             <div style={{textAlign: 'center'}}>
               <button className="nav-button" onClick={() => setActiveTab('dashboard')}>Dashboard</button>
-              {userRole === 'member' && <button className="nav-button" onClick={() => setActiveTab('registration')}>Join Us</button>}
               <button className="nav-button" onClick={() => setActiveTab('members')}>Members</button>
               <button className="nav-button" onClick={() => setActiveTab('datacapture')}>Data Capture</button>
               <button className="nav-button" onClick={() => setActiveTab('minutes')}>Minutes</button>
               <button className="nav-button" onClick={() => setActiveTab('database')}>Database</button>
               <button className="nav-button" onClick={() => setActiveTab('messaging')}>SMS</button>
+              <button className="nav-button" onClick={() => setActiveTab('donate')}>Donate</button>
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('admin')}>Admin</button>}
             </div>
           </>
@@ -152,17 +153,17 @@ function App() {
       {userRole && activeTab === 'contact' && <ContactUs />}
       {userRole && activeTab === 'faq' && <FAQ />}
       {userRole && activeTab === 'terms' && <Terms />}
-      {userRole && activeTab === 'privacy' && <Privacy />}
+      {userRole && activeTab === 'donate' && <Donate />}
       
       {userRole && (
         <footer style={{
           marginTop: '50px',
           padding: '30px',
           textAlign: 'center',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
           color: 'white',
           borderRadius: '25px',
-          boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)'
+          boxShadow: '0 10px 30px rgba(30, 60, 114, 0.3)'
         }}>
           <div style={{
             display: 'flex', 
