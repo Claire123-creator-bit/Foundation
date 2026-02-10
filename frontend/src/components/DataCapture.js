@@ -29,14 +29,14 @@ function DataCapture() {
   }, []);
 
   const fetchMeetings = () => {
-    fetch('http://localhost:5000/meetings')
+    fetch('https://foundation-0x4i.onrender.com/meetings')
       .then(res => res.json())
       .then(data => setMeetings(data))
       .catch(err => console.log('Backend offline'));
   };
 
   const fetchMembers = () => {
-    fetch('http://localhost:5000/members')
+    fetch('https://foundation-0x4i.onrender.com/members')
       .then(res => res.json())
       .then(data => setMembers(data))
       .catch(err => console.log('Backend offline'));
@@ -44,7 +44,7 @@ function DataCapture() {
 
   const handleMeetingSubmit = (e) => {
     e.preventDefault();
-    fetch('http://localhost:5000/meetings', {
+    fetch('https://foundation-0x4i.onrender.com/meetings', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(meetingForm)
@@ -59,7 +59,7 @@ function DataCapture() {
 
   const handleAttendanceSubmit = (e) => {
     e.preventDefault();
-    fetch('http://localhost:5000/attendance', {
+    fetch('https://foundation-0x4i.onrender.com/attendance', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(attendanceForm)
@@ -85,7 +85,7 @@ function DataCapture() {
     
     const message = `📅 MEETING ALERT: ${meeting.title}\nDate: ${meeting.date} at ${meeting.time}\n${locationInfo}\nPlease confirm attendance.`;
     
-    fetch('http://localhost:5000/send-bulk-sms', {
+    fetch('https://foundation-0x4i.onrender.com/send-bulk-sms', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({

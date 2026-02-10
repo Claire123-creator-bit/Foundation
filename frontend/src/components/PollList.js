@@ -6,7 +6,7 @@ function PollList() {
   const [response, setResponse] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/polls')
+    fetch('https://foundation-0x4i.onrender.com/polls')
       .then(res => res.json())
       .then(data => setPolls(data))
       .catch(err => console.error(err));
@@ -15,7 +15,7 @@ function PollList() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (selectedPoll && response) {
-      fetch('http://localhost:5000/feedback', {
+      fetch('https://foundation-0x4i.onrender.com/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ poll_id: selectedPoll.id, response })

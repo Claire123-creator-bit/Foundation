@@ -13,21 +13,21 @@ function DatabaseViewer() {
   }, []);
 
   const fetchMembers = () => {
-    fetch('http://localhost:5000/members')
+    fetch('https://foundation-0x4i.onrender.com/members')
       .then(res => res.json())
       .then(data => setMembers(data))
       .catch(err => console.log('Backend offline'));
   };
 
   const fetchMeetings = () => {
-    fetch('http://localhost:5000/meetings')
+    fetch('https://foundation-0x4i.onrender.com/meetings')
       .then(res => res.json())
       .then(data => setMeetings(data))
       .catch(err => console.log('Backend offline'));
   };
 
   const fetchAttendance = () => {
-    fetch('http://localhost:5000/attendance-records')
+    fetch('https://foundation-0x4i.onrender.com/attendance-records')
       .then(res => res.json())
       .then(data => setAttendance(data))
       .catch(err => console.log('Backend offline'));

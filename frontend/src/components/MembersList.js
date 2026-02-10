@@ -13,7 +13,7 @@ function MembersList({ userRole, userId }) {
       'User-ID': userId || ''
     };
     
-    const url = category ? `http://localhost:5000/members?category=${category}` : 'http://localhost:5000/members';
+    const url = category ? `https://foundation-0x4i.onrender.com/members?category=${category}` : 'https://foundation-0x4i.onrender.com/members';
     fetch(url, { headers })
       .then(res => res.json())
       .then(data => {
@@ -28,7 +28,7 @@ function MembersList({ userRole, userId }) {
 
   const fetchCategories = () => {
     if (userRole === 'admin') {
-      fetch('http://localhost:5000/members/categories')
+      fetch('https://foundation-0x4i.onrender.com/members/categories')
         .then(res => res.json())
         .then(data => setCategories(data))
         .catch(err => console.log('Backend offline'));

@@ -75,7 +75,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
       return;
     }
 
-    fetch('http://localhost:5000/register-member-pro', {
+    fetch('https://foundation-0x4i.onrender.com/register-member-pro', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData)

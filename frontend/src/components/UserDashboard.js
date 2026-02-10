@@ -26,7 +26,7 @@ function UserDashboard() {
         'User-ID': userId
       };
       
-      fetch('http://localhost:5000/members', { headers })
+      fetch('https://foundation-0x4i.onrender.com/members', { headers })
         .then(res => res.json())
         .then(data => {
           if (data.length > 0) {
@@ -63,14 +63,14 @@ function UserDashboard() {
   };
 
   const fetchAnnouncements = () => {
-    fetch('http://localhost:5000/announcements')
+    fetch('https://foundation-0x4i.onrender.com/announcements')
       .then(res => res.json())
       .then(data => setAnnouncements(data))
       .catch(err => console.log('Backend offline'));
   };
 
   const fetchUpcomingMeetings = () => {
-    fetch('http://localhost:5000/meetings')
+    fetch('https://foundation-0x4i.onrender.com/meetings')
       .then(res => res.json())
       .then(data => {
         const upcoming = data.filter(meeting => new Date(meeting.date) >= new Date());
@@ -85,7 +85,7 @@ function UserDashboard() {
     
     if (userRole === 'member' && userId) {
       // Fetch real attendance data for this specific member
-      fetch(`http://localhost:5000/attendance-records?member_id=${userId}`)
+      fetch(`https://foundation-0x4i.onrender.com/attendance-records?member_id=${userId}`)
         .then(res => res.json())
         .then(data => {
           setAttendanceHistory(data.slice(0, 5));
@@ -108,7 +108,7 @@ function UserDashboard() {
   };
 
   const signInToMeeting = (meetingId) => {
-    fetch('http://localhost:5000/sign-in-meeting', {
+    fetch('https://foundation-0x4i.onrender.com/sign-in-meeting', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({meeting_id: meetingId, user_id: user.id})
