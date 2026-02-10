@@ -6,7 +6,7 @@ function BulkMessaging() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/members/categories')
+    fetch('https://foundation-0x4i.onrender.com/members/categories')
       .then(res => res.json())
       .then(data => setCategories(data))
       .catch(err => console.log('Backend offline'));
@@ -24,7 +24,7 @@ function BulkMessaging() {
     );
     
     if (confirmSend) {
-      fetch('http://localhost:5000/send-bulk-sms', {
+      fetch('https://foundation-0x4i.onrender.com/send-bulk-sms', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({

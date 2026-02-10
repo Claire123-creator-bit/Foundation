@@ -6,7 +6,7 @@ function MeetingList() {
   const [meetings, setMeetings] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/meetings')
+    fetch('https://foundation-0x4i.onrender.com/meetings')
       .then(res => res.json())
       .then(data => setMeetings(data))
       .catch(err => console.error(err));
@@ -14,7 +14,7 @@ function MeetingList() {
 
   const handleRSVP = (meetingId) => {
     const token = localStorage.getItem('token');
-    fetch(`http://localhost:5000/meetings/${meetingId}/rsvp`, {
+    fetch(`https://foundation-0x4i.onrender.com/meetings/${meetingId}/rsvp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

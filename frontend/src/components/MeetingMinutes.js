@@ -21,14 +21,14 @@ function MeetingMinutes() {
   }, []);
 
   const fetchMeetings = () => {
-    fetch('http://localhost:5000/meetings')
+    fetch('https://foundation-0x4i.onrender.com/meetings')
       .then(res => res.json())
       .then(data => setMeetings(data))
       .catch(err => console.log('Backend offline'));
   };
 
   const fetchMinutes = () => {
-    fetch('http://localhost:5000/meeting-minutes')
+    fetch('https://foundation-0x4i.onrender.com/meeting-minutes')
       .then(res => res.json())
       .then(data => setMinutes(data))
       .catch(err => {
@@ -39,7 +39,7 @@ function MeetingMinutes() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('http://localhost:5000/meeting-minutes', {
+    fetch('https://foundation-0x4i.onrender.com/meeting-minutes', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(minutesForm)

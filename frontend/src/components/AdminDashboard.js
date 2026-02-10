@@ -12,21 +12,21 @@ function AdminDashboard() {
   const [isTraining, setIsTraining] = useState(false);
 
   const fetchAssignments = () => {
-    fetch('http://localhost:5000/assignments')
+    fetch('https://foundation-0x4i.onrender.com/assignments')
       .then(res => res.json())
       .then(data => setAssignments(data))
       .catch(err => console.log('Backend offline'));
   };
 
   const fetchMetrics = () => {
-    fetch('http://localhost:5000/api/metrics')
+    fetch('https://foundation-0x4i.onrender.com/api/metrics')
       .then(res => res.json())
       .then(data => setMetrics(data))
       .catch(err => console.log('Error fetching metrics'));
   };
 
   const fetchProgress = () => {
-    fetch('http://localhost:5000/api/progress')
+    fetch('https://foundation-0x4i.onrender.com/api/progress')
       .then(res => res.json())
       .then(data => {
         setTrainingProgress(data.progress);
@@ -54,7 +54,7 @@ function AdminDashboard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('http://localhost:5000/assignments', {
+    fetch('https://foundation-0x4i.onrender.com/assignments', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(newAssignment)
@@ -67,7 +67,7 @@ function AdminDashboard() {
   };
 
   const updateStatus = (id, status) => {
-    fetch(`http://localhost:5000/assignments/${id}`, {
+    fetch(`https://foundation-0x4i.onrender.com/assignments/${id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({status})
@@ -76,7 +76,7 @@ function AdminDashboard() {
 
   const startTraining = () => {
     const token = getAuthToken();
-    fetch('http://localhost:5000/api/train', {
+    fetch('https://foundation-0x4i.onrender.com/api/train', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

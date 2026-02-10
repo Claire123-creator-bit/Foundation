@@ -5,7 +5,7 @@ function AdminLogin({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('http://localhost:5000/admin-login', {
+    fetch('https://foundation-0x4i.onrender.com/admin-login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(credentials)

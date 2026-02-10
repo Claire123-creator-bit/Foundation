@@ -52,7 +52,7 @@ function App() {
     setMemberData(data.member_data);
     setActiveTab('confirmation');
     
-    fetch('http://localhost:5000/send-welcome-sms', {
+    fetch('https://foundation-0x4i.onrender.com/send-welcome-sms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
