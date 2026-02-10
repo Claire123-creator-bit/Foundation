@@ -55,7 +55,7 @@ const LoginPage = ({ onLogin, onNavigate }) => {
         ← Back to Home
       </button>
       
-      <h2 className="page-title">Login to Mbogo Foundation</h2>
+      <h2 className="page-title">Login to Mbogo Welfare Empowerment Foundation</h2>
       
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
         <button 

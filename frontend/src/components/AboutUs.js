@@ -21,7 +21,7 @@ function AboutUs() {
         Back to Home
       </button>
       
-      <h2 className="page-title">About Mbogo Foundation</h2>
+      <h2 className="page-title">About Mbogo Welfare Empowerment Foundation</h2>
       
       <div style={{
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',

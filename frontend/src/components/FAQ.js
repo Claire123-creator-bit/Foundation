@@ -7,7 +7,7 @@ function FAQ() {
 
   const faqs = [
     {
-      q: "How do I become a member of Mbogo Foundation?",
+      q: "How do I become a member of Mbogo Welfare Empowerment Foundation?",
       a: "Click on 'Join Us' in the navigation menu and fill out the registration form with your details. Once submitted, your membership will be activated immediately."
     },
     {
@@ -68,7 +68,7 @@ function FAQ() {
       }}>
         <h3 style={{fontSize: '2em', marginBottom: '15px', fontWeight: '700'}}>Have Questions?</h3>
         <p style={{fontSize: '1.2em', lineHeight: '1.8', color: 'rgba(255,255,255,0.95)'}}>
-          Find answers to the most commonly asked questions about Mbogo Foundation
+          Find answers to the most commonly asked questions about Mbogo Welfare Empowerment Foundation
         </p>
       </div>
       
