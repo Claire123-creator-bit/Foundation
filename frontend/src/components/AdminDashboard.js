@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getAuthToken } from '../utils/auth';
 
 function AdminDashboard() {
@@ -25,7 +25,7 @@ function AdminDashboard() {
       .catch(err => console.log('Error fetching metrics'));
   };
 
-  const fetchProgress = () => {
+  const fetchProgress = useCallback(() => {
     fetch('https://foundation-0x4i.onrender.com/api/progress')
       .then(res => res.json())
       .then(data => {
@@ -37,7 +37,7 @@ function AdminDashboard() {
         }
       })
       .catch(err => console.log('Error fetching progress'));
-  };
+  }, []);
 
   useEffect(() => {
     fetchAssignments();
