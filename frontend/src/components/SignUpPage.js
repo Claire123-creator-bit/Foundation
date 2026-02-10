@@ -59,7 +59,7 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
       
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
         <h1 style={{ color: '#006064', fontSize: '2.5em', marginBottom: '10px' }}>
-          Mbogo Foundation
+          Mbogo Welfare Empowerment Foundation
         </h1>
         <p style={{ color: '#666', fontSize: '1.1em' }}>
           Empowering Communities Through Unity

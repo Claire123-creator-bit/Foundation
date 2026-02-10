@@ -109,7 +109,7 @@ function App() {
         marginBottom: '30px',
         boxShadow: '0 10px 30px rgba(30, 60, 114, 0.3)'
       }}>
-        <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 20px 0', fontSize: '2.2em', fontWeight: '700'}}>Mbogo Foundation</h1>
+        <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 20px 0', fontSize: '2.2em', fontWeight: '700'}}>Mbogo Welfare Empowerment Foundation</h1>
         {userRole && (
           <>
             <div style={{textAlign: 'center', color: 'white', marginBottom: '10px'}}>
@@ -197,7 +197,7 @@ function App() {
             ))}
           </div>
           <p style={{margin: '0', fontSize: '15px', opacity: '0.95', fontWeight: '500'}}>
-            &copy; 2025 Mbogo Foundation. Empowering communities through transparency and trust.
+            &copy; 2025 Mbogo Welfare Empowerment Foundation. Empowering communities through transparency and trust.
           </p>
         </footer>
       )}

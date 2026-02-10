@@ -5,7 +5,7 @@ const Watermark = () => {
   return (
     <div className="watermark-container">
       <div className="watermark-logo">
-        <img src="/logo512.png" alt="Mbogo Foundation Logo" />
+        <img src="/logo512.png" alt="Mbogo Welfare Empowerment Foundation Logo" />
       </div>
     </div>
   );

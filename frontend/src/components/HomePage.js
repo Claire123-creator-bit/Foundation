@@ -24,7 +24,7 @@ function HomePage() {
     <div className="form-container">
       <div style={{textAlign: 'center', padding: '40px 20px'}}>
         <h2 style={{color: '#333', fontSize: '2.5em', marginBottom: '20px'}}>
-          Mbogo Foundation
+          Mbogo Welfare Empowerment Foundation
         </h2>
         <p style={{fontSize: '1.2em', color: '#666', marginBottom: '30px'}}>
           Empowering communities through transparency and trust

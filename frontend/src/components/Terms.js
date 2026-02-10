@@ -48,7 +48,7 @@ function Terms() {
       }}>
         <h3 style={{color: '#667eea', fontSize: '1.5em', marginBottom: '15px', fontWeight: '700'}}>1. Acceptance of Terms</h3>
         <p style={{color: '#4a5568', lineHeight: '1.8'}}>
-          By accessing and using Mbogo Foundation services, you acknowledge that you have read, understood, and agree to be bound by these terms and conditions. If you do not agree with any part of these terms, please do not use our services.
+          By accessing and using Mbogo Welfare Empowerment Foundation services, you acknowledge that you have read, understood, and agree to be bound by these terms and conditions. If you do not agree with any part of these terms, please do not use our services.
         </p>
       </div>
       
@@ -123,7 +123,7 @@ function Terms() {
       }}>
         <h3 style={{color: '#f093fb', fontSize: '1.5em', marginBottom: '15px', fontWeight: '700'}}>6. Intellectual Property</h3>
         <p style={{color: '#4a5568', lineHeight: '1.8'}}>
-          All content, logos, and materials on this platform are the property of Mbogo Foundation. You may not reproduce, distribute, or use any content without our express written permission.
+          All content, logos, and materials on this platform are the property of Mbogo Welfare Empowerment Foundation. You may not reproduce, distribute, or use any content without our express written permission.
         </p>
       </div>
       

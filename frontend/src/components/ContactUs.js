@@ -57,7 +57,7 @@ function ContactUs() {
           
           <div style={{marginBottom: '20px'}}>
             <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Address</h4>
-            <p style={{color: '#4a5568', lineHeight: '1.6'}}>Mbogo Foundation Office<br/>Nairobi, Kenya</p>
+            <p style={{color: '#4a5568', lineHeight: '1.6'}}>Mbogo Welfare Empowerment Foundation Office<br/>Nairobi, Kenya</p>
           </div>
 
           <div style={{marginBottom: '20px'}}>
