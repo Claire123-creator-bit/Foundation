@@ -50,7 +50,7 @@ function AdminDashboard() {
       interval = setInterval(fetchProgress, 1000);
     }
     return () => clearInterval(interval);
-  }, [isTraining]);
+  }, [isTraining, fetchProgress]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
