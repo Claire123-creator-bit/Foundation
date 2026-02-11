@@ -414,7 +414,20 @@ def admin_login():
 def member_login():
     try:
         data = request.json
-        member = Member.query.filter_by(national_id=data['national_id']).first()
+        full_name = data.get('full_name', '').strip().lower()
+        national_id = data.get('national_id', '').strip()
+        
+        member = Member.query.filter(
+            db.func.lower(Member.full_names) == full_name,
+            Member.national_id == national_id
+        ).first()
+        
+        if not member:
+            member = Member.query.filter(
+                db.func.lower(Member.name) == full_name,
+                Member.national_id == national_id
+            ).first()
+        
         if member:
             return jsonify({
                 'success': True, 
@@ -422,7 +435,7 @@ def member_login():
                 'user_id': member.id,
                 'name': member.full_names or member.name or 'Member'
             })
-        return jsonify({'success': False, 'message': 'Member not found'})
+        return jsonify({'success': False, 'message': 'Invalid name or ID number'})
     except Exception as e:
         print(f"Login error: {str(e)}")
         return jsonify({'success': False, 'message': 'Server error'}), 500

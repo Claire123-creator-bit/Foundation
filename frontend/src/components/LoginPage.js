@@ -5,47 +5,40 @@ const LoginPage = ({ onLogin, onNavigate }) => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
+    full_name: '',
     national_id: ''
   });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('Connecting to server... Please wait up to 50 seconds.');
+    setMessage('Logging in...');
 
     try {
       const endpoint = loginType === 'admin' ? '/admin-login' : '/member-login';
       const payload = loginType === 'admin' 
         ? { username: formData.username, password: formData.password }
-        : { national_id: formData.national_id };
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000);
+        : { full_name: formData.full_name, national_id: formData.national_id };
 
       const response = await fetch(`https://foundation-0x4i.onrender.com${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        signal: controller.signal
+        body: JSON.stringify(payload)
       });
 
-      clearTimeout(timeoutId);
       const data = await response.json();
       
       if (data.success) {
         onLogin(data.role, data.user_id, data.name || 'Admin');
         setMessage(`Welcome ${data.name || 'Admin'}!`);
       } else {
-        setMessage(loginType === 'admin' ? 'Invalid admin credentials' : 'Member not found');
+        setMessage(data.message || 'Login failed. Check your credentials.');
       }
     } catch (error) {
-      if (error.name === 'AbortError') {
-        setMessage('Server timeout. Please try again.');
-      } else {
-        setMessage('Server is waking up. Please wait 30 seconds and try again.');
-      }
+      setMessage('Connection error. Please check your internet.');
     }
     setLoading(false);
   };
@@ -124,16 +117,47 @@ const LoginPage = ({ onLogin, onNavigate }) => {
             </div>
           </>
         ) : (
-          <div className="form-group">
-            <label>National ID:</label>
-            <input
-              type="text"
-              value={formData.national_id}
-              onChange={(e) => setFormData({...formData, national_id: e.target.value})}
-              required
-              placeholder="Enter your National ID"
-            />
-          </div>
+          <>
+            <div className="form-group">
+              <label>Full Name:</label>
+              <input
+                type="text"
+                value={formData.full_name}
+                onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                required
+                placeholder="Enter your full name"
+              />
+            </div>
+            <div className="form-group">
+              <label>Password (National ID):</label>
+              <div style={{position: 'relative'}}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={formData.national_id}
+                  onChange={(e) => setFormData({...formData, national_id: e.target.value})}
+                  required
+                  placeholder="Enter your National ID"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '18px',
+                    padding: '5px'
+                  }}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
+            </div>
+          </>
         )}
         
         <button type="submit" disabled={loading}>
