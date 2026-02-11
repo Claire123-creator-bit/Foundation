@@ -9,16 +9,48 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 CORS(app, origins="*", supports_credentials=True)
+
+def init_db():
+    from website_models import db, CallLog, AutoResponse, Member, Meeting, Attendance, MeetingMinutes, Admin, Resource, Payment
+    from admin_models import Assignment, Report, FinancialRecord
+    
+    with app.app_context():
+        db.create_all()
+        print("Database tables created successfully")
+        
+        if not AutoResponse.query.first():
+            responses = [
+                AutoResponse(trigger_type='new_member', 
+                           message_template='Welcome! Paybill: 123456. WhatsApp: https://chat.whatsapp.com/xyz',
+                           paybill_no='123456',
+                           whatsapp_group='https://chat.whatsapp.com/xyz'),
+                AutoResponse(trigger_type='inquiry',
+                           message_template='Thank you for your inquiry. We will get back to you soon.'),
+                AutoResponse(trigger_type='complaint',
+                           message_template='We have received your complaint and will address it promptly.')
+            ]
+            for resp in responses:
+                db.session.add(resp)
+            db.session.commit()
+            print("Default auto-responses added")
+
+init_db()
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    try:
+        db.session.execute(db.text('SELECT 1'))
+        return jsonify({'status': 'healthy', 'database': 'connected'})
+    except Exception as e:
+        return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
+
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.json
-    
-    # Check if phone number already exists
     existing_user = Member.query.filter_by(phone_number=data['phone_number']).first()
     if existing_user:
         return jsonify({'error': 'Phone number already registered'}), 400
     
-    # Store signup data temporarily (in production, use proper session management)
     return jsonify({'message': 'Account created successfully', 'phone_number': data['phone_number']})
 
 @app.route('/send-welcome-sms', methods=['POST'])
@@ -26,11 +58,7 @@ def send_welcome_sms():
     data = request.json
     phone_number = data['phone_number']
     member_name = data['member_name']
-    
-    # SMS message content
     sms_message = f"Welcome to Mbogo Welfare Empowerment Foundation, {member_name}. You have been successfully registered as a member. Thank you for joining us."
-    
-    # Simulate SMS sending (integrate with SMS gateway in production)
     print(f"SMS sent to {phone_number}: {sms_message}")
     
     return jsonify({
@@ -89,7 +117,6 @@ def log_call():
     db.session.add(call)
     db.session.commit()
     
-    # Auto-respond
     response = AutoResponse.query.filter_by(trigger_type=data['call_type']).first()
     if response:
         return jsonify({
@@ -100,47 +127,103 @@ def log_call():
     return jsonify({'message': 'Thank you for contacting us!'})
 
 
-@app.route('/register-member-pro', methods=['POST'])
+@app.route('/register-member-pro', methods=['POST', 'OPTIONS'])
 def register_member_pro():
-    data = request.json
+    if request.method == 'OPTIONS':
+        response = app.make_response('')
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response
     
-
-    existing_member = Member.query.filter_by(national_id=data['national_id']).first()
-    if existing_member:
-        return jsonify({'error': 'User with this National ID already registered'}), 400
-    
-    member = Member(
-        full_names=data['full_names'],
-        national_id=data['national_id'],
-        phone_number=data['phone_number'],
-        county=data['county'],
-        constituency=data['constituency'],
-        ward=data['ward'],
-        physical_location=data['physical_location'],
-        gps_latitude=data.get('gps_latitude', ''),
-        gps_longitude=data.get('gps_longitude', ''),
-        category=data['category'],
-        is_verified=True
-    )
-    db.session.add(member)
-    db.session.commit()
-    
-    return jsonify({
-        'message': 'Registration successful', 
-        'user_id': member.id,
-        'member_data': {
-            'full_names': member.full_names,
-            'national_id': member.national_id,
-            'phone_number': member.phone_number,
-            'county': member.county,
-            'constituency': member.constituency,
-            'ward': member.ward,
-            'category': member.category
-        }
-    })
+    try:
+        data = request.json
+        print("=" * 50)
+        print("Registration attempt received")
+        print(f"Data keys: {list(data.keys()) if data else 'None'}")
+        
+        if not data:
+            return jsonify({'error': 'No data received'}), 400
+        
+        required_fields = ['full_names', 'national_id', 'phone_number', 'county', 'constituency', 'ward', 'physical_location', 'category']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        if missing_fields:
+            print(f"Missing fields: {missing_fields}")
+            return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
+        
+        existing_member = Member.query.filter_by(national_id=data['national_id']).first()
+        if existing_member:
+            print(f"Duplicate registration attempt for national_id: {data['national_id']}")
+            return jsonify({'error': 'This National ID is already registered. Please login instead.'}), 400
+        
+        member = Member(
+            full_names=data['full_names'],
+            national_id=data['national_id'],
+            phone_number=data['phone_number'],
+            county=data['county'],
+            constituency=data['constituency'],
+            ward=data['ward'],
+            physical_location=data['physical_location'],
+            gps_latitude=data.get('gps_latitude', ''),
+            gps_longitude=data.get('gps_longitude', ''),
+            category=data['category'],
+            is_verified=True
+        )
+        db.session.add(member)
+        db.session.commit()
+        print(f"SUCCESS: Member created with ID: {member.id}")
+        
+        response = jsonify({
+            'message': 'Registration successful', 
+            'user_id': member.id,
+            'member_data': {
+                'full_names': member.full_names,
+                'national_id': member.national_id,
+                'phone_number': member.phone_number,
+                'county': member.county,
+                'constituency': member.constituency,
+                'ward': member.ward,
+                'category': member.category
+            }
+        })
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
+        
+    except Exception as e:
+        db.session.rollback()
+        error_msg = str(e)
+        print(f"Registration error: {error_msg}")
+        import traceback
+        traceback.print_exc()
+        if 'UNIQUE constraint failed' in error_msg:
+            return jsonify({'error': 'This National ID or phone number is already registered.'}), 400
+        elif 'FOREIGN KEY constraint' in error_msg:
+            return jsonify({'error': 'Invalid data provided. Please check all fields.'}), 400
+        else:
+            return jsonify({'error': 'Registration failed. Please try again.', 'details': error_msg}), 500
 
 
 @app.route('/register-member', methods=['POST'])
+def register_member():
+    return register_member_pro()
+
+@app.route('/members', methods=['GET'])
+def get_members():
+    user_role = request.headers.get('User-Role', 'member')
+    user_id = request.headers.get('User-ID')
+    
+    if user_role == 'admin':
+        category = request.args.get('category')
+        if category:
+            members = Member.query.filter_by(category=category).all()
+        else:
+            members = Member.query.all()
+        return jsonify([member.to_dict() for member in members])
+    else:
+        if user_id:
+            member = Member.query.get(user_id)
+            if member:
+                return jsonify([member.to_dict()])
 def register_member():
     return register_member_pro()
 
@@ -441,22 +524,4 @@ def member_login():
         return jsonify({'success': False, 'message': 'Server error'}), 500
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-
-        if not AutoResponse.query.first():
-            responses = [
-                AutoResponse(trigger_type='new_member', 
-                           message_template='Welcome! Paybill: 123456. WhatsApp: https://chat.whatsapp.com/xyz',
-                           paybill_no='123456',
-                           whatsapp_group='https://chat.whatsapp.com/xyz'),
-                AutoResponse(trigger_type='inquiry',
-                           message_template='Thank you for your inquiry. We will get back to you soon.'),
-                AutoResponse(trigger_type='complaint',
-                           message_template='We have received your complaint and will address it promptly.')
-            ]
-            for resp in responses:
-                db.session.add(resp)
-            db.session.commit()
-    
     app.run(host='0.0.0.0', debug=True)
