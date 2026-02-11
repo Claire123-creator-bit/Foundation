@@ -109,7 +109,10 @@ function App() {
         padding: '5px',
         borderRadius: '0',
         marginBottom: '5px',
-        boxShadow: 'none'
+        boxShadow: 'none',
+        position: 'sticky',
+        top: '0',
+        zIndex: '1000'
       }}>
         <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 5px 0', fontSize: '0.85em', fontWeight: '700', lineHeight: '1.1', padding: '0 5px'}}>Mbogo Welfare Empowerment Foundation</h1>
         {userRole && (
