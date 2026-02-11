@@ -45,6 +45,10 @@ body::before {
 }
 
 @media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
   .app-container {
     margin: 0;
     border-radius: 0;
@@ -52,41 +56,72 @@ body::before {
   }
   
   .form-container {
-    padding: 15px;
-    margin: 10px 5px;
-    border-radius: 15px;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
   }
   
   .page-title {
-    font-size: 1.5em;
-    margin-bottom: 15px;
+    font-size: 1.2em;
+    margin-bottom: 10px;
   }
   
   .section-title {
-    font-size: 1.2em;
-    margin: 20px 0 15px 0;
+    font-size: 1em;
+    margin: 15px 0 10px 0;
+    padding-left: 10px;
   }
   
   .nav-button {
-    padding: 8px 15px;
-    margin: 3px;
-    font-size: 12px;
+    padding: 6px 12px;
+    margin: 2px;
+    font-size: 11px;
   }
   
   button {
-    padding: 12px 25px;
-    font-size: 14px;
-    margin: 5px;
+    padding: 10px 20px;
+    font-size: 13px;
+    margin: 5px 0;
   }
   
   input, select, textarea {
-    padding: 12px 14px;
-    font-size: 14px;
-    margin: 8px 0;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin: 6px 0;
+  }
+  
+  nav {
+    padding: 8px !important;
+    margin-bottom: 10px !important;
   }
   
   nav h1 {
-    font-size: 1.1em !important;
+    font-size: 0.9em !important;
+    margin: 0 0 8px 0 !important;
+  }
+  
+  footer {
+    padding: 15px !important;
+    margin-top: 20px !important;
+    font-size: 12px !important;
+  }
+  
+  .faq-item, .info-card, .terms-section {
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  
+  h3 {
+    font-size: 1.1em;
+  }
+  
+  h4 {
+    font-size: 1em;
   }
 }
 
