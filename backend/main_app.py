@@ -412,16 +412,20 @@ def admin_login():
 
 @app.route('/member-login', methods=['POST'])
 def member_login():
-    data = request.json
-    member = Member.query.filter_by(national_id=data['national_id']).first()
-    if member:
-        return jsonify({
-            'success': True, 
-            'role': 'member', 
-            'user_id': member.id,
-            'name': member.full_names
-        })
-    return jsonify({'success': False})
+    try:
+        data = request.json
+        member = Member.query.filter_by(national_id=data['national_id']).first()
+        if member:
+            return jsonify({
+                'success': True, 
+                'role': 'member', 
+                'user_id': member.id,
+                'name': member.full_names or member.name or 'Member'
+            })
+        return jsonify({'success': False, 'message': 'Member not found'})
+    except Exception as e:
+        print(f"Login error: {str(e)}")
+        return jsonify({'success': False, 'message': 'Server error'}), 500
 
 if __name__ == '__main__':
     with app.app_context():
