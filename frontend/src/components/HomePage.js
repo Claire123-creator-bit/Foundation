@@ -20,31 +20,50 @@ function HomePage() {
     }
   };
 
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
-    <div className="form-container">
-      <div style={{textAlign: 'center', padding: '40px 20px'}}>
-        <h2 style={{color: '#333', fontSize: '2.5em', marginBottom: '20px'}}>
+    <div className="form-container" style={{ scrollPaddingTop: '100px' }}>
+      <div style={{textAlign: 'center', padding: '10px'}}>
+        <h2 style={{
+          color: '#333', 
+          fontSize: '1.2em', 
+          marginBottom: '8px',
+          background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>
           Mbogo Welfare Empowerment Foundation
         </h2>
-        <p style={{fontSize: '1.2em', color: '#666', marginBottom: '30px'}}>
+        <p style={{fontSize: '0.9em', color: '#666', marginBottom: '15px'}}>
           Empowering communities through transparency and trust
         </p>
         
         <div style={{
-          marginTop: '40px',
-          padding: '30px',
-          background: 'linear-gradient(135deg, rgba(0,188,212,0.1) 0%, rgba(0,151,167,0.05) 100%)',
-          borderRadius: '20px',
-          border: '1px solid rgba(0,188,212,0.2)'
+          marginTop: '15px',
+          padding: '15px',
+          background: 'linear-gradient(135deg, rgba(30,60,114,0.08) 0%, rgba(42,82,152,0.04) 100%)',
+          borderRadius: '12px',
+          border: '1px solid rgba(30,60,114,0.1)'
         }}>
           <h3 style={{
-            color: '#00bcd4',
-            marginBottom: '25px',
+            color: '#1e3c72',
+            marginBottom: '10px',
             textAlign: 'center',
-            fontSize: '1.8em',
+            fontSize: '1em',
             fontWeight: 'bold'
           }}>Quick Links</h3>
-          <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '15px'}}>
+          <div style={{
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', 
+            gap: '8px'
+          }}>
             {[
               {text: 'Browse Members', color: '#00bcd4', action: 'members'},
               {text: 'How It Works', color: '#0097a7', action: 'how-it-works'},
@@ -79,7 +98,12 @@ function HomePage() {
           </div>
         </div>
         
-        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '25px', marginTop: '40px'}}>
+        <div style={{
+          display: 'grid', 
+          gridTemplateColumns: '1fr', 
+          gap: '10px', 
+          marginTop: '15px'
+        }}>
           <div style={{
             padding: '30px', 
             background: 'linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)', 

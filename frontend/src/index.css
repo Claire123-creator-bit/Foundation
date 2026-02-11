@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
 * {
   font-family: 'Poppins', sans-serif;
 }
@@ -10,8 +15,10 @@ body {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  overflow-y: auto;
   max-width: 100vw;
   padding: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 body::before {
@@ -43,6 +50,7 @@ body::before {
   backdrop-filter: blur(20px);
   max-width: 100%;
   overflow-x: hidden;
+  overflow-y: auto;
   min-height: 100vh;
 }
 
@@ -51,10 +59,13 @@ body::before {
     box-sizing: border-box;
   }
   
-  body {
+  html, body {
     font-size: 13px;
     padding: 0;
     margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
   }
   
   .app-container {
@@ -62,12 +73,15 @@ body::before {
     border-radius: 0;
     padding: 0 !important;
     min-height: 100vh;
+    overflow-y: auto;
+    height: auto;
   }
   
   .form-container {
     padding: 8px;
     margin: 5px 3px;
     border-radius: 8px;
+    overflow: visible;
   }
   
   .page-title {
@@ -104,6 +118,10 @@ body::before {
     padding: 5px !important;
     margin-bottom: 5px !important;
     border-radius: 0 !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
   }
   
   nav h1 {
