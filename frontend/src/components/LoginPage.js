@@ -13,7 +13,7 @@ const LoginPage = ({ onLogin, onNavigate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
+    setMessage('Connecting to server... Please wait up to 50 seconds.');
 
     try {
       const endpoint = loginType === 'admin' ? '/admin-login' : '/member-login';
@@ -21,12 +21,17 @@ const LoginPage = ({ onLogin, onNavigate }) => {
         ? { username: formData.username, password: formData.password }
         : { national_id: formData.national_id };
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+
       const response = await fetch(`https://foundation-0x4i.onrender.com${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
       const data = await response.json();
       
       if (data.success) {
@@ -36,7 +41,11 @@ const LoginPage = ({ onLogin, onNavigate }) => {
         setMessage(loginType === 'admin' ? 'Invalid admin credentials' : 'Member not found');
       }
     } catch (error) {
-      setMessage('Login failed. Please try again.');
+      if (error.name === 'AbortError') {
+        setMessage('Server timeout. Please try again.');
+      } else {
+        setMessage('Server is waking up. Please wait 30 seconds and try again.');
+      }
     }
     setLoading(false);
   };
