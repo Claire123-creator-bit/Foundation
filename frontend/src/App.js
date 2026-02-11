@@ -43,8 +43,10 @@ function App() {
     }
   }, []);
 
-  const handleSignUpSuccess = (phone) => {
-    setSignupPhone(phone);
+  const handleSignUpSuccess = (fullName, nationalId) => {
+    setSignupPhone(fullName);
+    localStorage.setItem('signupName', fullName);
+    localStorage.setItem('signupId', nationalId);
     setActiveTab('registration');
   };
 

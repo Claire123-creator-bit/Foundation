@@ -2,44 +2,27 @@ import React, { useState } from 'react';
 
 const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
   const [formData, setFormData] = useState({
-    phone_number: '',
-    password: '',
-    confirm_password: ''
+    full_name: '',
+    national_id: '',
+    confirm_id: ''
   });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showId, setShowId] = useState(false);
+  const [showConfirmId, setShowConfirmId] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
 
-    if (formData.password !== formData.confirm_password) {
-      setMessage('Passwords do not match');
+    if (formData.national_id !== formData.confirm_id) {
+      setMessage('ID numbers do not match');
       setLoading(false);
       return;
     }
 
-    try {
-      const response = await fetch('https://foundation-0x4i.onrender.com/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone_number: formData.phone_number,
-          password: formData.password
-        })
-      });
-
-      const data = await response.json();
-      
-      if (response.ok) {
-        onSignUpSuccess(formData.phone_number);
-      } else {
-        setMessage(data.error || 'Sign up failed');
-      }
-    } catch (error) {
-      setMessage('Network error. Please try again.');
-    }
+    onSignUpSuccess(formData.full_name, formData.national_id);
     setLoading(false);
   };
 
@@ -70,38 +53,78 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
       
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Phone Number:</label>
+          <label>Full Name:</label>
           <input
-            type="tel"
-            value={formData.phone_number}
-            onChange={(e) => setFormData({...formData, phone_number: e.target.value})}
+            type="text"
+            value={formData.full_name}
+            onChange={(e) => setFormData({...formData, full_name: e.target.value})}
             required
-            placeholder="Enter your phone number"
+            placeholder="Enter your full name"
           />
         </div>
 
         <div className="form-group">
-          <label>Password:</label>
-          <input
-            type="password"
-            value={formData.password}
-            onChange={(e) => setFormData({...formData, password: e.target.value})}
-            required
-            placeholder="Create a password"
-            minLength="6"
-          />
+          <label>National ID Number:</label>
+          <div style={{position: 'relative'}}>
+            <input
+              type={showId ? "text" : "password"}
+              value={formData.national_id}
+              onChange={(e) => setFormData({...formData, national_id: e.target.value})}
+              required
+              placeholder="Enter your National ID"
+            />
+            <button
+              type="button"
+              onClick={() => setShowId(!showId)}
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '12px',
+                padding: '5px',
+                color: '#1e3c72',
+                fontWeight: '600'
+              }}
+            >
+              {showId ? 'Hide' : 'Show'}
+            </button>
+          </div>
         </div>
 
         <div className="form-group">
-          <label>Confirm Password:</label>
-          <input
-            type="password"
-            value={formData.confirm_password}
-            onChange={(e) => setFormData({...formData, confirm_password: e.target.value})}
-            required
-            placeholder="Confirm your password"
-            minLength="6"
-          />
+          <label>Confirm National ID:</label>
+          <div style={{position: 'relative'}}>
+            <input
+              type={showConfirmId ? "text" : "password"}
+              value={formData.confirm_id}
+              onChange={(e) => setFormData({...formData, confirm_id: e.target.value})}
+              required
+              placeholder="Confirm your National ID"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmId(!showConfirmId)}
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '12px',
+                padding: '5px',
+                color: '#1e3c72',
+                fontWeight: '600'
+              }}
+            >
+              {showConfirmId ? 'Hide' : 'Show'}
+            </button>
+          </div>
         </div>
         
         <button type="submit" disabled={loading}>
