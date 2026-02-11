@@ -101,20 +101,20 @@ function App() {
   }, []);
 
   return (
-    <div className="app-container" style={{ padding: '5px' }}>
+    <div className="app-container" style={{ padding: '0' }}>
       <nav style={{
         background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
-        padding: '10px',
-        borderRadius: '15px',
-        marginBottom: '15px',
-        boxShadow: '0 10px 30px rgba(30, 60, 114, 0.3)'
+        padding: '8px',
+        borderRadius: '0',
+        marginBottom: '10px',
+        boxShadow: '0 5px 15px rgba(30, 60, 114, 0.3)'
       }}>
-        <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 10px 0', fontSize: '1.3em', fontWeight: '700'}}>Mbogo Welfare Empowerment Foundation</h1>
+        <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 8px 0', fontSize: '1em', fontWeight: '700', lineHeight: '1.2'}}>Mbogo Welfare Empowerment Foundation</h1>
         {userRole && (
           <>
-            <div style={{textAlign: 'center', color: 'white', marginBottom: '10px'}}>
+            <div style={{textAlign: 'center', color: 'white', marginBottom: '5px', fontSize: '12px'}}>
               Welcome, {userName} ({userRole})
-              <button onClick={handleLogout} style={{marginLeft: '10px', padding: '5px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid white', borderRadius: '5px', cursor: 'pointer'}}>Logout</button>
+              <button onClick={handleLogout} style={{marginLeft: '5px', padding: '3px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid white', borderRadius: '5px', cursor: 'pointer', fontSize: '11px'}}>Logout</button>
             </div>
             <div style={{textAlign: 'center', flexWrap: 'wrap', display: 'flex', justifyContent: 'center', gap: '5px'}}>
               <button className="nav-button" onClick={() => setActiveTab('dashboard')}>Dashboard</button>
@@ -157,22 +157,22 @@ function App() {
       
       {userRole && (
         <footer style={{
-          marginTop: '50px',
-          padding: '30px',
+          marginTop: '20px',
+          padding: '15px',
           textAlign: 'center',
           background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
           color: 'white',
-          borderRadius: '25px',
-          boxShadow: '0 10px 30px rgba(30, 60, 114, 0.3)'
+          borderRadius: '0',
+          boxShadow: '0 5px 15px rgba(30, 60, 114, 0.3)'
         }}>
           <div style={{
             display: 'flex', 
             justifyContent: 'center', 
-            gap: '30px', 
+            gap: '10px', 
             flexWrap: 'wrap', 
-            marginBottom: '20px',
+            marginBottom: '10px',
             borderBottom: '1px solid rgba(255,255,255,0.3)',
-            paddingBottom: '15px'
+            paddingBottom: '10px'
           }}>
             {[
               {label: 'About Us', page: 'about'},
@@ -188,7 +188,7 @@ function App() {
                   padding: '5px 10px',
                   borderRadius: '5px',
                   transition: 'all 0.3s ease',
-                  fontSize: '14px'
+                  fontSize: '12px'
                 }} 
                 onMouseOver={e => e.target.style.background = 'rgba(255,255,255,0.2)'}
                 onMouseOut={e => e.target.style.background = 'transparent'}>
@@ -196,7 +196,7 @@ function App() {
               </span>
             ))}
           </div>
-          <p style={{margin: '0', fontSize: '15px', opacity: '0.95', fontWeight: '500'}}>
+          <p style={{margin: '0', fontSize: '11px', opacity: '0.95', fontWeight: '500'}}>
             &copy; 2025 Mbogo Welfare Empowerment Foundation. Empowering communities through transparency and trust.
           </p>
         </footer>
