@@ -123,3 +123,54 @@ class MeetingMinutes(db.Model):
             'next_meeting_date': self.next_meeting_date,
             'created_date': self.created_date.isoformat()
         }
+
+class Admin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False, unique=True)
+    password = db.Column(db.String(200), nullable=False)
+    full_name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100))
+    phone = db.Column(db.String(20))
+    role = db.Column(db.String(50), default='admin')
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    last_login = db.Column(db.DateTime)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'full_name': self.full_name,
+            'email': self.email,
+            'phone': self.phone,
+            'role': self.role,
+            'created_date': self.created_date.isoformat(),
+            'last_login': self.last_login.isoformat() if self.last_login else None,
+            'is_active': self.is_active
+        }
+
+class Resource(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    resource_type = db.Column(db.String(50), nullable=False)
+    file_url = db.Column(db.String(500))
+    category = db.Column(db.String(50))
+    uploaded_by = db.Column(db.String(100))
+    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
+    is_public = db.Column(db.Boolean, default=True)
+    download_count = db.Column(db.Integer, default=0)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'resource_type': self.resource_type,
+            'file_url': self.file_url,
+            'category': self.category,
+            'uploaded_by': self.uploaded_by,
+            'upload_date': self.upload_date.isoformat(),
+            'is_public': self.is_public,
+            'download_count': self.download_count
+        }
