@@ -174,3 +174,31 @@ class Resource(db.Model):
             'is_public': self.is_public,
             'download_count': self.download_count
         }
+
+class Payment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    payment_method = db.Column(db.String(50), nullable=False)
+    phone_number = db.Column(db.String(20), nullable=False)
+    transaction_id = db.Column(db.String(100))
+    payment_type = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(20), default='pending')
+    payment_date = db.Column(db.DateTime, default=datetime.utcnow)
+    confirmed_date = db.Column(db.DateTime)
+    notes = db.Column(db.Text)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'member_id': self.member_id,
+            'amount': self.amount,
+            'payment_method': self.payment_method,
+            'phone_number': self.phone_number,
+            'transaction_id': self.transaction_id,
+            'payment_type': self.payment_type,
+            'status': self.status,
+            'payment_date': self.payment_date.isoformat(),
+            'confirmed_date': self.confirmed_date.isoformat() if self.confirmed_date else None,
+            'notes': self.notes
+        }
