@@ -101,22 +101,22 @@ function App() {
   }, []);
 
   return (
-    <div className="app-container" style={{ padding: '20px' }}>
+    <div className="app-container" style={{ padding: '5px' }}>
       <nav style={{
         background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
-        padding: '20px 0',
-        borderRadius: '25px',
-        marginBottom: '30px',
+        padding: '10px',
+        borderRadius: '15px',
+        marginBottom: '15px',
         boxShadow: '0 10px 30px rgba(30, 60, 114, 0.3)'
       }}>
-        <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 20px 0', fontSize: '2.2em', fontWeight: '700'}}>Mbogo Welfare Empowerment Foundation</h1>
+        <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 10px 0', fontSize: '1.3em', fontWeight: '700'}}>Mbogo Welfare Empowerment Foundation</h1>
         {userRole && (
           <>
             <div style={{textAlign: 'center', color: 'white', marginBottom: '10px'}}>
               Welcome, {userName} ({userRole})
               <button onClick={handleLogout} style={{marginLeft: '10px', padding: '5px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid white', borderRadius: '5px', cursor: 'pointer'}}>Logout</button>
             </div>
-            <div style={{textAlign: 'center'}}>
+            <div style={{textAlign: 'center', flexWrap: 'wrap', display: 'flex', justifyContent: 'center', gap: '5px'}}>
               <button className="nav-button" onClick={() => setActiveTab('dashboard')}>Dashboard</button>
               <button className="nav-button" onClick={() => setActiveTab('members')}>Members</button>
               <button className="nav-button" onClick={() => setActiveTab('datacapture')}>Data Capture</button>
