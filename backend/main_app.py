@@ -224,28 +224,6 @@ def get_members():
             member = Member.query.get(user_id)
             if member:
                 return jsonify([member.to_dict()])
-def register_member():
-    return register_member_pro()
-
-@app.route('/members', methods=['GET'])
-def get_members():
-    user_role = request.headers.get('User-Role', 'member')
-    user_id = request.headers.get('User-ID')
-    
-    if user_role == 'admin':
-        # Admin can see all members
-        category = request.args.get('category')
-        if category:
-            members = Member.query.filter_by(category=category).all()
-        else:
-            members = Member.query.all()
-        return jsonify([member.to_dict() for member in members])
-    else:
-        # Regular members can only see their own details
-        if user_id:
-            member = Member.query.get(user_id)
-            if member:
-                return jsonify([member.to_dict()])
         return jsonify([])
 
 @app.route('/members/categories', methods=['GET'])
