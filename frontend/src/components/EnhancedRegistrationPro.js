@@ -61,42 +61,132 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
     }
   };
 
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorDetails, setErrorDetails] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    setErrorMessage('');
+    setErrorDetails('');
+    setSuccessMessage('');
     
-    // Validation
     if (!formData.national_id || formData.national_id.length < 7) {
-      alert('Please enter a valid National ID number');
+      setErrorMessage('Please enter a valid National ID number');
       return;
     }
     
     if (!formData.phone_number || formData.phone_number.length < 10) {
-      alert('Please enter a valid phone number');
+      setErrorMessage('Please enter a valid phone number');
       return;
     }
 
+    setIsSubmitting(true);
+    console.log('Submitting registration data:', formData);
+
     fetch('https://foundation-0x4i.onrender.com/register-member-pro', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       body: JSON.stringify(formData)
     })
-      .then(res => res.json())
+      .then(res => {
+        console.log('Response status:', res.status);
+        console.log('Response headers:', [...res.headers.entries()]);
+        
+        return res.text().then(text => {
+          console.log('Raw response:', text);
+          try {
+            const data = JSON.parse(text);
+            console.log('Parsed response:', data);
+            if (!res.ok) {
+              setErrorDetails(data.details || `Status: ${res.status}`);
+              throw new Error(data.error || `Server error (${res.status})`);
+            }
+            return data;
+          } catch (e) {
+            setErrorDetails(`Parse error: ${e.message}. Raw response: ${text.substring(0, 200)}`);
+            throw new Error(`Invalid server response (${res.status})`);
+          }
+        });
+      })
       .then(data => {
+        setIsSubmitting(false);
         if (data.member_data) {
+          setSuccessMessage('Registration successful! Redirecting...');
+          onRegistrationSuccess(data);
+        } else if (data.message && data.user_id) {
+          setSuccessMessage('Registration successful! Redirecting...');
           onRegistrationSuccess(data);
         } else {
-          alert('Registration successful!');
+          setErrorMessage('Registration completed but unexpected response from server.');
+          setErrorDetails(JSON.stringify(data, null, 2));
         }
       })
-      .catch(err => alert('Registration failed. Please try again.'));
+      .catch(err => {
+        setIsSubmitting(false);
+        console.error('Registration error:', err);
+        setErrorMessage(err.message || 'Registration failed. Please try again.');
+      });
   };
 
   const handleChange = (e) => {
     setFormData({...formData, [e.target.name]: e.target.value});
   };
 
+  const [healthStatus, setHealthStatus] = useState(null);
+  const [isCheckingHealth, setIsCheckingHealth] = useState(false);
+
+  const checkHealth = () => {
+    setIsCheckingHealth(true);
+    setHealthStatus(null);
+    
+    fetch('https://foundation-0x4i.onrender.com/health')
+      .then(res => res.json())
+      .then(data => {
+        setHealthStatus(data);
+      })
+      .catch(err => {
+        setHealthStatus({status: 'error', message: err.message});
+      })
+      .finally(() => {
+        setIsCheckingHealth(false);
+      });
+  };
+
   return (
     <div className="form-container">
+      <div style={{marginBottom: '20px', padding: '10px', background: '#f5f5f5', borderRadius: '8px'}}>
+        <button 
+          type="button"
+          onClick={checkHealth}
+          disabled={isCheckingHealth}
+          style={{
+            background: isCheckingHealth ? '#ccc' : '#2196f3',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            border: 'none',
+            color: 'white',
+            cursor: isCheckingHealth ? 'not-allowed' : 'pointer',
+            fontSize: '12px'
+          }}
+        >
+          {isCheckingHealth ? 'Checking...' : 'Check Server Health'}
+        </button>
+        
+        {healthStatus && (
+          <div style={{marginTop: '10px', fontSize: '12px', fontFamily: 'monospace'}}>
+            Status: {healthStatus.status}
+            {healthStatus.database && <div>Database: {healthStatus.database}</div>}
+            {healthStatus.error && <div style={{color: 'red'}}>Error: {healthStatus.error}</div>}
+            {healthStatus.message && <div>Message: {healthStatus.message}</div>}
+          </div>
+        )}
+      </div>
+
       <div style={{textAlign: 'center', marginBottom: '30px'}}>
         <h2 className="page-title">Official User Registration</h2>
         <p style={{color: '#666', fontSize: '14px'}}>
@@ -105,7 +195,6 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
       </div>
 
       <form onSubmit={handleSubmit}>
-        {/* Personal Information Section */}
         <div style={{
           background: 'rgba(0,188,212,0.1)', 
           padding: '20px', 
@@ -159,7 +248,6 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
           </div>
         </div>
 
-        {/* Location Information Section */}
         <div style={{
           background: 'rgba(76,175,80,0.1)', 
           padding: '20px', 
@@ -245,7 +333,6 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
           </div>
         </div>
 
-        {/* Role Selection Section */}
         <div style={{
           background: 'rgba(255,152,0,0.1)', 
           padding: '20px', 
@@ -268,22 +355,59 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
           </div>
         </div>
 
+        {successMessage && (
+          <div style={{
+            background: '#e8f5e9',
+            color: '#2e7d32',
+            padding: '15px',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            border: '1px solid #a5d6a7'
+          }}>
+            {successMessage}
+          </div>
+        )}
+
+        {errorMessage && (
+          <div style={{
+            background: '#ffebee',
+            color: '#c62828',
+            padding: '15px',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            border: '1px solid #ef9a9a'
+          }}>
+            <div style={{fontWeight: 'bold', marginBottom: errorDetails ? '8px' : 0}}>
+              {errorMessage}
+            </div>
+            {errorDetails && (
+              <div style={{fontSize: '12px', opacity: 0.8, fontFamily: 'monospace', background: 'rgba(0,0,0,0.05)', padding: '8px', borderRadius: '4px'}}>
+                {errorDetails}
+              </div>
+            )}
+            <div style={{marginTop: '10px', fontSize: '12px', opacity: 0.7}}>
+              Check browser console (F12) for more details
+            </div>
+          </div>
+        )}
+
         <button 
           type="submit" 
+          disabled={isSubmitting}
           style={{
             width: '100%', 
             padding: '18px', 
             fontSize: '18px', 
             fontWeight: 'bold',
-            background: 'linear-gradient(45deg, #00bcd4, #0097a7)',
+            background: isSubmitting ? '#ccc' : 'linear-gradient(45deg, #00bcd4, #0097a7)',
             color: 'white',
             border: 'none',
             borderRadius: '12px',
-            cursor: 'pointer',
+            cursor: isSubmitting ? 'not-allowed' : 'pointer',
             marginTop: '20px'
           }}
         >
-          Complete Official Registration
+          {isSubmitting ? 'Processing...' : 'Complete Official Registration'}
         </button>
       </form>
     </div>
@@ -291,3 +415,4 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
 }
 
 export default EnhancedRegistrationPro;
+
