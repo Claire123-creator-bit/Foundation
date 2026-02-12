@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template_string
+<parameter name="content">from flask import Flask, request, jsonify, render_template_string
 from flask_cors import CORS
 from website_models import db, CallLog, AutoResponse, Member, Meeting, Attendance, MeetingMinutes, Admin, Resource, Payment
 from datetime import datetime
@@ -138,9 +138,6 @@ def register_member_pro():
     
     try:
         data = request.json
-        print("=" * 50)
-        print("Registration attempt received")
-        print(f"Data keys: {list(data.keys()) if data else 'None'}")
         
         if not data:
             return jsonify({'error': 'No data received'}), 400
@@ -148,12 +145,10 @@ def register_member_pro():
         required_fields = ['full_names', 'national_id', 'phone_number', 'county', 'constituency', 'ward', 'physical_location', 'category']
         missing_fields = [field for field in required_fields if not data.get(field)]
         if missing_fields:
-            print(f"Missing fields: {missing_fields}")
             return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
         
         existing_member = Member.query.filter_by(national_id=data['national_id']).first()
         if existing_member:
-            print(f"Duplicate registration attempt for national_id: {data['national_id']}")
             return jsonify({'error': 'This National ID is already registered. Please login instead.'}), 400
         
         member = Member(
@@ -171,7 +166,6 @@ def register_member_pro():
         )
         db.session.add(member)
         db.session.commit()
-        print(f"SUCCESS: Member created with ID: {member.id}")
         
         response = jsonify({
             'message': 'Registration successful', 
@@ -193,12 +187,8 @@ def register_member_pro():
         db.session.rollback()
         error_msg = str(e)
         print(f"Registration error: {error_msg}")
-        import traceback
-        traceback.print_exc()
         if 'UNIQUE constraint failed' in error_msg:
             return jsonify({'error': 'This National ID or phone number is already registered.'}), 400
-        elif 'FOREIGN KEY constraint' in error_msg:
-            return jsonify({'error': 'Invalid data provided. Please check all fields.'}), 400
         else:
             return jsonify({'error': 'Registration failed. Please try again.', 'details': error_msg}), 500
 
@@ -234,17 +224,21 @@ def get_categories():
 
 @app.route('/send-bulk-message', methods=['POST'])
 def send_bulk_message():
+    user_role = request.headers.get('User-Role')
+    if user_role != 'admin':
+        return jsonify({'error': 'Unauthorized. Admin access required.'}), 403
+    
     data = request.json
     category = data.get('category')
     message = data['message']
-
+    
     if category:
         members = Member.query.filter_by(category=category).all()
     else:
         members = Member.query.all()
-
-    phone_numbers = [member.phone_number for member in members]
-
+    
+    phone_numbers = [member.phone for member in members]
+    
     return jsonify({
         'message': 'Bulk message prepared',
         'recipients': len(phone_numbers),
@@ -254,6 +248,10 @@ def send_bulk_message():
 
 @app.route('/assignments', methods=['GET', 'POST'])
 def assignments():
+    user_role = request.headers.get('User-Role')
+    if user_role != 'admin':
+        return jsonify({'error': 'Unauthorized. Admin access required.'}), 403
+    
     if request.method == 'POST':
         from admin_models import Assignment
         data = request.json
@@ -262,7 +260,7 @@ def assignments():
             description=data['description'],
             assigned_to=data['assigned_to'],
             priority=data['priority'],
-            due_date=datetime.fromisoformat(data['due_date']) if data['due_date'] else None
+            due_date=datetime.fromisoformat(data.get('due_date')) if data.get('due_date') else None
         )
         db.session.add(assignment)
         db.session.commit()
@@ -274,6 +272,10 @@ def assignments():
 
 @app.route('/assignments/<int:id>', methods=['PUT'])
 def update_assignment(id):
+    user_role = request.headers.get('User-Role')
+    if user_role != 'admin':
+        return jsonify({'error': 'Unauthorized. Admin access required.'}), 403
+    
     from admin_models import Assignment
     assignment = Assignment.query.get(id)
     data = request.json
@@ -283,22 +285,26 @@ def update_assignment(id):
 
 @app.route('/send-bulk-sms', methods=['POST'])
 def send_bulk_sms():
+    user_role = request.headers.get('User-Role')
+    if user_role != 'admin':
+        return jsonify({'error': 'Unauthorized. Admin access required.'}), 403
+    
     data = request.json
     category = data.get('category')
     message = data['message']
-
+    
     if category:
         members = Member.query.filter_by(category=category).all()
     else:
         members = Member.query.all()
-
-    phone_numbers = [member.phone_number for member in members]
-
+    
+    phone_numbers = [member.phone for member in members]
+    
     import time
     time.sleep(1)
     for member in members:
-        print(f"SMS sent to {member.full_names} ({member.phone_number}): {message}")
-
+        print(f"SMS sent to {member.name} ({member.phone}): {message}")
+    
     return jsonify({
         'status': 'Delivered',
         'recipients': len(phone_numbers),
@@ -310,6 +316,10 @@ def send_bulk_sms():
 @app.route('/meetings', methods=['GET', 'POST'])
 def meetings():
     if request.method == 'POST':
+        user_role = request.headers.get('User-Role')
+        if user_role != 'admin':
+            return jsonify({'error': 'Unauthorized. Admin access required.'}), 403
+            
         data = request.json
         meeting = Meeting(
             title=data['title'],
@@ -343,19 +353,9 @@ def record_attendance():
 @app.route('/attendance-records', methods=['GET'])
 def get_attendance_records():
     member_id = request.args.get('member_id')
+    user_role = request.headers.get('User-Role')
     
-    if member_id:
-        # Get attendance for specific member
-        records = db.session.query(
-            Attendance.id,
-            Attendance.status,
-            Attendance.recorded_date,
-            Meeting.title.label('meeting_title'),
-            Meeting.date.label('meeting_date')
-        ).join(Meeting, Attendance.meeting_id == Meeting.id)\
-         .filter(Attendance.member_id == member_id).all()
-    else:
-        # Get all attendance records
+    if user_role == 'admin':
         records = db.session.query(
             Attendance.id,
             Attendance.status,
@@ -364,16 +364,7 @@ def get_attendance_records():
             Member.name.label('member_name')
         ).join(Meeting, Attendance.meeting_id == Meeting.id)\
          .join(Member, Attendance.member_id == Member.id).all()
-    
-    if member_id:
-        return jsonify([{
-            'id': record.id,
-            'status': record.status,
-            'recorded_date': record.recorded_date.isoformat(),
-            'meeting_title': record.meeting_title,
-            'meeting_date': record.meeting_date
-        } for record in records])
-    else:
+        
         return jsonify([{
             'id': record.id,
             'status': record.status,
@@ -381,11 +372,34 @@ def get_attendance_records():
             'meeting_title': record.meeting_title,
             'member_name': record.member_name
         } for record in records])
+    else:
+        if member_id:
+            records = db.session.query(
+                Attendance.id,
+                Attendance.status,
+                Attendance.recorded_date,
+                Meeting.title.label('meeting_title'),
+                Meeting.date.label('meeting_date')
+            ).join(Meeting, Attendance.meeting_id == Meeting.id)\
+             .filter(Attendance.member_id == member_id).all()
+            
+            return jsonify([{
+                'id': record.id,
+                'status': record.status,
+                'recorded_date': record.recorded_date.isoformat(),
+                'meeting_title': record.meeting_title,
+                'meeting_date': record.meeting_date
+            } for record in records])
+        return jsonify([])
 
 
 @app.route('/meeting-minutes', methods=['GET', 'POST'])
 def meeting_minutes():
     if request.method == 'POST':
+        user_role = request.headers.get('User-Role')
+        if user_role != 'admin':
+            return jsonify({'error': 'Unauthorized. Admin access required.'}), 403
+        
         data = request.json
         minutes = MeetingMinutes(
             meeting_id=data['meeting_id'],
@@ -400,7 +414,6 @@ def meeting_minutes():
         db.session.commit()
         return jsonify({'message': 'Meeting minutes saved successfully'})
     
-
     minutes_records = db.session.query(
         MeetingMinutes.id,
         MeetingMinutes.secretary_name,
@@ -533,3 +546,4 @@ def get_member_profile():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
+</parameter>
