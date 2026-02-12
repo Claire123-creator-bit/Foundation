@@ -18,6 +18,7 @@ import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
 import MembershipConfirmation from './components/MembershipConfirmation';
 import Donate from './components/Donate';
+import ProfilePage from './components/ProfilePage';
 import Watermark from './components/Watermark';
 
 function App() {
@@ -121,8 +122,9 @@ function App() {
               Welcome, {userName} ({userRole})
               <button onClick={handleLogout} style={{marginLeft: '3px', padding: '2px 6px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid white', borderRadius: '3px', cursor: 'pointer', fontSize: '10px'}}>Logout</button>
             </div>
-            <div style={{textAlign: 'center', flexWrap: 'wrap', display: 'flex', justifyContent: 'center', gap: '5px'}}>
+<div style={{textAlign: 'center', flexWrap: 'wrap', display: 'flex', justifyContent: 'center', gap: '5px'}}>
               <button className="nav-button" onClick={() => setActiveTab('dashboard')}>Dashboard</button>
+              <button className="nav-button" onClick={() => setActiveTab('profile')}>My Profile</button>
               <button className="nav-button" onClick={() => setActiveTab('members')}>Members</button>
               <button className="nav-button" onClick={() => setActiveTab('datacapture')}>Data Capture</button>
               <button className="nav-button" onClick={() => setActiveTab('minutes')}>Minutes</button>
@@ -145,8 +147,9 @@ function App() {
       {!userRole && activeTab === 'registration' && <EnhancedRegistrationPro signupPhone={signupPhone} onRegistrationSuccess={handleRegistrationSuccess} />}
       {!userRole && activeTab === 'confirmation' && <MembershipConfirmation memberData={memberData} onContinue={handleConfirmationContinue} />}
       {!userRole && activeTab === 'login' && <LoginPage onLogin={handleLogin} onNavigate={setActiveTab} />}
-      {userRole && activeTab === 'dashboard' && <UserDashboard />}
+{userRole && activeTab === 'dashboard' && <UserDashboard />}
       {userRole && activeTab === 'home' && <HomePage />}
+      {userRole && activeTab === 'profile' && <ProfilePage userId={userId} onLogout={handleLogout} />}
       {userRole && activeTab === 'registration' && <EnhancedRegistrationPro onRegistered={() => setRefresh(!refresh)} />}
       {userRole && activeTab === 'members' && <MembersList key={refresh} userRole={userRole} userId={userId} />}
       {userRole && activeTab === 'datacapture' && <DataCapture />}

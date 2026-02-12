@@ -1,16 +1,40 @@
 import React, { useState } from 'react';
 
 function ContactUs() {
-  const [formData, setFormData] = useState({name: '', email: '', message: ''});
+  const [formData, setFormData] = useState({name: '', phone: '', call_type: 'inquiry', message: ''});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const goBack = () => {
     window.location.hash = '#landing';
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Thank you for your message. We will get back to you soon!');
-    setFormData({name: '', email: '', message: ''});
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('http://localhost:5000/log-call', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Thank you for your message. We will get back to you soon!');
+        setFormData({name: '', phone: '', call_type: 'inquiry', message: ''});
+      } else {
+        alert('Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -111,7 +135,9 @@ function ContactUs() {
             required
           />
           
-          <button type="submit" style={{width: '100%', marginTop: '10px'}}>Send Message</button>
+          <button type="submit" style={{width: '100%', marginTop: '10px'}} disabled={isSubmitting}>
+            {isSubmitting ? 'Sending...' : 'Send Message'}
+          </button>
         </form>
       </div>
 
