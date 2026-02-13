@@ -67,7 +67,6 @@ function App() {
   };
 
   const handleConfirmationContinue = () => {
-    // After registration, automatically log in the user and go to dashboard
     if (memberData) {
       const userId = memberData.id || memberData.user_id;
       const userName = memberData.full_names;
@@ -232,3 +231,4 @@ function App() {
 }
 
 export default App;
+

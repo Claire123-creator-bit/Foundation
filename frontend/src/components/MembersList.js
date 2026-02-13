@@ -6,7 +6,6 @@ function MembersList({ userRole, userId }) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // For members: fetch only their own profile. For admin: fetch all members
   const fetchMembers = (category = '') => {
     const headers = {
       'Content-Type': 'application/json',
@@ -15,7 +14,6 @@ function MembersList({ userRole, userId }) {
     };
     
     if (userRole === 'admin') {
-      // Admin sees all members (or filtered by category)
       const url = category ? `https://foundation-0x4i.onrender.com/members?category=${category}` : 'https://foundation-0x4i.onrender.com/members';
       fetch(url, { headers })
         .then(res => res.json())
@@ -28,7 +26,6 @@ function MembersList({ userRole, userId }) {
           setLoading(false);
         });
     } else {
-      // Members only see their own profile
       fetch(`https://foundation-0x4i.onrender.com/member-profile?member_id=${userId}`, { headers })
         .then(res => res.json())
         .then(data => {
@@ -56,7 +53,7 @@ function MembersList({ userRole, userId }) {
   useEffect(() => {
     fetchMembers();
     fetchCategories();
-  }, [userRole, userId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userRole, userId]);
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
@@ -162,3 +159,4 @@ function MembersList({ userRole, userId }) {
 }
 
 export default MembersList;
+

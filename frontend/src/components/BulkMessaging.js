@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 function BulkMessaging({ userRole, userId }) {
-  // Redirect non-admin users
   if (userRole !== 'admin') {
     return (
       <div className="form-container" style={{textAlign: 'center', padding: '50px'}}>
@@ -45,7 +44,7 @@ function BulkMessaging({ userRole, userId }) {
       })
         .then(res => res.json())
         .then(data => {
-          alert(`📨 SMS sent successfully to ${data.recipients} members!\n\nDelivery Status: ${data.status}\nSent at: ${new Date().toLocaleString()}`);
+          alert(`SMS sent successfully to ${data.recipients} members!\n\nDelivery Status: ${data.status}\nSent at: ${new Date().toLocaleString()}`);
           setMessage('');
         })
         .catch(err => alert('Error sending SMS: ' + err.message));
@@ -54,14 +53,14 @@ function BulkMessaging({ userRole, userId }) {
 
   return (
     <div className="form-container">
-      <h2 className="page-title">📨 SMS Broadcast System</h2>
+      <h2 className="page-title">SMS Broadcast System</h2>
       <p style={{textAlign: 'center', color: '#666', marginBottom: '30px'}}>Send instant SMS updates to all registered members</p>
       <form onSubmit={handleSend}>
         <div style={{marginBottom: '20px'}}>
           <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#00bcd4'}}>Target Audience:</label>
           <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} style={{width: '100%'}}>
-            <option value="">📢 All Members (Broadcast to Everyone)</option>
-            {categories.map(cat => <option key={cat} value={cat}>👥 {cat} Members Only</option>)}
+            <option value="">All Members (Broadcast to Everyone)</option>
+            {categories.map(cat => <option key={cat} value={cat}>{cat} Members Only</option>)}
           </select>
         </div>
         
@@ -84,10 +83,11 @@ function BulkMessaging({ userRole, userId }) {
           color: 'white',
           border: 'none',
           borderRadius: '8px'
-        }}>📨 Send SMS to All Members</button>
+        }}>Send SMS to All Members</button>
       </form>
     </div>
   );
 }
 
 export default BulkMessaging;
+

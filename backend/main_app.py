@@ -11,18 +11,15 @@ db.init_app(app)
 CORS(app, origins="*", supports_credentials=True)
 
 def get_user_role():
-    """Helper function to get user role and ID from headers"""
     user_role = request.headers.get('User-Role', 'guest')
     user_id = request.headers.get('User-ID')
     return user_role, user_id
 
 def is_admin():
-    """Check if current user is admin"""
     user_role, _ = get_user_role()
     return user_role == 'admin'
 
 def is_member():
-    """Check if current user is a member"""
     user_role, user_id = get_user_role()
     return user_role == 'member' and user_id is not None
 
@@ -242,27 +239,20 @@ def get_members():
                 return jsonify([member.to_dict()])
         return jsonify([])
 
-# ==========================================
-# ROLE-BASED ACCESS CONTROL ENDPOINTS
-# ==========================================
-
 @app.route('/member-profile', methods=['GET'])
 def get_member_profile():
-    """Get profile of the logged-in member only"""
     user_role, user_id = get_user_role()
     
     if not user_id:
         return jsonify({'error': 'Authentication required'}), 401
     
     if user_role == 'admin':
-        # Admin can view any member profile
         member_id = request.args.get('member_id')
         if member_id:
             member = Member.query.get(member_id)
         else:
             return jsonify({'error': 'member_id required for admin'}), 400
     else:
-        # Members can only view their own profile
         member = Member.query.get(user_id)
     
     if member:
@@ -271,17 +261,14 @@ def get_member_profile():
 
 @app.route('/my-messages', methods=['GET'])
 def get_my_messages():
-    """Get messages/call logs for the logged-in member only"""
     user_role, user_id = get_user_role()
     
     if not user_id:
         return jsonify({'error': 'Authentication required'}), 401
     
     if user_role == 'admin':
-        # Admin can see all call logs
         call_logs = CallLog.query.order_by(CallLog.timestamp.desc()).all()
     else:
-        # Members can only see messages related to their phone number
         member = Member.query.get(user_id)
         if member:
             call_logs = CallLog.query.filter_by(phone=member.phone_number).order_by(CallLog.timestamp.desc()).all()
@@ -300,31 +287,26 @@ def get_my_messages():
 
 @app.route('/meetings', methods=['GET'])
 def get_meetings():
-    """Get meetings - all for admin, available/public for members"""
     user_role, user_id = get_user_role()
     
-    # Get all meetings
     meetings = Meeting.query.order_by(Meeting.date.desc()).all()
     
     return jsonify([meeting.to_dict() for meeting in meetings])
 
 @app.route('/attendance-records', methods=['GET'])
 def get_attendance_records():
-    """Get attendance records - all for admin, only own for members"""
     user_role, user_id = get_user_role()
     
     if not user_id:
         return jsonify({'error': 'Authentication required'}), 401
     
     if user_role == 'admin':
-        # Admin can see all attendance
         member_id = request.args.get('member_id')
         if member_id:
             records = Attendance.query.filter_by(member_id=member_id).all()
         else:
             records = Attendance.query.all()
     else:
-        # Members can only see their own attendance
         records = Attendance.query.filter_by(member_id=user_id).all()
     
     result = []
@@ -344,13 +326,8 @@ def get_attendance_records():
     
     return jsonify(result)
 
-# ==========================================
-# ADMIN-ONLY ENDPOINTS
-# ==========================================
-
 @app.route('/admin/all-members', methods=['GET'])
 def admin_get_all_members():
-    """Admin-only: Get all members with full details"""
     if not is_admin():
         return jsonify({'error': 'Admin access required'}), 403
     
@@ -359,7 +336,6 @@ def admin_get_all_members():
 
 @app.route('/admin/all-call-logs', methods=['GET'])
 def admin_get_all_call_logs():
-    """Admin-only: Get all call logs"""
     if not is_admin():
         return jsonify({'error': 'Admin access required'}), 403
     
@@ -376,7 +352,6 @@ def admin_get_all_call_logs():
 
 @app.route('/admin/all-attendance', methods=['GET'])
 def admin_get_all_attendance():
-    """Admin-only: Get all attendance records"""
     if not is_admin():
         return jsonify({'error': 'Admin access required'}), 403
     
@@ -400,7 +375,6 @@ def admin_get_all_attendance():
 
 @app.route('/admin/meeting-minutes', methods=['GET'])
 def admin_get_meeting_minutes():
-    """Admin-only: Get all meeting minutes"""
     if not is_admin():
         return jsonify({'error': 'Admin access required'}), 403
     
@@ -409,7 +383,6 @@ def admin_get_meeting_minutes():
 
 @app.route('/members/categories', methods=['GET'])
 def get_member_categories():
-    """Get all unique member categories - available to authenticated users"""
     user_role, user_id = get_user_role()
     
     if not user_id:
@@ -417,3 +390,4 @@ def get_member_categories():
     
     categories = db.session.query(Member.category).distinct().all()
     return jsonify([c[0] for c in categories if c[0]])
+
