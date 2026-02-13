@@ -6,8 +6,8 @@ class Assignment(db.Model):
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
     assigned_to = db.Column(db.String(100))
-    priority = db.Column(db.String(20))  # High, Medium, Low
-    status = db.Column(db.String(20), default='Pending')  # Pending, In Progress, Completed
+    priority = db.Column(db.String(20))
+    status = db.Column(db.String(20), default='Pending')
     due_date = db.Column(db.DateTime)
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -27,7 +27,7 @@ class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text)
-    report_type = db.Column(db.String(50))  # Financial, Activity, Issue
+    report_type = db.Column(db.String(50))
     submitted_by = db.Column(db.String(100))
     submission_date = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -43,7 +43,7 @@ class Report(db.Model):
 
 class FinancialRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    transaction_type = db.Column(db.String(20))  # Income, Expense
+    transaction_type = db.Column(db.String(20))
     amount = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(200))
     category = db.Column(db.String(50))
@@ -58,3 +58,4 @@ class FinancialRecord(db.Model):
             'category': self.category,
             'date': self.date.isoformat()
         }
+

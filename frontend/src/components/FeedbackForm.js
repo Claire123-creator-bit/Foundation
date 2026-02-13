@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 function FeedbackForm({ meetingId }) {
@@ -8,7 +7,6 @@ function FeedbackForm({ meetingId }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (feedback.trim()) {
-      // In a real app, this would send feedback to the backend
       console.log('Feedback submitted for meeting', meetingId, ':', feedback);
       setSubmitted(true);
       setFeedback('');

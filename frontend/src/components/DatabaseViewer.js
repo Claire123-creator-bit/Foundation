@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 function DatabaseViewer({ userRole, userId }) {
-  // Redirect non-admin users
   if (userRole !== 'admin') {
     return (
       <div className="form-container" style={{textAlign: 'center', padding: '50px'}}>
@@ -251,3 +250,4 @@ function DatabaseViewer({ userRole, userId }) {
 }
 
 export default DatabaseViewer;
+

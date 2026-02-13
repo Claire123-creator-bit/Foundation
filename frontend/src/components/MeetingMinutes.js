@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 function MeetingMinutes({ userRole, userId }) {
-  // Redirect non-admin users
   if (userRole !== 'admin') {
     return (
       <div className="form-container" style={{textAlign: 'center', padding: '50px'}}>
@@ -282,3 +281,4 @@ function MeetingMinutes({ userRole, userId }) {
 }
 
 export default MeetingMinutes;
+

@@ -19,7 +19,6 @@ function UserDashboard() {
     const userName = localStorage.getItem('userName');
     
     if (userRole === 'member' && userId) {
-      // Fetch actual member data
       const headers = {
         'Content-Type': 'application/json',
         'User-Role': userRole,
@@ -39,7 +38,6 @@ function UserDashboard() {
         })
         .catch(err => {
           console.log('Backend offline');
-          // Fallback to stored user name
           setUser({
             full_names: userName || 'Member',
             category: 'Member',
@@ -50,7 +48,6 @@ function UserDashboard() {
           });
         });
     } else {
-      // Admin or fallback
       setUser({
         full_names: userName || 'Admin',
         category: userRole === 'admin' ? 'Administrator' : 'Member',
@@ -84,7 +81,6 @@ function UserDashboard() {
     const userRole = localStorage.getItem('userRole');
     
     if (userRole === 'member' && userId) {
-      // Fetch real attendance data for this specific member
       fetch(`https://foundation-0x4i.onrender.com/attendance-records?member_id=${userId}`)
         .then(res => res.json())
         .then(data => {
@@ -92,17 +88,16 @@ function UserDashboard() {
         })
         .catch(err => {
           console.log('Backend offline');
-          setAttendanceHistory([]); // No attendance for new members
+          setAttendanceHistory([]);
         });
     } else {
-      setAttendanceHistory([]); // No attendance data
+      setAttendanceHistory([]);
     }
   };
 
   const joinMeeting = (meetingLink) => {
     if (meetingLink) {
       window.open(meetingLink, '_blank');
-      // Record attendance
       alert('Please sign in to confirm your attendance once you join the meeting.');
     }
   };
@@ -127,7 +122,6 @@ function UserDashboard() {
 
   return (
     <div className="form-container">
-      {/* Welcome Section */}
       <div style={{
         background: 'linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)',
         color: 'white',
@@ -148,7 +142,6 @@ function UserDashboard() {
         </p>
       </div>
 
-      {/* Quick Actions */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -177,7 +170,6 @@ function UserDashboard() {
         </div>
       </div>
 
-      {/* Important Announcements */}
       <div style={{marginBottom: '30px'}}>
         <h3 className="section-title">Important Announcements</h3>
         {announcements.length > 0 ? (
@@ -208,7 +200,6 @@ function UserDashboard() {
         )}
       </div>
 
-      {/* Upcoming Meetings */}
       <div style={{marginBottom: '30px'}}>
         <h3 className="section-title">Upcoming Meetings</h3>
         {upcomingMeetings.length > 0 ? (
@@ -252,7 +243,6 @@ function UserDashboard() {
         )}
       </div>
 
-      {/* Recent Attendance */}
       <div>
         <h3 className="section-title">Recent Attendance History</h3>
         {attendanceHistory.length > 0 ? (
@@ -297,3 +287,4 @@ function UserDashboard() {
 }
 
 export default UserDashboard;
+

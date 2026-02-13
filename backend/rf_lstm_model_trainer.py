@@ -9,7 +9,6 @@ from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.optimizers import Adam
 import numpy as np
 
-# Add the backend directory to the path to import models
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from models import db, TrainingResult
 
@@ -20,12 +19,9 @@ def write_progress(progress, message):
 def train_and_evaluate_models():
     write_progress(0, "Starting training...")
 
-    # For demonstration, create dummy data
-    # In real scenario, load from database
     np.random.seed(42)
     n_samples = 1000
 
-    # RF Classification data
     X_clf = np.random.rand(n_samples, 10)
     y_clf = np.random.randint(0, 2, n_samples)
 
@@ -43,8 +39,7 @@ def train_and_evaluate_models():
 
     write_progress(50, "Random Forest training completed. Training LSTM...")
 
-    # LSTM Regression data
-    X_reg = np.random.rand(n_samples, 10, 1)  # Sequence data
+    X_reg = np.random.rand(n_samples, 10, 1)
     y_reg = np.random.rand(n_samples)
 
     X_train_reg, X_test_reg, y_train_reg, y_test_reg = train_test_split(X_reg, y_reg, test_size=0.2, random_state=42)
@@ -62,7 +57,6 @@ def train_and_evaluate_models():
 
     write_progress(90, "LSTM training completed. Saving results...")
 
-    # Save to database
     from app import app
     with app.app_context():
         with db.session.begin():
@@ -86,3 +80,4 @@ def train_and_evaluate_models():
 
 if __name__ == "__main__":
     train_and_evaluate_models()
+

@@ -111,7 +111,7 @@ function ProfilePage({ userId, onLogout }) {
         <div className="profile-title">
           <h2>{profile.full_names}</h2>
           <span className={`verification-badge ${profile.is_verified ? 'verified' : 'pending'}`}>
-            {profile.is_verified ? '✓ Verified Member' : 'Pending Verification'}
+            {profile.is_verified ? 'Verified Member' : 'Pending Verification'}
           </span>
         </div>
         <button onClick={onLogout} className="logout-btn">Logout</button>
