@@ -391,3 +391,95 @@ def get_member_categories():
     categories = db.session.query(Member.category).distinct().all()
     return jsonify([c[0] for c in categories if c[0]])
 
+
+# ========== LOGIN ENDPOINTS ==========
+
+@app.route('/member-login', methods=['POST'])
+def member_login():
+    """Authenticate a member using full_name and national_id"""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'success': False, 'message': 'No data received'}), 400
+        
+        full_name = data.get('full_name', '').strip()
+        national_id = data.get('national_id', '').strip()
+        
+        if not full_name or not national_id:
+            return jsonify({'success': False, 'message': 'Full name and National ID are required'}), 400
+        
+        # Query member by full_name and national_id
+        member = Member.query.filter_by(full_names=full_name, national_id=national_id).first()
+        
+        if not member:
+            return jsonify({'success': False, 'message': 'Invalid credentials. Please check your name and National ID.'}), 401
+        
+        # Update last login
+        member.last_login = datetime.utcnow()
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Login successful',
+            'user_id': member.id,
+            'role': 'member',
+            'name': member.full_names,
+            'phone_number': member.phone_number,
+            'national_id': member.national_id,
+            'category': member.category
+        })
+        
+    except Exception as e:
+        print(f"Member login error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': 'Login failed. Please try again.'}), 500
+
+
+@app.route('/admin-login', methods=['POST'])
+def admin_login():
+    """Authenticate an admin using username and password"""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'success': False, 'message': 'No data received'}), 400
+        
+        username = data.get('username', '').strip()
+        password = data.get('password', '').strip()
+        
+        if not username or not password:
+            return jsonify({'success': False, 'message': 'Username and password are required'}), 400
+        
+        # Query admin by username
+        admin = Admin.query.filter_by(username=username).first()
+        
+        if not admin:
+            return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
+        
+        # Check password (simple comparison - in production use proper hashing)
+        if admin.password != password:
+            return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
+        
+        # Check if admin is active
+        if not admin.is_active:
+            return jsonify({'success': False, 'message': 'Your account has been deactivated'}), 401
+        
+        # Update last login
+        admin.last_login = datetime.utcnow()
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Login successful',
+            'user_id': admin.id,
+            'role': 'admin',
+            'name': admin.full_name,
+            'username': admin.username
+        })
+        
+    except Exception as e:
+        print(f"Admin login error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': 'Login failed. Please try again.'}), 500
+
