@@ -8,7 +8,7 @@ function ProfilePage({ userId, onLogout }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
 
-  const API_BASE = 'https://foundation-0x4i.onrender.com';
+  const API_BASE = 'http://localhost:5000';
 
   useEffect(() => {
     fetchProfile();
