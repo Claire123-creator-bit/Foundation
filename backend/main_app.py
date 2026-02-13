@@ -10,6 +10,22 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 CORS(app, origins="*", supports_credentials=True)
 
+def get_user_role():
+    """Helper function to get user role and ID from headers"""
+    user_role = request.headers.get('User-Role', 'guest')
+    user_id = request.headers.get('User-ID')
+    return user_role, user_id
+
+def is_admin():
+    """Check if current user is admin"""
+    user_role, _ = get_user_role()
+    return user_role == 'admin'
+
+def is_member():
+    """Check if current user is a member"""
+    user_role, user_id = get_user_role()
+    return user_role == 'member' and user_id is not None
+
 def init_db():
     from website_models import db, CallLog, AutoResponse, Member, Meeting, Attendance, MeetingMinutes, Admin, Resource, Payment
     from admin_models import Assignment, Report, FinancialRecord
@@ -226,310 +242,178 @@ def get_members():
                 return jsonify([member.to_dict()])
         return jsonify([])
 
-@app.route('/members/categories', methods=['GET'])
-def get_categories():
-    categories = db.session.query(Member.category).distinct().all()
-    return jsonify([cat[0] for cat in categories])
-
-
-@app.route('/send-bulk-message', methods=['POST'])
-def send_bulk_message():
-    data = request.json
-    category = data.get('category')
-    message = data['message']
-
-    if category:
-        members = Member.query.filter_by(category=category).all()
-    else:
-        members = Member.query.all()
-
-    phone_numbers = [member.phone_number for member in members]
-
-    return jsonify({
-        'message': 'Bulk message prepared',
-        'recipients': len(phone_numbers),
-        'phones': phone_numbers
-    })
-
-
-@app.route('/assignments', methods=['GET', 'POST'])
-def assignments():
-    if request.method == 'POST':
-        from admin_models import Assignment
-        data = request.json
-        assignment = Assignment(
-            title=data['title'],
-            description=data['description'],
-            assigned_to=data['assigned_to'],
-            priority=data['priority'],
-            due_date=datetime.fromisoformat(data['due_date']) if data['due_date'] else None
-        )
-        db.session.add(assignment)
-        db.session.commit()
-        return jsonify({'message': 'Assignment created'})
-    
-    from admin_models import Assignment
-    assignments = Assignment.query.all()
-    return jsonify([a.to_dict() for a in assignments])
-
-@app.route('/assignments/<int:id>', methods=['PUT'])
-def update_assignment(id):
-    from admin_models import Assignment
-    assignment = Assignment.query.get(id)
-    data = request.json
-    assignment.status = data['status']
-    db.session.commit()
-    return jsonify({'message': 'Assignment updated'})
-
-@app.route('/send-bulk-sms', methods=['POST'])
-def send_bulk_sms():
-    data = request.json
-    category = data.get('category')
-    message = data['message']
-
-    if category:
-        members = Member.query.filter_by(category=category).all()
-    else:
-        members = Member.query.all()
-
-    phone_numbers = [member.phone_number for member in members]
-
-    import time
-    time.sleep(1)
-    for member in members:
-        print(f"SMS sent to {member.full_names} ({member.phone_number}): {message}")
-
-    return jsonify({
-        'status': 'Delivered',
-        'recipients': len(phone_numbers),
-        'phones': phone_numbers,
-        'message': f'SMS broadcast sent to {len(phone_numbers)} members'
-    })
-
-
-@app.route('/meetings', methods=['GET', 'POST'])
-def meetings():
-    if request.method == 'POST':
-        data = request.json
-        meeting = Meeting(
-            title=data['title'],
-            date=data['date'],
-            time=data['time'],
-            venue=data.get('venue', ''),
-            agenda=data.get('agenda', ''),
-            category=data.get('category', ''),
-            meeting_type=data.get('meeting_type', 'physical'),
-            meeting_link=data.get('meeting_link', '')
-        )
-        db.session.add(meeting)
-        db.session.commit()
-        return jsonify({'message': 'Meeting registered successfully'})
-    
-    meetings = Meeting.query.all()
-    return jsonify([meeting.to_dict() for meeting in meetings])
-
-@app.route('/attendance', methods=['POST'])
-def record_attendance():
-    data = request.json
-    attendance = Attendance(
-        meeting_id=data['meeting_id'],
-        member_id=data['member_id'],
-        status=data['status']
-    )
-    db.session.add(attendance)
-    db.session.commit()
-    return jsonify({'message': 'Attendance recorded successfully'})
-
-@app.route('/attendance-records', methods=['GET'])
-def get_attendance_records():
-    member_id = request.args.get('member_id')
-    
-    if member_id:
-        # Get attendance for specific member
-        records = db.session.query(
-            Attendance.id,
-            Attendance.status,
-            Attendance.recorded_date,
-            Meeting.title.label('meeting_title'),
-            Meeting.date.label('meeting_date')
-        ).join(Meeting, Attendance.meeting_id == Meeting.id)\
-         .filter(Attendance.member_id == member_id).all()
-    else:
-        # Get all attendance records
-        records = db.session.query(
-            Attendance.id,
-            Attendance.status,
-            Attendance.recorded_date,
-            Meeting.title.label('meeting_title'),
-            Member.name.label('member_name')
-        ).join(Meeting, Attendance.meeting_id == Meeting.id)\
-         .join(Member, Attendance.member_id == Member.id).all()
-    
-    if member_id:
-        return jsonify([{
-            'id': record.id,
-            'status': record.status,
-            'recorded_date': record.recorded_date.isoformat(),
-            'meeting_title': record.meeting_title,
-            'meeting_date': record.meeting_date
-        } for record in records])
-    else:
-        return jsonify([{
-            'id': record.id,
-            'status': record.status,
-            'recorded_date': record.recorded_date.isoformat(),
-            'meeting_title': record.meeting_title,
-            'member_name': record.member_name
-        } for record in records])
-
-
-@app.route('/meeting-minutes', methods=['GET', 'POST'])
-def meeting_minutes():
-    if request.method == 'POST':
-        data = request.json
-        minutes = MeetingMinutes(
-            meeting_id=data['meeting_id'],
-            secretary_name=data['secretary_name'],
-            content=data['content'],
-            attendees_present=data.get('attendees_present', ''),
-            attendees_absent=data.get('attendees_absent', ''),
-            action_items=data.get('action_items', ''),
-            next_meeting_date=data.get('next_meeting_date', '')
-        )
-        db.session.add(minutes)
-        db.session.commit()
-        return jsonify({'message': 'Meeting minutes saved successfully'})
-    
-
-    minutes_records = db.session.query(
-        MeetingMinutes.id,
-        MeetingMinutes.secretary_name,
-        MeetingMinutes.content,
-        MeetingMinutes.attendees_present,
-        MeetingMinutes.attendees_absent,
-        MeetingMinutes.action_items,
-        MeetingMinutes.next_meeting_date,
-        MeetingMinutes.created_date,
-        Meeting.title.label('meeting_title'),
-        Meeting.date.label('meeting_date')
-    ).join(Meeting, MeetingMinutes.meeting_id == Meeting.id).all()
-    
-    return jsonify([{
-        'id': record.id,
-        'secretary_name': record.secretary_name,
-        'content': record.content,
-        'attendees_present': record.attendees_present,
-        'attendees_absent': record.attendees_absent,
-        'action_items': record.action_items,
-        'next_meeting_date': record.next_meeting_date,
-        'created_date': record.created_date.isoformat(),
-        'meeting_title': record.meeting_title,
-        'meeting_date': record.meeting_date
-    } for record in minutes_records])
-
-
-@app.route('/sign-in-meeting', methods=['POST'])
-def sign_in_meeting():
-    data = request.json
-    attendance = Attendance(
-        meeting_id=data['meeting_id'],
-        member_id=data['user_id'],
-        status='Present'
-    )
-    db.session.add(attendance)
-    db.session.commit()
-    return jsonify({'message': 'Attendance recorded successfully'})
-
-@app.route('/announcements', methods=['GET'])
-def get_announcements():
-    return jsonify([])
-
-@app.route('/my-attendance', methods=['GET'])
-def get_my_attendance():
-    member_id = request.args.get('member_id')
-    if member_id:
-        records = db.session.query(
-            Attendance.id,
-            Attendance.status,
-            Attendance.recorded_date,
-            Meeting.title.label('meeting_title'),
-            Meeting.date.label('meeting_date')
-        ).join(Meeting, Attendance.meeting_id == Meeting.id)\
-         .filter(Attendance.member_id == member_id).all()
-        
-        return jsonify([{
-            'meeting_title': record.meeting_title,
-            'meeting_date': record.meeting_date,
-            'status': record.status
-        } for record in records])
-    return jsonify([])
-
-@app.route('/admin-login', methods=['POST'])
-def admin_login():
-    data = request.json
-    if data['username'] == 'admin' and data['password'] == 'admin123':
-        return jsonify({'success': True, 'role': 'admin', 'user_id': 'admin'})
-    return jsonify({'success': False})
-
-@app.route('/member-login', methods=['POST'])
-def member_login():
-    try:
-        data = request.json
-        full_name = data.get('full_name', '').strip().lower()
-        national_id = data.get('national_id', '').strip()
-        
-        member = Member.query.filter(
-            db.func.lower(Member.full_names) == full_name,
-            Member.national_id == national_id
-        ).first()
-        
-        if not member:
-            member = Member.query.filter(
-                db.func.lower(Member.name) == full_name,
-                Member.national_id == national_id
-            ).first()
-        
-        if member:
-            return jsonify({
-                'success': True, 
-                'role': 'member', 
-                'user_id': member.id,
-                'name': member.full_names or member.name or 'Member'
-            })
-        return jsonify({'success': False, 'message': 'Invalid name or ID number'})
-    except Exception as e:
-        print(f"Login error: {str(e)}")
-        return jsonify({'success': False, 'message': 'Server error'}), 500
+# ==========================================
+# ROLE-BASED ACCESS CONTROL ENDPOINTS
+# ==========================================
 
 @app.route('/member-profile', methods=['GET'])
 def get_member_profile():
-    try:
+    """Get profile of the logged-in member only"""
+    user_role, user_id = get_user_role()
+    
+    if not user_id:
+        return jsonify({'error': 'Authentication required'}), 401
+    
+    if user_role == 'admin':
+        # Admin can view any member profile
         member_id = request.args.get('member_id')
-        if not member_id:
-            return jsonify({'error': 'Member ID required'}), 400
-        
-        member = Member.query.get(member_id)
-        if not member:
-            return jsonify({'error': 'Member not found'}), 404
-        
-        return jsonify({
-            'id': member.id,
-            'full_names': member.full_names or member.name,
-            'national_id': member.national_id or member.id_no,
-            'phone_number': member.phone_number or member.phone,
-            'county': member.county,
-            'constituency': member.constituency,
-            'ward': member.ward,
-            'physical_location': member.physical_location,
-            'gps_latitude': member.gps_latitude,
-            'gps_longitude': member.gps_longitude,
-            'category': member.category,
-            'registration_date': member.registration_date.isoformat() if member.registration_date else None,
-            'is_verified': member.is_verified
-        })
-    except Exception as e:
-        print(f"Profile fetch error: {str(e)}")
-        return jsonify({'error': 'Failed to fetch profile'}), 500
+        if member_id:
+            member = Member.query.get(member_id)
+        else:
+            return jsonify({'error': 'member_id required for admin'}), 400
+    else:
+        # Members can only view their own profile
+        member = Member.query.get(user_id)
+    
+    if member:
+        return jsonify(member.to_dict())
+    return jsonify({'error': 'Member not found'}), 404
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+@app.route('/my-messages', methods=['GET'])
+def get_my_messages():
+    """Get messages/call logs for the logged-in member only"""
+    user_role, user_id = get_user_role()
+    
+    if not user_id:
+        return jsonify({'error': 'Authentication required'}), 401
+    
+    if user_role == 'admin':
+        # Admin can see all call logs
+        call_logs = CallLog.query.order_by(CallLog.timestamp.desc()).all()
+    else:
+        # Members can only see messages related to their phone number
+        member = Member.query.get(user_id)
+        if member:
+            call_logs = CallLog.query.filter_by(phone=member.phone_number).order_by(CallLog.timestamp.desc()).all()
+        else:
+            call_logs = []
+    
+    return jsonify([{
+        'id': log.id,
+        'caller_name': log.caller_name,
+        'phone': log.phone,
+        'call_type': log.call_type,
+        'message': log.message,
+        'response_sent': log.response_sent,
+        'timestamp': log.timestamp.isoformat()
+    } for log in call_logs])
+
+@app.route('/meetings', methods=['GET'])
+def get_meetings():
+    """Get meetings - all for admin, available/public for members"""
+    user_role, user_id = get_user_role()
+    
+    # Get all meetings
+    meetings = Meeting.query.order_by(Meeting.date.desc()).all()
+    
+    return jsonify([meeting.to_dict() for meeting in meetings])
+
+@app.route('/attendance-records', methods=['GET'])
+def get_attendance_records():
+    """Get attendance records - all for admin, only own for members"""
+    user_role, user_id = get_user_role()
+    
+    if not user_id:
+        return jsonify({'error': 'Authentication required'}), 401
+    
+    if user_role == 'admin':
+        # Admin can see all attendance
+        member_id = request.args.get('member_id')
+        if member_id:
+            records = Attendance.query.filter_by(member_id=member_id).all()
+        else:
+            records = Attendance.query.all()
+    else:
+        # Members can only see their own attendance
+        records = Attendance.query.filter_by(member_id=user_id).all()
+    
+    result = []
+    for record in records:
+        meeting = Meeting.query.get(record.meeting_id)
+        member = Member.query.get(record.member_id)
+        result.append({
+            'id': record.id,
+            'meeting_id': record.meeting_id,
+            'meeting_title': meeting.title if meeting else 'Unknown',
+            'meeting_date': meeting.date if meeting else 'Unknown',
+            'member_id': record.member_id,
+            'member_name': member.full_names if member else 'Unknown',
+            'status': record.status,
+            'recorded_date': record.recorded_date.isoformat()
+        })
+    
+    return jsonify(result)
+
+# ==========================================
+# ADMIN-ONLY ENDPOINTS
+# ==========================================
+
+@app.route('/admin/all-members', methods=['GET'])
+def admin_get_all_members():
+    """Admin-only: Get all members with full details"""
+    if not is_admin():
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    members = Member.query.all()
+    return jsonify([member.to_dict() for member in members])
+
+@app.route('/admin/all-call-logs', methods=['GET'])
+def admin_get_all_call_logs():
+    """Admin-only: Get all call logs"""
+    if not is_admin():
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    call_logs = CallLog.query.order_by(CallLog.timestamp.desc()).all()
+    return jsonify([{
+        'id': log.id,
+        'caller_name': log.caller_name,
+        'phone': log.phone,
+        'call_type': log.call_type,
+        'message': log.message,
+        'response_sent': log.response_sent,
+        'timestamp': log.timestamp.isoformat()
+    } for log in call_logs])
+
+@app.route('/admin/all-attendance', methods=['GET'])
+def admin_get_all_attendance():
+    """Admin-only: Get all attendance records"""
+    if not is_admin():
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    records = Attendance.query.all()
+    result = []
+    for record in records:
+        meeting = Meeting.query.get(record.meeting_id)
+        member = Member.query.get(record.member_id)
+        result.append({
+            'id': record.id,
+            'meeting_id': record.meeting_id,
+            'meeting_title': meeting.title if meeting else 'Unknown',
+            'meeting_date': meeting.date if meeting else 'Unknown',
+            'member_id': record.member_id,
+            'member_name': member.full_names if member else 'Unknown',
+            'status': record.status,
+            'recorded_date': record.recorded_date.isoformat()
+        })
+    
+    return jsonify(result)
+
+@app.route('/admin/meeting-minutes', methods=['GET'])
+def admin_get_meeting_minutes():
+    """Admin-only: Get all meeting minutes"""
+    if not is_admin():
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    minutes = MeetingMinutes.query.order_by(MeetingMinutes.created_date.desc()).all()
+    return jsonify([m.to_dict() for m in minutes])
+
+@app.route('/members/categories', methods=['GET'])
+def get_member_categories():
+    """Get all unique member categories - available to authenticated users"""
+    user_role, user_id = get_user_role()
+    
+    if not user_id:
+        return jsonify({'error': 'Authentication required'}), 401
+    
+    categories = db.session.query(Member.category).distinct().all()
+    return jsonify([c[0] for c in categories if c[0]])

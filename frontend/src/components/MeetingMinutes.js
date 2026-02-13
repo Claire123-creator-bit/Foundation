@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
-function MeetingMinutes() {
+function MeetingMinutes({ userRole, userId }) {
+  // Redirect non-admin users
+  if (userRole !== 'admin') {
+    return (
+      <div className="form-container" style={{textAlign: 'center', padding: '50px'}}>
+        <h2 style={{color: '#f44336'}}>Access Denied</h2>
+        <p style={{color: '#666'}}>You do not have permission to view this page.</p>
+        <p style={{color: '#666', fontSize: '14px'}}>Only administrators can access meeting minutes.</p>
+      </div>
+    );
+  }
+
   const [meetings, setMeetings] = useState([]);
   const [minutes, setMinutes] = useState([]);
   const [activeSection, setActiveSection] = useState('create');

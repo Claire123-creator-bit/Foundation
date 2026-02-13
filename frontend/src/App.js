@@ -13,6 +13,7 @@ import BulkMessaging from './components/BulkMessaging';
 import DataCapture from './components/DataCapture';
 import DatabaseViewer from './components/DatabaseViewer';
 import MeetingMinutes from './components/MeetingMinutes';
+import MeetingList from './components/MeetingList';
 import AdminDashboard from './components/AdminDashboard';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
@@ -66,7 +67,21 @@ function App() {
   };
 
   const handleConfirmationContinue = () => {
-    setActiveTab('login');
+    // After registration, automatically log in the user and go to dashboard
+    if (memberData) {
+      const userId = memberData.id || memberData.user_id;
+      const userName = memberData.full_names;
+      
+      setUserRole('member');
+      setUserId(userId);
+      setUserName(userName);
+      localStorage.setItem('userRole', 'member');
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('userName', userName);
+      setActiveTab('dashboard');
+    } else {
+      setActiveTab('login');
+    }
   };
 
   const handleLogin = (role, id, name = '') => {
@@ -125,13 +140,14 @@ function App() {
 <div style={{textAlign: 'center', flexWrap: 'wrap', display: 'flex', justifyContent: 'center', gap: '5px'}}>
               <button className="nav-button" onClick={() => setActiveTab('dashboard')}>Dashboard</button>
               <button className="nav-button" onClick={() => setActiveTab('profile')}>My Profile</button>
-              <button className="nav-button" onClick={() => setActiveTab('members')}>Members</button>
-              <button className="nav-button" onClick={() => setActiveTab('datacapture')}>Data Capture</button>
-              <button className="nav-button" onClick={() => setActiveTab('minutes')}>Minutes</button>
-              <button className="nav-button" onClick={() => setActiveTab('database')}>Database</button>
-              <button className="nav-button" onClick={() => setActiveTab('messaging')}>SMS</button>
-              <button className="nav-button" onClick={() => setActiveTab('donate')}>Donate</button>
+              <button className="nav-button" onClick={() => setActiveTab('members')}>{userRole === 'admin' ? 'Members' : 'My Profile'}</button>
+              {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('datacapture')}>Data Capture</button>}
+              {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('minutes')}>Minutes</button>}
+              {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('database')}>Database</button>}
+              {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('messaging')}>SMS</button>}
+              <button className="nav-button" onClick={() => setActiveTab('meetings')}>Meetings</button>
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('admin')}>Admin</button>}
+              <button className="nav-button" onClick={() => setActiveTab('donate')}>Donate</button>
             </div>
           </>
         )}
@@ -153,9 +169,10 @@ function App() {
       {userRole && activeTab === 'registration' && <EnhancedRegistrationPro onRegistered={() => setRefresh(!refresh)} />}
       {userRole && activeTab === 'members' && <MembersList key={refresh} userRole={userRole} userId={userId} />}
       {userRole && activeTab === 'datacapture' && <DataCapture />}
-      {userRole && activeTab === 'minutes' && <MeetingMinutes />}
-      {userRole && activeTab === 'database' && <DatabaseViewer />}
-      {userRole && activeTab === 'messaging' && <BulkMessaging />}
+{userRole && activeTab === 'minutes' && userRole === 'admin' && <MeetingMinutes userRole={userRole} userId={userId} />}
+      {userRole && activeTab === 'meetings' && <MeetingList />}
+{userRole && activeTab === 'database' && userRole === 'admin' && <DatabaseViewer userRole={userRole} userId={userId} />}
+{userRole && activeTab === 'messaging' && userRole === 'admin' && <BulkMessaging userRole={userRole} userId={userId} />}
       {userRole === 'admin' && activeTab === 'admin' && <AdminDashboard />}
       {userRole && activeTab === 'about' && <AboutUs />}
       {userRole && activeTab === 'contact' && <ContactUs />}

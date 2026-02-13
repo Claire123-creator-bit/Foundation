@@ -6,6 +6,7 @@ function MembersList({ userRole, userId }) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [loading, setLoading] = useState(true);
 
+  // For members: fetch only their own profile. For admin: fetch all members
   const fetchMembers = (category = '') => {
     const headers = {
       'Content-Type': 'application/json',
@@ -13,17 +14,34 @@ function MembersList({ userRole, userId }) {
       'User-ID': userId || ''
     };
     
-    const url = category ? `https://foundation-0x4i.onrender.com/members?category=${category}` : 'https://foundation-0x4i.onrender.com/members';
-    fetch(url, { headers })
-      .then(res => res.json())
-      .then(data => {
-        setMembers(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.log('Backend offline');
-        setLoading(false);
-      });
+    if (userRole === 'admin') {
+      // Admin sees all members (or filtered by category)
+      const url = category ? `https://foundation-0x4i.onrender.com/members?category=${category}` : 'https://foundation-0x4i.onrender.com/members';
+      fetch(url, { headers })
+        .then(res => res.json())
+        .then(data => {
+          setMembers(data);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.log('Backend offline');
+          setLoading(false);
+        });
+    } else {
+      // Members only see their own profile
+      fetch(`https://foundation-0x4i.onrender.com/member-profile?member_id=${userId}`, { headers })
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error) {
+            setMembers([data]);
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          console.log('Backend offline');
+          setLoading(false);
+        });
+    }
   };
 
   const fetchCategories = () => {
@@ -50,7 +68,7 @@ function MembersList({ userRole, userId }) {
     return (
       <div className="form-container">
         <div style={{textAlign: 'center', padding: '50px'}}>
-          <p>Loading members...</p>
+          <p>Loading...</p>
         </div>
       </div>
     );
@@ -59,7 +77,7 @@ function MembersList({ userRole, userId }) {
   return (
     <div className="form-container">
       <h2 className="page-title">
-        {userRole === 'admin' ? 'All Community Members' : 'Your Profile'}
+        {userRole === 'admin' ? 'All Community Members' : 'My Profile'}
       </h2>
       
       {userRole === 'admin' && (
@@ -82,8 +100,9 @@ function MembersList({ userRole, userId }) {
 
       <div style={{marginBottom: '20px', textAlign: 'center'}}>
         <p style={{color: '#666', fontSize: '14px'}}>
-          Showing {members.length} member{members.length !== 1 ? 's' : ''}
-          {selectedCategory && ` in ${selectedCategory} category`}
+          {userRole === 'admin' 
+            ? `Showing ${members.length} member${members.length !== 1 ? 's' : ''}${selectedCategory && ` in ${selectedCategory} category`}`
+            : 'Your member profile information'}
         </p>
       </div>
 
@@ -96,6 +115,9 @@ function MembersList({ userRole, userId }) {
               </h4>
               <div style={{fontSize: '14px', color: '#666', lineHeight: '1.6'}}>
                 <p style={{margin: '5px 0'}}>
+                  <strong>National ID:</strong> {member.national_id || member.id_no || 'N/A'}
+                </p>
+                <p style={{margin: '5px 0'}}>
                   <strong>Category:</strong> {member.category}
                 </p>
                 <p style={{margin: '5px 0'}}>
@@ -104,6 +126,11 @@ function MembersList({ userRole, userId }) {
                 <p style={{margin: '5px 0'}}>
                   <strong>Phone:</strong> {member.phone_number || member.phone}
                 </p>
+                {member.registration_date && (
+                  <p style={{margin: '5px 0'}}>
+                    <strong>Registered:</strong> {new Date(member.registration_date).toLocaleDateString()}
+                  </p>
+                )}
                 {member.is_verified && (
                   <span style={{
                     background: '#4caf50',
@@ -124,7 +151,9 @@ function MembersList({ userRole, userId }) {
       ) : (
         <div style={{textAlign: 'center', padding: '50px'}}>
           <p style={{color: '#666'}}>
-            No members found{selectedCategory && ` in ${selectedCategory} category`}.
+            {userRole === 'admin' 
+              ? `No members found${selectedCategory && ` in ${selectedCategory} category`}.`
+              : 'No profile information found.'}
           </p>
         </div>
       )}
