@@ -147,7 +147,8 @@ function UserDashboard() {
       .catch(err => alert('Sign-in failed. Please try again.'));
   };
 
-  if (loading && dataLoading.profile) {
+  // Show loading spinner while loading OR if user is not yet set
+  if (loading || !user) {
     return (
       <div style={{
         display: 'flex', 
