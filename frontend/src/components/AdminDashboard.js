@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getAuthToken } from '../utils/auth';
+import API_BASE from '../utils/apiConfig';
 
 function AdminDashboard() {
   const [assignments, setAssignments] = useState([]);
@@ -12,21 +13,21 @@ function AdminDashboard() {
   const [isTraining, setIsTraining] = useState(false);
 
   const fetchAssignments = () => {
-    fetch('https://foundation-0x4i.onrender.com/assignments')
+    fetch(`${API_BASE}/assignments`)
       .then(res => res.json())
       .then(data => setAssignments(data))
       .catch(err => console.log('Backend offline'));
   };
 
   const fetchMetrics = () => {
-    fetch('https://foundation-0x4i.onrender.com/api/metrics')
+    fetch(`${API_BASE}/api/metrics`)
       .then(res => res.json())
       .then(data => setMetrics(data))
       .catch(err => console.log('Error fetching metrics'));
   };
 
   const fetchProgress = useCallback(() => {
-    fetch('https://foundation-0x4i.onrender.com/api/progress')
+    fetch(`${API_BASE}/api/progress`)
       .then(res => res.json())
       .then(data => {
         setTrainingProgress(data.progress);
@@ -54,7 +55,7 @@ function AdminDashboard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('https://foundation-0x4i.onrender.com/assignments', {
+    fetch(`${API_BASE}/assignments`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(newAssignment)
@@ -67,7 +68,7 @@ function AdminDashboard() {
   };
 
   const updateStatus = (id, status) => {
-    fetch(`https://foundation-0x4i.onrender.com/assignments/${id}`, {
+    fetch(`${API_BASE}/assignments/${id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({status})
@@ -76,7 +77,7 @@ function AdminDashboard() {
 
   const startTraining = () => {
     const token = getAuthToken();
-    fetch('https://foundation-0x4i.onrender.com/api/train', {
+    fetch(`${API_BASE}/api/train`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

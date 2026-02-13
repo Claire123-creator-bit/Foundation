@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE from '../utils/apiConfig';
 
 function MeetingMinutes({ userRole, userId }) {
   const isAdmin = userRole === 'admin';
@@ -23,14 +24,14 @@ function MeetingMinutes({ userRole, userId }) {
   }, []);
 
   const fetchMeetings = () => {
-    fetch('https://foundation-0x4i.onrender.com/meetings')
+    fetch(`${API_BASE}/meetings`)
       .then(res => res.json())
       .then(data => setMeetings(data))
       .catch(err => console.log('Backend offline'));
   };
 
   const fetchMinutes = () => {
-    fetch('https://foundation-0x4i.onrender.com/meeting-minutes')
+    fetch(`${API_BASE}/meeting-minutes`)
       .then(res => res.json())
       .then(data => setMinutes(data))
       .catch(err => {
@@ -41,7 +42,7 @@ function MeetingMinutes({ userRole, userId }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('https://foundation-0x4i.onrender.com/meeting-minutes', {
+    fetch(`${API_BASE}/meeting-minutes`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(minutesForm)

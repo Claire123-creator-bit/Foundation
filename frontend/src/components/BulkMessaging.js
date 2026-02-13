@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE from '../utils/apiConfig';
 
 function BulkMessaging({ userRole, userId }) {
   if (userRole !== 'admin') {
@@ -16,7 +17,7 @@ function BulkMessaging({ userRole, userId }) {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('https://foundation-0x4i.onrender.com/members/categories')
+    fetch(`${API_BASE}/members/categories`)
       .then(res => res.json())
       .then(data => setCategories(data))
       .catch(err => console.log('Backend offline'));
@@ -34,7 +35,7 @@ function BulkMessaging({ userRole, userId }) {
     );
     
     if (confirmSend) {
-      fetch('https://foundation-0x4i.onrender.com/send-bulk-sms', {
+      fetch(`${API_BASE}/send-bulk-sms`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({

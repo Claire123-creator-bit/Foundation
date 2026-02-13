@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE from '../utils/apiConfig';
 
 function UserDashboard() {
   const [user, setUser] = useState(null);
@@ -32,7 +33,7 @@ function UserDashboard() {
         'User-ID': userId
       };
       
-fetch('https://foundation-0x4i.onrender.com/members', { headers })
+fetch(`${API_BASE}/members`, { headers })
         .then(res => res.json())
         .then(data => {
           if (data.length > 0) {
@@ -80,7 +81,7 @@ fetch('https://foundation-0x4i.onrender.com/members', { headers })
   };
 
   const fetchAnnouncements = () => {
-    fetch('https://foundation-0x4i.onrender.com/announcements')
+    fetch(`${API_BASE}/announcements`)
       .then(res => res.json())
       .then(data => {
         setAnnouncements(data);
@@ -93,7 +94,7 @@ fetch('https://foundation-0x4i.onrender.com/members', { headers })
   };
 
   const fetchUpcomingMeetings = () => {
-    fetch('https://foundation-0x4i.onrender.com/meetings')
+    fetch(`${API_BASE}/meetings`)
       .then(res => res.json())
       .then(data => {
         const upcoming = data.filter(meeting => new Date(meeting.date) >= new Date());
@@ -111,7 +112,7 @@ fetch('https://foundation-0x4i.onrender.com/members', { headers })
     const userRole = localStorage.getItem('userRole');
     
     if (userRole === 'member' && userId) {
-      fetch(`https://foundation-0x4i.onrender.com/attendance-records?member_id=${userId}`)
+      fetch(`${API_BASE}/attendance-records?member_id=${userId}`)
         .then(res => res.json())
         .then(data => {
           setAttendanceHistory(data.slice(0, 5));
@@ -144,7 +145,7 @@ fetch('https://foundation-0x4i.onrender.com/members', { headers })
   };
 
   const signInToMeeting = (meetingId) => {
-    fetch('https://foundation-0x4i.onrender.com/sign-in-meeting', {
+    fetch(`${API_BASE}/sign-in-meeting`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({meeting_id: meetingId, user_id: user.id})

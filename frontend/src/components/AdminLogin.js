@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import API_BASE from '../utils/apiConfig';
 
 function AdminLogin({ onLogin }) {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('https://foundation-0x4i.onrender.com/admin-login', {
+    fetch(`${API_BASE}/admin-login`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(credentials)
