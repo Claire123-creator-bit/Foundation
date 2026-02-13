@@ -32,13 +32,23 @@ function UserDashboard() {
         'User-ID': userId
       };
       
-      fetch('https://foundation-0x4i.onrender.com/members', { headers })
+fetch('https://foundation-0x4i.onrender.com/members', { headers })
         .then(res => res.json())
         .then(data => {
           if (data.length > 0) {
             const memberData = data[0];
             setUser({
               ...memberData,
+              last_login: new Date().toISOString()
+            });
+          } else {
+            // Fallback when no data returned
+            setUser({
+              full_names: userName || 'Member',
+              category: 'Member',
+              ward: 'N/A',
+              constituency: 'N/A',
+              is_verified: true,
               last_login: new Date().toISOString()
             });
           }
