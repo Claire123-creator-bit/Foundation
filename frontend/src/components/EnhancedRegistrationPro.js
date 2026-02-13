@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import API_BASE from '../utils/apiConfig';
 
 function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
   const [formData, setFormData] = useState({
@@ -85,7 +86,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
     setIsSubmitting(true);
     console.log('Submitting registration data:', formData);
 
-    fetch('https://foundation-0x4i.onrender.com/register-member-pro', {
+    fetch(`${API_BASE}/register-member-pro`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -144,7 +145,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
     setIsCheckingHealth(true);
     setHealthStatus(null);
     
-    fetch('https://foundation-0x4i.onrender.com/health')
+    fetch(`${API_BASE}/health`)
       .then(res => res.json())
       .then(data => {
         setHealthStatus(data);

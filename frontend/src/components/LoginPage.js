@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import API_BASE from '../utils/apiConfig';
 
 const LoginPage = ({ onLogin, onNavigate }) => {
   const [loginType, setLoginType] = useState('member');
@@ -23,7 +24,7 @@ const LoginPage = ({ onLogin, onNavigate }) => {
         ? { username: formData.username, password: formData.password }
         : { full_name: formData.full_name, national_id: formData.national_id };
 
-      const response = await fetch(`https://foundation-0x4i.onrender.com${endpoint}`, {
+      const response = await fetch(`${API_BASE}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

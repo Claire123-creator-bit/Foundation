@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import API_BASE from '../utils/apiConfig';
 
 function MembersList({ userRole, userId }) {
   const [members, setMembers] = useState([]);
@@ -14,7 +15,7 @@ function MembersList({ userRole, userId }) {
     };
     
     if (userRole === 'admin') {
-      const url = category ? `https://foundation-0x4i.onrender.com/members?category=${category}` : 'https://foundation-0x4i.onrender.com/members';
+      const url = category ? `${API_BASE}/members?category=${category}` : `${API_BASE}/members`;
       fetch(url, { headers })
         .then(res => res.json())
         .then(data => {
@@ -26,7 +27,7 @@ function MembersList({ userRole, userId }) {
           setLoading(false);
         });
     } else {
-      fetch(`https://foundation-0x4i.onrender.com/member-profile?member_id=${userId}`, { headers })
+      fetch(`${API_BASE}/member-profile?member_id=${userId}`, { headers })
         .then(res => res.json())
         .then(data => {
           if (!data.error) {
@@ -43,7 +44,7 @@ function MembersList({ userRole, userId }) {
 
   const fetchCategories = () => {
     if (userRole === 'admin') {
-      fetch('https://foundation-0x4i.onrender.com/members/categories')
+      fetch(`${API_BASE}/members/categories`)
         .then(res => res.json())
         .then(data => setCategories(data))
         .catch(err => console.log('Backend offline'));

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE from '../utils/apiConfig';
 
 function DataCapture() {
   const [activeSection, setActiveSection] = useState('meetings');
@@ -29,14 +30,14 @@ function DataCapture() {
   }, []);
 
   const fetchMeetings = () => {
-    fetch('https://foundation-0x4i.onrender.com/meetings')
+    fetch(`${API_BASE}/meetings`)
       .then(res => res.json())
       .then(data => setMeetings(data))
       .catch(err => console.log('Backend offline'));
   };
 
   const fetchMembers = () => {
-    fetch('https://foundation-0x4i.onrender.com/members')
+    fetch(`${API_BASE}/members`)
       .then(res => res.json())
       .then(data => setMembers(data))
       .catch(err => console.log('Backend offline'));
@@ -44,7 +45,7 @@ function DataCapture() {
 
   const handleMeetingSubmit = (e) => {
     e.preventDefault();
-    fetch('https://foundation-0x4i.onrender.com/meetings', {
+    fetch(`${API_BASE}/meetings`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(meetingForm)
@@ -59,7 +60,7 @@ function DataCapture() {
 
   const handleAttendanceSubmit = (e) => {
     e.preventDefault();
-    fetch('https://foundation-0x4i.onrender.com/attendance', {
+    fetch(`${API_BASE}/attendance`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(attendanceForm)
@@ -85,7 +86,7 @@ function DataCapture() {
     
     const message = `📅 MEETING ALERT: ${meeting.title}\nDate: ${meeting.date} at ${meeting.time}\n${locationInfo}\nPlease confirm attendance.`;
     
-    fetch('https://foundation-0x4i.onrender.com/send-bulk-sms', {
+    fetch(`${API_BASE}/send-bulk-sms`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({

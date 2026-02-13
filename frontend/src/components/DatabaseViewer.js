@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE from '../utils/apiConfig';
 
 function DatabaseViewer({ userRole, userId }) {
   if (userRole !== 'admin') {
@@ -23,21 +24,21 @@ function DatabaseViewer({ userRole, userId }) {
   }, []);
 
   const fetchMembers = () => {
-    fetch('https://foundation-0x4i.onrender.com/members')
+    fetch(`${API_BASE}/members`)
       .then(res => res.json())
       .then(data => setMembers(data))
       .catch(err => console.log('Backend offline'));
   };
 
   const fetchMeetings = () => {
-    fetch('https://foundation-0x4i.onrender.com/meetings')
+    fetch(`${API_BASE}/meetings`)
       .then(res => res.json())
       .then(data => setMeetings(data))
       .catch(err => console.log('Backend offline'));
   };
 
   const fetchAttendance = () => {
-    fetch('https://foundation-0x4i.onrender.com/attendance-records')
+    fetch(`${API_BASE}/attendance-records`)
       .then(res => res.json())
       .then(data => setAttendance(data))
       .catch(err => console.log('Backend offline'));

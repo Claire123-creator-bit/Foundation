@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE from '../utils/apiConfig';
 
 function PollList() {
   const [polls, setPolls] = useState([]);
@@ -6,7 +7,7 @@ function PollList() {
   const [response, setResponse] = useState('');
 
   useEffect(() => {
-    fetch('https://foundation-0x4i.onrender.com/polls')
+    fetch(`${API_BASE}/polls`)
       .then(res => res.json())
       .then(data => setPolls(data))
       .catch(err => console.error(err));
@@ -15,7 +16,7 @@ function PollList() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (selectedPoll && response) {
-      fetch('https://foundation-0x4i.onrender.com/feedback', {
+      fetch(`${API_BASE}/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ poll_id: selectedPoll.id, response })
