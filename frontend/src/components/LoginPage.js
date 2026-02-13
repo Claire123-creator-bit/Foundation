@@ -32,7 +32,9 @@ const LoginPage = ({ onLogin, onNavigate }) => {
       const data = await response.json();
       
       if (data.success) {
-        onLogin(data.role, data.user_id, data.name || 'Admin');
+        // Get phone number from the response if available
+        const phoneNumber = data.phone_number || '';
+        onLogin(data.role, data.user_id, data.name || 'Admin', phoneNumber);
         setMessage(`Welcome ${data.name || 'Admin'}!`);
       } else {
         setMessage(data.message || 'Login failed. Check your credentials.');

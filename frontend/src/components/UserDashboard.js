@@ -5,6 +5,13 @@ function UserDashboard() {
   const [announcements, setAnnouncements] = useState([]);
   const [upcomingMeetings, setUpcomingMeetings] = useState([]);
   const [attendanceHistory, setAttendanceHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState({
+    profile: true,
+    announcements: true,
+    meetings: true,
+    attendance: true
+  });
 
   useEffect(() => {
     fetchUserProfile();
@@ -35,6 +42,7 @@ function UserDashboard() {
               last_login: new Date().toISOString()
             });
           }
+          setDataLoading(prev => ({ ...prev, profile: false }));
         })
         .catch(err => {
           console.log('Backend offline');
@@ -46,6 +54,7 @@ function UserDashboard() {
             is_verified: true,
             last_login: new Date().toISOString()
           });
+          setDataLoading(prev => ({ ...prev, profile: false }));
         });
     } else {
       setUser({
@@ -56,14 +65,21 @@ function UserDashboard() {
         is_verified: true,
         last_login: new Date().toISOString()
       });
+      setDataLoading(prev => ({ ...prev, profile: false }));
     }
   };
 
   const fetchAnnouncements = () => {
     fetch('https://foundation-0x4i.onrender.com/announcements')
       .then(res => res.json())
-      .then(data => setAnnouncements(data))
-      .catch(err => console.log('Backend offline'));
+      .then(data => {
+        setAnnouncements(data);
+        setDataLoading(prev => ({ ...prev, announcements: false }));
+      })
+      .catch(err => {
+        console.log('Backend offline');
+        setDataLoading(prev => ({ ...prev, announcements: false }));
+      });
   };
 
   const fetchUpcomingMeetings = () => {
@@ -72,8 +88,12 @@ function UserDashboard() {
       .then(data => {
         const upcoming = data.filter(meeting => new Date(meeting.date) >= new Date());
         setUpcomingMeetings(upcoming.slice(0, 3));
+        setDataLoading(prev => ({ ...prev, meetings: false }));
       })
-      .catch(err => console.log('Backend offline'));
+      .catch(err => {
+        console.log('Backend offline');
+        setDataLoading(prev => ({ ...prev, meetings: false }));
+      });
   };
 
   const fetchAttendanceHistory = () => {
@@ -85,15 +105,26 @@ function UserDashboard() {
         .then(res => res.json())
         .then(data => {
           setAttendanceHistory(data.slice(0, 5));
+          setDataLoading(prev => ({ ...prev, attendance: false }));
         })
         .catch(err => {
           console.log('Backend offline');
           setAttendanceHistory([]);
+          setDataLoading(prev => ({ ...prev, attendance: false }));
         });
     } else {
       setAttendanceHistory([]);
+      setDataLoading(prev => ({ ...prev, attendance: false }));
     }
   };
+
+  // Check if all data is loaded
+  useEffect(() => {
+    const allLoaded = Object.values(dataLoading).every(v => v === false);
+    if (allLoaded !== loading) {
+      setLoading(allLoaded);
+    }
+  }, [dataLoading]);
 
   const joinMeeting = (meetingLink) => {
     if (meetingLink) {
@@ -116,8 +147,33 @@ function UserDashboard() {
       .catch(err => alert('Sign-in failed. Please try again.'));
   };
 
-  if (!user) {
-    return <div style={{textAlign: 'center', padding: '50px'}}>Loading your dashboard...</div>;
+  if (loading && dataLoading.profile) {
+    return (
+      <div style={{
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        padding: '50px',
+        minHeight: '400px'
+      }}>
+        <div style={{
+          width: '50px',
+          height: '50px',
+          border: '4px solid #f3f3f3',
+          borderTop: '4px solid #00bcd4',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }}></div>
+        <p style={{marginTop: '20px', color: '#666', fontSize: '16px'}}>Loading your dashboard...</p>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
   }
 
   return (
