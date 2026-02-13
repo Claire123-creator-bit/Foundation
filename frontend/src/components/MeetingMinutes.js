@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
 function MeetingMinutes({ userRole, userId }) {
-  if (userRole !== 'admin') {
-    return (
-      <div className="form-container" style={{textAlign: 'center', padding: '50px'}}>
-        <h2 style={{color: '#f44336'}}>Access Denied</h2>
-        <p style={{color: '#666'}}>You do not have permission to view this page.</p>
-        <p style={{color: '#666', fontSize: '14px'}}>Only administrators can access meeting minutes.</p>
-      </div>
-    );
-  }
-
+  const isAdmin = userRole === 'admin';
+  
   const [meetings, setMeetings] = useState([]);
   const [minutes, setMinutes] = useState([]);
-  const [activeSection, setActiveSection] = useState('create');
+  const [activeSection, setActiveSection] = useState('view');
   
   const [minutesForm, setMinutesForm] = useState({
     meeting_id: '',
@@ -78,19 +70,21 @@ function MeetingMinutes({ userRole, userId }) {
       <h2 className="page-title">📝 Meeting Minutes</h2>
       
       <nav style={{display: 'flex', gap: '10px', marginBottom: '30px', justifyContent: 'center'}}>
-        <button 
-          onClick={() => setActiveSection('create')}
-          style={{
-            padding: '10px 20px', 
-            borderRadius: '8px', 
-            background: activeSection === 'create' ? '#00bcd4' : '#f0f0f0',
-            color: activeSection === 'create' ? 'white' : '#333',
-            border: 'none',
-            cursor: 'pointer'
-          }}
-        >
-          ✍️ Write Minutes
-        </button>
+        {isAdmin && (
+          <button 
+            onClick={() => setActiveSection('create')}
+            style={{
+              padding: '10px 20px', 
+              borderRadius: '8px', 
+              background: activeSection === 'create' ? '#00bcd4' : '#f0f0f0',
+              color: activeSection === 'create' ? 'white' : '#333',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            ✍️ Write Minutes
+          </button>
+        )}
         <button 
           onClick={() => setActiveSection('view')}
           style={{
@@ -106,7 +100,7 @@ function MeetingMinutes({ userRole, userId }) {
         </button>
       </nav>
 
-      {activeSection === 'create' && (
+      {activeSection === 'create' && isAdmin && (
         <div>
           <h3 className="section-title">✍️ Create Meeting Minutes</h3>
           <form onSubmit={handleSubmit} className="info-card">

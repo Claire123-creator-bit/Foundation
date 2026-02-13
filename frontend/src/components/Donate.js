@@ -1,9 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function Donate() {
+  const [isLoaded, setIsLoaded] = useState(false);
   const [amount, setAmount] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+
+  useEffect(() => {
+    // Pre-fill user data if available
+    const storedName = localStorage.getItem('userName') || '';
+    const storedPhone = localStorage.getItem('userPhone') || '';
+    
+    if (storedName) setName(storedName);
+    if (storedPhone) setPhone(storedPhone);
+    
+    // Mark as loaded immediately
+    setIsLoaded(true);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

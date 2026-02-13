@@ -8,7 +8,7 @@ function ProfilePage({ userId, onLogout }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
 
-  const API_BASE = 'http://localhost:5000';
+  const API_BASE = 'https://foundation-0x4i.onrender.com';
 
   useEffect(() => {
     fetchProfile();
@@ -17,7 +17,13 @@ function ProfilePage({ userId, onLogout }) {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE}/member-profile?member_id=${userId}`);
+      const userRole = localStorage.getItem('userRole') || 'member';
+      const headers = {
+        'Content-Type': 'application/json',
+        'User-Role': userRole,
+        'User-ID': userId
+      };
+      const response = await fetch(`${API_BASE}/member-profile?member_id=${userId}`, { headers });
       const data = await response.json();
       
       if (data.error) {

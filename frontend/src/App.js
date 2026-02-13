@@ -70,6 +70,7 @@ function App() {
     if (memberData) {
       const userId = memberData.id || memberData.user_id;
       const userName = memberData.full_names;
+      const userPhone = memberData.phone_number || '';
       
       setUserRole('member');
       setUserId(userId);
@@ -77,19 +78,25 @@ function App() {
       localStorage.setItem('userRole', 'member');
       localStorage.setItem('userId', userId);
       localStorage.setItem('userName', userName);
+      if (userPhone) {
+        localStorage.setItem('userPhone', userPhone);
+      }
       setActiveTab('dashboard');
     } else {
       setActiveTab('login');
     }
   };
 
-  const handleLogin = (role, id, name = '') => {
+  const handleLogin = (role, id, name = '', phoneNumber = '') => {
     setUserRole(role);
     setUserId(id);
     setUserName(name);
     localStorage.setItem('userRole', role);
     localStorage.setItem('userId', id);
     localStorage.setItem('userName', name);
+    if (phoneNumber) {
+      localStorage.setItem('userPhone', phoneNumber);
+    }
     setActiveTab('dashboard');
   };
 
@@ -100,6 +107,7 @@ function App() {
     localStorage.removeItem('userRole');
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
+    localStorage.removeItem('userPhone');
     setActiveTab('login');
   };
   
@@ -139,9 +147,9 @@ function App() {
 <div style={{textAlign: 'center', flexWrap: 'wrap', display: 'flex', justifyContent: 'center', gap: '5px'}}>
               <button className="nav-button" onClick={() => setActiveTab('dashboard')}>Dashboard</button>
               <button className="nav-button" onClick={() => setActiveTab('profile')}>My Profile</button>
-              <button className="nav-button" onClick={() => setActiveTab('members')}>{userRole === 'admin' ? 'Members' : 'My Profile'}</button>
+              {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('members')}>Members</button>}
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('datacapture')}>Data Capture</button>}
-              {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('minutes')}>Minutes</button>}
+              <button className="nav-button" onClick={() => setActiveTab('minutes')}>Minutes</button>
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('database')}>Database</button>}
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('messaging')}>SMS</button>}
               <button className="nav-button" onClick={() => setActiveTab('meetings')}>Meetings</button>
@@ -168,7 +176,7 @@ function App() {
       {userRole && activeTab === 'registration' && <EnhancedRegistrationPro onRegistered={() => setRefresh(!refresh)} />}
       {userRole && activeTab === 'members' && <MembersList key={refresh} userRole={userRole} userId={userId} />}
       {userRole && activeTab === 'datacapture' && <DataCapture />}
-{userRole && activeTab === 'minutes' && userRole === 'admin' && <MeetingMinutes userRole={userRole} userId={userId} />}
+{userRole && activeTab === 'minutes' && <MeetingMinutes userRole={userRole} userId={userId} />}
       {userRole && activeTab === 'meetings' && <MeetingList />}
 {userRole && activeTab === 'database' && userRole === 'admin' && <DatabaseViewer userRole={userRole} userId={userId} />}
 {userRole && activeTab === 'messaging' && userRole === 'admin' && <BulkMessaging userRole={userRole} userId={userId} />}
