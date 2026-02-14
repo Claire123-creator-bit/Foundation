@@ -132,8 +132,8 @@ fetch(`${API_BASE}/members`, { headers })
   // Check if all data is loaded
   useEffect(() => {
     const allLoaded = Object.values(dataLoading).every(v => v === false);
-    if (allLoaded !== loading) {
-      setLoading(allLoaded);
+    if (allLoaded) {
+      setLoading(false);
     }
   }, [dataLoading]);
 
