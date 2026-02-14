@@ -483,3 +483,7 @@ def admin_login():
         traceback.print_exc()
         return jsonify({'success': False, 'message': 'Login failed. Please try again.'}), 500
 
+
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5001)
