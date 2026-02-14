@@ -114,110 +114,114 @@ function ProfilePage({ userId, onLogout }) {
       <div style={{
         background: 'linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)',
         color: 'white',
-        padding: '30px',
+        padding: 'clamp(15px, 4vw, 30px)',
         borderRadius: '15px',
-        marginBottom: '30px',
-        textAlign: 'center'
+        marginBottom: 'clamp(15px, 4vw, 30px)',
+        textAlign: 'center',
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
-        <h2 style={{ margin: '0 0 10px 0', fontSize: '2em' }}>My Profile</h2>
-        <p style={{ margin: '0', opacity: '0.9' }}>View and manage your account information</p>
+        <h2 style={{ margin: '0 0 10px 0', fontSize: 'clamp(1.3em, 4vw, 2em)' }}>My Profile</h2>
+        <p style={{ margin: '0', opacity: '0.9', fontSize: 'clamp(12px, 3vw, 14px)' }}>View and manage your account information</p>
       </div>
 
       <div style={{
         background: 'white',
         borderRadius: '12px',
-        padding: '30px',
-        boxShadow: '0 4px 15px rgba(0,188,212,0.1)'
+        padding: 'clamp(15px, 4vw, 30px)',
+        boxShadow: '0 4px 15px rgba(0,188,212,0.1)',
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
-        <div style={{ marginBottom: '30px' }}>
-          <h3 style={{ color: '#00bcd4', marginBottom: '20px', borderBottom: '2px solid #00bcd4', paddingBottom: '10px' }}>
+        <div style={{ marginBottom: 'clamp(15px, 4vw, 30px)' }}>
+          <h3 style={{ color: '#00bcd4', marginBottom: '20px', borderBottom: '2px solid #00bcd4', paddingBottom: '10px', fontSize: 'clamp(16px, 3.5vw, 18px)' }}>
             Personal Information
           </h3>
           
           <div style={{ display: 'grid', gap: '15px' }}>
             <div className="profile-field">
-              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px' }}>
+              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
                 Full Name
               </label>
-              <p style={{ margin: '0', fontSize: '16px', color: '#333' }}>{member.full_names}</p>
+              <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)', color: '#333', wordBreak: 'break-word' }}>{member.full_names}</p>
             </div>
 
             <div className="profile-field">
-              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px' }}>
+              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
                 National ID
               </label>
-              <p style={{ margin: '0', fontSize: '16px', color: '#333' }}>{member.national_id}</p>
+              <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)', color: '#333' }}>{member.national_id}</p>
             </div>
 
             <div className="profile-field">
-              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px' }}>
+              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
                 Phone Number
               </label>
-              <p style={{ margin: '0', fontSize: '16px', color: '#333' }}>{member.phone_number}</p>
+              <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)', color: '#333' }}>{member.phone_number}</p>
             </div>
 
             <div className="profile-field">
-              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px' }}>
+              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
                 Category
               </label>
-              <p style={{ margin: '0', fontSize: '16px', color: '#333' }}>{member.category}</p>
+              <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)', color: '#333' }}>{member.category}</p>
             </div>
           </div>
         </div>
 
-        <div style={{ marginBottom: '30px' }}>
-          <h3 style={{ color: '#00bcd4', marginBottom: '20px', borderBottom: '2px solid #00bcd4', paddingBottom: '10px' }}>
+        <div style={{ marginBottom: 'clamp(15px, 4vw, 30px)' }}>
+          <h3 style={{ color: '#00bcd4', marginBottom: '20px', borderBottom: '2px solid #00bcd4', paddingBottom: '10px', fontSize: 'clamp(16px, 3.5vw, 18px)' }}>
             Location Details
           </h3>
           
           <div style={{ display: 'grid', gap: '15px' }}>
             <div className="profile-field">
-              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px' }}>
+              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
                 County
               </label>
-              <p style={{ margin: '0', fontSize: '16px', color: '#333' }}>{member.county}</p>
+              <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)', color: '#333', wordBreak: 'break-word' }}>{member.county}</p>
             </div>
 
             <div className="profile-field">
-              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px' }}>
+              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
                 Constituency
               </label>
-              <p style={{ margin: '0', fontSize: '16px', color: '#333' }}>{member.constituency}</p>
+              <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)', color: '#333', wordBreak: 'break-word' }}>{member.constituency}</p>
             </div>
 
             <div className="profile-field">
-              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px' }}>
+              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
                 Ward
               </label>
-              <p style={{ margin: '0', fontSize: '16px', color: '#333' }}>{member.ward}</p>
+              <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)', color: '#333', wordBreak: 'break-word' }}>{member.ward}</p>
             </div>
 
             <div className="profile-field">
-              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px' }}>
+              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
                 Physical Location
               </label>
-              <p style={{ margin: '0', fontSize: '16px', color: '#333' }}>{member.physical_location}</p>
+              <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)', color: '#333', wordBreak: 'break-word' }}>{member.physical_location}</p>
             </div>
           </div>
         </div>
 
-        <div style={{ marginBottom: '30px' }}>
-          <h3 style={{ color: '#00bcd4', marginBottom: '20px', borderBottom: '2px solid #00bcd4', paddingBottom: '10px' }}>
+        <div style={{ marginBottom: 'clamp(15px, 4vw, 30px)' }}>
+          <h3 style={{ color: '#00bcd4', marginBottom: '20px', borderBottom: '2px solid #00bcd4', paddingBottom: '10px', fontSize: 'clamp(16px, 3.5vw, 18px)' }}>
             Account Status
           </h3>
           
           <div style={{ display: 'grid', gap: '15px' }}>
             <div className="profile-field">
-              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px' }}>
+              <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
                 Verification Status
               </label>
-              <p style={{ margin: '0', fontSize: '16px' }}>
+              <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)' }}>
                 <span style={{
                   background: member.is_verified ? '#4caf50' : '#ff9800',
                   color: 'white',
                   padding: '4px 12px',
                   borderRadius: '12px',
-                  fontSize: '14px'
+                  fontSize: 'clamp(12px, 2.5vw, 14px)'
                 }}>
                   {member.is_verified ? 'Verified' : 'Pending Verification'}
                 </span>
@@ -226,10 +230,10 @@ function ProfilePage({ userId, onLogout }) {
 
             {member.last_login && (
               <div className="profile-field">
-                <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px' }}>
+                <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
                   Last Login
                 </label>
-                <p style={{ margin: '0', fontSize: '16px', color: '#333' }}>
+                <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)', color: '#333' }}>
                   {new Date(member.last_login).toLocaleString()}
                 </p>
               </div>
@@ -237,10 +241,10 @@ function ProfilePage({ userId, onLogout }) {
 
             {member.registration_date && (
               <div className="profile-field">
-                <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px' }}>
+                <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
                   Member Since
                 </label>
-                <p style={{ margin: '0', fontSize: '16px', color: '#333' }}>
+                <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)', color: '#333' }}>
                   {new Date(member.registration_date).toLocaleDateString()}
                 </p>
               </div>
@@ -249,7 +253,7 @@ function ProfilePage({ userId, onLogout }) {
         </div>
 
         <div style={{ textAlign: 'center', paddingTop: '20px', borderTop: '1px solid #e0e0e0' }}>
-          <p style={{ color: '#666', fontSize: '14px', marginBottom: '15px' }}>
+          <p style={{ color: '#666', fontSize: 'clamp(12px, 2.5vw, 14px)', marginBottom: '15px' }}>
             Need to update your information? Please contact an administrator.
           </p>
         </div>
