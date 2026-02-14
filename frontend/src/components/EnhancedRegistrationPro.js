@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
 
 function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
+  // Try to get stored signup data from localStorage
+  const storedName = localStorage.getItem('signupName') || '';
+  const storedId = localStorage.getItem('signupId') || '';
+  
   const [formData, setFormData] = useState({
-    full_names: '',
-    national_id: '',
+    full_names: storedName,
+    national_id: storedId,
     phone_number: signupPhone || '',
     county: '',
     constituency: '',

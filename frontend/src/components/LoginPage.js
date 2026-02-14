@@ -38,10 +38,23 @@ const LoginPage = ({ onLogin, onNavigate }) => {
         onLogin(data.role, data.user_id, data.name || 'Admin', phoneNumber);
         setMessage(`Welcome ${data.name || 'Admin'}!`);
       } else {
-        setMessage(data.message || 'Login failed. Check your credentials.');
+        // Provide more helpful error messages
+        let errorMsg = data.message || 'Login failed. Check your credentials.';
+        
+        if (loginType === 'member') {
+          if (errorMsg.includes('Invalid credentials')) {
+            errorMsg = 'Invalid name or National ID. Please check your registration details.';
+          }
+        } else {
+          if (errorMsg.includes('Invalid username')) {
+            errorMsg = 'Invalid admin username or password.';
+          }
+        }
+        
+        setMessage(errorMsg);
       }
     } catch (error) {
-      setMessage('Connection error. Please check your internet.');
+      setMessage('Connection error. Please check your internet and try again.');
     }
     setLoading(false);
   };
@@ -65,7 +78,7 @@ const LoginPage = ({ onLogin, onNavigate }) => {
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
         <button 
           type="button"
-          onClick={() => setLoginType('member')}
+          onClick={() => { setLoginType('member'); setMessage(''); }}
           style={{
             background: loginType === 'member' ? '#006064' : '#ccc',
             color: 'white',
@@ -80,7 +93,7 @@ const LoginPage = ({ onLogin, onNavigate }) => {
         </button>
         <button 
           type="button"
-          onClick={() => setLoginType('admin')}
+          onClick={() => { setLoginType('admin'); setMessage(''); }}
           style={{
             background: loginType === 'admin' ? '#006064' : '#ccc',
             color: 'white',
@@ -122,17 +135,17 @@ const LoginPage = ({ onLogin, onNavigate }) => {
         ) : (
           <>
             <div className="form-group">
-              <label>Full Name:</label>
+              <label>Full Name (as registered):</label>
               <input
                 type="text"
                 value={formData.full_name}
                 onChange={(e) => setFormData({...formData, full_name: e.target.value})}
                 required
-                placeholder="Enter your full name"
+                placeholder="Enter your full name exactly as registered"
               />
             </div>
             <div className="form-group">
-              <label>Password (National ID):</label>
+              <label>National ID:</label>
               <div style={{position: 'relative'}}>
                 <input
                   type={showPassword ? "text" : "password"}
@@ -186,6 +199,11 @@ const LoginPage = ({ onLogin, onNavigate }) => {
             Sign up here
           </span>
         </p>
+        {loginType === 'member' && (
+          <p style={{ margin: '10px 0 0 0', color: '#666', fontSize: '12px' }}>
+            Forgot your National ID? Please contact support or re-register.
+          </p>
+        )}
       </div>
     </div>
   );
