@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import CheckIn from './CheckIn';
 import FeedbackForm from './FeedbackForm';
+import API_BASE from '../utils/apiConfig';
 
 function MeetingList() {
   const [meetings, setMeetings] = useState([]);
 
   useEffect(() => {
-    fetch('https://foundation-0x4i.onrender.com/meetings')
+    fetch(`${API_BASE}/meetings`)
       .then(res => res.json())
       .then(data => setMeetings(data))
       .catch(err => console.error(err));
@@ -14,7 +15,7 @@ function MeetingList() {
 
   const handleRSVP = (meetingId) => {
     const token = localStorage.getItem('token');
-    fetch(`https://foundation-0x4i.onrender.com/meetings/${meetingId}/rsvp`, {
+    fetch(`${API_BASE}/meetings/${meetingId}/rsvp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

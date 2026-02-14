@@ -21,6 +21,7 @@ import MembershipConfirmation from './components/MembershipConfirmation';
 import Donate from './components/Donate';
 import ProfilePage from './components/ProfilePage';
 import Watermark from './components/Watermark';
+import API_BASE from './utils/apiConfig';
 
 function App() {
   const [refresh, setRefresh] = useState(false);
@@ -58,7 +59,7 @@ function App() {
     setMemberData(data.member_data);
     setActiveTab('confirmation');
     
-    fetch('https://foundation-0x4i.onrender.com/send-welcome-sms', {
+    fetch(`${API_BASE}/send-welcome-sms`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

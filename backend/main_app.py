@@ -2,13 +2,18 @@ from flask import Flask, request, jsonify, render_template_string
 from flask_cors import CORS
 from website_models import db, CallLog, AutoResponse, Member, Meeting, Attendance, MeetingMinutes, Admin, Resource, Payment
 from datetime import datetime
+import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///foundation_complete.db'
+
+# Use absolute path for database
+db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance', 'foundation.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
-CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:8080", "http://127.0.0.1:8080"], supports_credentials=True)
+# Allow all origins for development
+CORS(app, supports_credentials=True)
 
 def get_user_role():
     user_role = request.headers.get('User-Role', 'guest')
@@ -26,6 +31,10 @@ def is_member():
 def init_db():
     from website_models import db, CallLog, AutoResponse, Member, Meeting, Attendance, MeetingMinutes, Admin, Resource, Payment
     from admin_models import Assignment, Report, FinancialRecord
+    
+    # Ensure instance folder exists
+    instance_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance')
+    os.makedirs(instance_path, exist_ok=True)
     
     with app.app_context():
         db.create_all()
@@ -61,6 +70,41 @@ def init_db():
                 db.session.add(resp)
             db.session.commit()
             print("Default auto-responses added")
+        
+        # Add default test members if they don't exist
+        peter = Member.query.filter(Member.full_names.ilike('%peter%')).first()
+        if not peter:
+            peter = Member(
+                full_names='Peter Maina',
+                national_id='12345678',
+                phone_number='0712345678',
+                county='Nairobi',
+                constituency='Kasarani',
+                ward='Ruaraka',
+                physical_location='Kariobangi',
+                category='Youth Leader',
+                is_verified=True
+            )
+            db.session.add(peter)
+            print("Added Peter Maina")
+        
+        roselyne = Member.query.filter(Member.full_names.ilike('%roselyne%')).first()
+        if not roselyne:
+            roselyne = Member(
+                full_names='Roselyne Akinyi',
+                national_id='87654321',
+                phone_number='0723456789',
+                county='Kisumu',
+                constituency='Kisumu Central',
+                ward='Nyalenda',
+                physical_location='Nyalenda',
+                category='Community Member',
+                is_verified=True
+            )
+            db.session.add(roselyne)
+            print("Added Roselyne Akinyi")
+        
+        db.session.commit()
 
 init_db()
 
@@ -179,10 +223,17 @@ def register_member_pro():
             print(f"Missing fields: {missing_fields}")
             return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
         
+        # Check for existing National ID
         existing_member = Member.query.filter_by(national_id=data['national_id']).first()
         if existing_member:
             print(f"Duplicate registration attempt for national_id: {data['national_id']}")
             return jsonify({'error': 'This National ID is already registered. Please login instead.'}), 400
+        
+        # Check for existing phone number
+        existing_phone = Member.query.filter_by(phone_number=data['phone_number']).first()
+        if existing_phone:
+            print(f"Duplicate registration attempt for phone_number: {data['phone_number']}")
+            return jsonify({'error': 'This phone number is already registered. Please login instead.'}), 400
         
         member = Member(
             full_names=data['full_names'],
