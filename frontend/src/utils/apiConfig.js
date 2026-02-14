@@ -1,8 +1,8 @@
 // API Configuration
-// Using localhost - works with backend running on port 8080
-// For production, change to your production URL
+// Using deployed backend on Render
+// For local development, change to 'http://localhost:8080'
 
-const API_BASE = 'http://localhost:8080';
+const API_BASE = 'https://foundation-0x4i.onrender.com';
 
 export default API_BASE;
 
