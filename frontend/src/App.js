@@ -46,9 +46,11 @@ function App() {
   }, []);
 
   const handleSignUpSuccess = (fullName, nationalId) => {
-    setSignupPhone(fullName);
+    // Store the signup data in localStorage for the registration form
     localStorage.setItem('signupName', fullName);
     localStorage.setItem('signupId', nationalId);
+    // Don't set signupPhone with fullName - it should be empty for phone
+    setSignupPhone(''); 
     setActiveTab('registration');
   };
 

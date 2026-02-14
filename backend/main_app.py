@@ -8,7 +8,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///foundation_complete.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
-CORS(app, origins="*", supports_credentials=True)
+CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:8080", "http://127.0.0.1:8080"], supports_credentials=True)
 
 def get_user_role():
     user_role = request.headers.get('User-Role', 'guest')
@@ -30,6 +30,21 @@ def init_db():
     with app.app_context():
         db.create_all()
         print("Database tables created successfully")
+        
+        # Create default admin if not exists
+        if not Admin.query.first():
+            default_admin = Admin(
+                username='admin',
+                password='admin123',  # Change this in production!
+                full_name='System Administrator',
+                email='admin@mbogofoundation.org',
+                phone='+254700000000',
+                role='admin',
+                is_active=True
+            )
+            db.session.add(default_admin)
+            db.session.commit()
+            print("Default admin account created: username='admin', password='admin123'")
         
         if not AutoResponse.query.first():
             responses = [
@@ -408,8 +423,18 @@ def member_login():
         if not full_name or not national_id:
             return jsonify({'success': False, 'message': 'Full name and National ID are required'}), 400
         
-        # Query member by full_name and national_id
-        member = Member.query.filter_by(full_names=full_name, national_id=national_id).first()
+        # Query member by full_name (case-insensitive) and national_id
+        member = Member.query.filter(
+            db.func.lower(Member.full_names) == db.func.lower(full_name),
+            Member.national_id == national_id
+        ).first()
+        
+        if not member:
+            # Try alternative: search by name containing the input (case-insensitive)
+            member = Member.query.filter(
+                db.func.lower(Member.full_names).contains(db.func.lower(full_name)),
+                Member.national_id == national_id
+            ).first()
         
         if not member:
             return jsonify({'success': False, 'message': 'Invalid credentials. Please check your name and National ID.'}), 401
