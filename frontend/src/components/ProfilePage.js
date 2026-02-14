@@ -35,12 +35,13 @@ function ProfilePage({ userId, onLogout }) {
         return res.json();
       })
       .then(data => {
+        console.log('Profile data:', data);
         setMember(data);
         setLoading(false);
       })
       .catch(err => {
         console.error('Profile fetch error:', err);
-        setError('Member not found');
+        setError('Unable to load profile. Please check your connection.');
         setLoading(false);
       });
   };
