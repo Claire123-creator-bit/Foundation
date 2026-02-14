@@ -149,7 +149,6 @@ function App() {
             </div>
 <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '4px', padding: '0 5px'}}>
               <button className="nav-button" onClick={() => setActiveTab('dashboard')}>Dashboard</button>
-              <button className="nav-button" onClick={() => setActiveTab('profile')}>My Profile</button>
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('members')}>Members</button>}
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('datacapture')}>Data Capture</button>}
               <button className="nav-button" onClick={() => setActiveTab('minutes')}>Minutes</button>
@@ -175,7 +174,6 @@ function App() {
       {!userRole && activeTab === 'login' && <LoginPage onLogin={handleLogin} onNavigate={setActiveTab} />}
 {userRole && activeTab === 'dashboard' && <UserDashboard />}
       {userRole && activeTab === 'home' && <HomePage />}
-      {userRole && activeTab === 'profile' && <ProfilePage userId={userId} onLogout={handleLogout} />}
       {userRole && activeTab === 'registration' && <EnhancedRegistrationPro onRegistered={() => setRefresh(!refresh)} />}
       {userRole && activeTab === 'members' && <MembersList key={refresh} userRole={userRole} userId={userId} />}
       {userRole && activeTab === 'datacapture' && <DataCapture />}
