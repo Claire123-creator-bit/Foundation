@@ -1,9 +1,8 @@
 // API Configuration
-// Change this URL to point to your backend server
-// Local development: 'http://localhost:5000'
-// Production: 'https://your-production-url.com'
+// Using localhost - works with backend running on port 8080
+// For production, change to your production URL
 
-const API_BASE = 'http://127.0.0.1:8080';
+const API_BASE = 'http://localhost:8080';
 
 export default API_BASE;
 
