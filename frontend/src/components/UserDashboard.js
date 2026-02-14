@@ -193,68 +193,71 @@ fetch(`${API_BASE}/members`, { headers })
       <div style={{
         background: 'linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)',
         color: 'white',
-        padding: '25px',
+        padding: 'clamp(15px, 4vw, 25px)',
         borderRadius: '15px',
-        marginBottom: '30px',
-        textAlign: 'center'
+        marginBottom: 'clamp(15px, 4vw, 30px)',
+        textAlign: 'center',
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
-        <h2 style={{margin: '0 0 10px 0', fontSize: '1.8em'}}>
+        <h2 style={{margin: '0 0 10px 0', fontSize: 'clamp(1.2em, 4vw, 1.8em)', wordBreak: 'break-word'}}>
           Welcome back, {user.full_names.split(' ')[0]}!
         </h2>
-        <p style={{margin: '0', opacity: '0.9'}}>
+        <p style={{margin: '0', opacity: '0.9', fontSize: 'clamp(12px, 3vw, 14px)', wordBreak: 'break-word'}}>
           {user.category} | {user.ward} Ward, {user.constituency} | 
           {user.is_verified ? ' Verified' : ' Pending Verification'}
         </p>
-        <p style={{margin: '10px 0 0 0', fontSize: '14px', opacity: '0.8'}}>
+        <p style={{margin: '10px 0 0 0', fontSize: 'clamp(11px, 2.5vw, 14px)', opacity: '0.8'}}>
           Last login: {new Date(user.last_login).toLocaleDateString()}
         </p>
       </div>
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '20px',
-        marginBottom: '30px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+        gap: 'clamp(10px, 3vw, 20px)',
+        marginBottom: 'clamp(15px, 4vw, 30px)',
+        width: '100%'
       }}>
-        <div className="info-card" style={{textAlign: 'center', padding: '20px'}}>
-          <h4 style={{color: '#00bcd4', margin: '0 0 10px 0'}}>Messages</h4>
-          <p style={{margin: '0', fontSize: '14px', color: '#666'}}>
+        <div className="info-card" style={{textAlign: 'center', padding: 'clamp(12px, 3vw, 20px)'}}>
+          <h4 style={{color: '#00bcd4', margin: '0 0 10px 0', fontSize: 'clamp(14px, 3vw, 16px)'}}>Messages</h4>
+          <p style={{margin: '0', fontSize: 'clamp(12px, 2.5vw, 14px)', color: '#666'}}>
             {announcements.length} new announcements
           </p>
         </div>
         
-        <div className="info-card" style={{textAlign: 'center', padding: '20px'}}>
-          <h4 style={{color: '#00bcd4', margin: '0 0 10px 0'}}>Meetings</h4>
-          <p style={{margin: '0', fontSize: '14px', color: '#666'}}>
+        <div className="info-card" style={{textAlign: 'center', padding: 'clamp(12px, 3vw, 20px)'}}>
+          <h4 style={{color: '#00bcd4', margin: '0 0 10px 0', fontSize: 'clamp(14px, 3vw, 16px)'}}>Meetings</h4>
+          <p style={{margin: '0', fontSize: 'clamp(12px, 2.5vw, 14px)', color: '#666'}}>
             {upcomingMeetings.length} upcoming meetings
           </p>
         </div>
         
-        <div className="info-card" style={{textAlign: 'center', padding: '20px'}}>
-          <h4 style={{color: '#00bcd4', margin: '0 0 10px 0'}}>Attendance</h4>
-          <p style={{margin: '0', fontSize: '14px', color: '#666'}}>
+        <div className="info-card" style={{textAlign: 'center', padding: 'clamp(12px, 3vw, 20px)'}}>
+          <h4 style={{color: '#00bcd4', margin: '0 0 10px 0', fontSize: 'clamp(14px, 3vw, 16px)'}}>Attendance</h4>
+          <p style={{margin: '0', fontSize: 'clamp(12px, 2.5vw, 14px)', color: '#666'}}>
             {attendanceHistory.length} meetings attended
           </p>
         </div>
       </div>
 
-      <div style={{marginBottom: '30px'}}>
+      <div style={{marginBottom: 'clamp(15px, 4vw, 30px)', width: '100%', overflow: 'hidden'}}>
         <h3 className="section-title">Important Announcements</h3>
         {announcements.length > 0 ? (
           announcements.slice(0, 3).map((announcement, index) => (
-            <div key={index} className="faq-item" style={{marginBottom: '15px'}}>
-              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
+            <div key={index} className="faq-item" style={{marginBottom: '15px', width: '100%', boxSizing: 'border-box'}}>
+              <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
                 <div style={{flex: 1}}>
-                  <h4 style={{color: '#00bcd4', margin: '0 0 8px 0'}}>{announcement.title}</h4>
-                  <p style={{margin: '0', fontSize: '14px', lineHeight: '1.5'}}>{announcement.content}</p>
+                  <h4 style={{color: '#00bcd4', margin: '0 0 8px 0', fontSize: 'clamp(14px, 3vw, 16px)', wordBreak: 'break-word'}}>{announcement.title}</h4>
+                  <p style={{margin: '0', fontSize: 'clamp(12px, 2.5vw, 14px)', lineHeight: '1.5', wordBreak: 'break-word'}}>{announcement.content}</p>
                 </div>
                 <span style={{
                   background: announcement.priority === 'high' ? '#f44336' : '#ff9800',
                   color: 'white',
                   padding: '4px 8px',
                   borderRadius: '12px',
-                  fontSize: '11px',
-                  marginLeft: '10px'
+                  fontSize: 'clamp(10px, 2vw, 11px)',
+                  alignSelf: 'flex-start'
                 }}>
                   {announcement.priority || 'normal'}
                 </span>
@@ -268,35 +271,35 @@ fetch(`${API_BASE}/members`, { headers })
         )}
       </div>
 
-      <div style={{marginBottom: '30px'}}>
+      <div style={{marginBottom: 'clamp(15px, 4vw, 30px)', width: '100%', overflow: 'hidden'}}>
         <h3 className="section-title">Upcoming Meetings</h3>
         {upcomingMeetings.length > 0 ? (
           upcomingMeetings.map(meeting => (
-            <div key={meeting.id} className="faq-item" style={{marginBottom: '15px'}}>
-              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div key={meeting.id} className="faq-item" style={{marginBottom: '15px', width: '100%', boxSizing: 'border-box'}}>
+              <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
                 <div style={{flex: 1}}>
-                  <h4 style={{color: '#00bcd4', margin: '0 0 8px 0'}}>
+                  <h4 style={{color: '#00bcd4', margin: '0 0 8px 0', fontSize: 'clamp(14px, 3vw, 16px)', wordBreak: 'break-word'}}>
                     {meeting.title}
                   </h4>
-                  <p style={{margin: '0', fontSize: '14px', color: '#666'}}>
+                  <p style={{margin: '0', fontSize: 'clamp(12px, 2.5vw, 14px)', color: '#666'}}>
                     {meeting.date} at {meeting.time}
                   </p>
-                  <p style={{margin: '5px 0 0 0', fontSize: '14px', color: '#666'}}>
+                  <p style={{margin: '5px 0 0 0', fontSize: 'clamp(12px, 2.5vw, 14px)', color: '#666'}}>
                     {meeting.meeting_type === 'online' ? 'Online Meeting' : meeting.venue}
                   </p>
                 </div>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
                   {meeting.meeting_link && (
                     <button 
                       onClick={() => joinMeeting(meeting.meeting_link)}
-                      style={{fontSize: '12px', padding: '8px 16px', whiteSpace: 'nowrap'}}
+                      style={{fontSize: 'clamp(11px, 2.5vw, 12px)', padding: '8px 16px', whiteSpace: 'nowrap', flex: '1 1 auto'}}
                     >
                       Join Meeting
                     </button>
                   )}
                   <button 
                     onClick={() => signInToMeeting(meeting.id)}
-                    style={{fontSize: '12px', padding: '8px 16px', whiteSpace: 'nowrap', background: '#4caf50'}}
+                    style={{fontSize: 'clamp(11px, 2.5vw, 12px)', padding: '8px 16px', whiteSpace: 'nowrap', background: '#4caf50', flex: '1 1 auto'}}
                   >
                     Sign In
                   </button>
@@ -314,8 +317,8 @@ fetch(`${API_BASE}/members`, { headers })
       <div>
         <h3 className="section-title">Recent Attendance History</h3>
         {attendanceHistory.length > 0 ? (
-          <div style={{background: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,188,212,0.1)'}}>
-            <table style={{width: '100%', borderCollapse: 'collapse'}}>
+          <div style={{background: 'white', borderRadius: '12px', overflow: 'auto', boxShadow: '0 4px 15px rgba(0,188,212,0.1)', width: '100%', maxWidth: '100%'}}>
+            <table style={{width: '100%', borderCollapse: 'collapse', minWidth: '500px'}}>
               <thead>
                 <tr style={{background: 'linear-gradient(45deg, #00bcd4, #0097a7)'}}>
                   <th style={{color: 'white', padding: '12px 8px', textAlign: 'left', fontSize: '14px'}}>Meeting</th>

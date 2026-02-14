@@ -129,22 +129,25 @@ function App() {
     <div className="app-container" style={{ padding: '0' }}>
       <nav style={{
         background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
-        padding: '5px',
+        padding: '8px',
         borderRadius: '0',
         marginBottom: '5px',
         boxShadow: 'none',
         position: 'sticky',
         top: '0',
-        zIndex: '1000'
+        zIndex: '1000',
+        width: '100%',
+        maxWidth: '100vw',
+        boxSizing: 'border-box'
       }}>
-        <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 5px 0', fontSize: '0.85em', fontWeight: '700', lineHeight: '1.1', padding: '0 5px'}}>Mbogo Welfare Empowerment Foundation</h1>
+        <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 8px 0', fontSize: 'clamp(0.85em, 3vw, 1.2em)', fontWeight: '700', lineHeight: '1.2', padding: '0 5px'}}>Mbogo Welfare Empowerment Foundation</h1>
         {userRole && (
           <>
-            <div style={{textAlign: 'center', color: 'white', marginBottom: '3px', fontSize: '10px'}}>
+            <div style={{textAlign: 'center', color: 'white', marginBottom: '5px', fontSize: 'clamp(10px, 2.5vw, 12px)', padding: '0 5px', wordBreak: 'break-word'}}>
               Welcome, {userName} ({userRole})
-              <button onClick={handleLogout} style={{marginLeft: '3px', padding: '2px 6px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid white', borderRadius: '3px', cursor: 'pointer', fontSize: '10px'}}>Logout</button>
+              <button onClick={handleLogout} style={{marginLeft: '5px', padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid white', borderRadius: '3px', cursor: 'pointer', fontSize: 'clamp(10px, 2.5vw, 12px)'}}>Logout</button>
             </div>
-<div style={{textAlign: 'center', flexWrap: 'wrap', display: 'flex', justifyContent: 'center', gap: '5px'}}>
+<div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '4px', padding: '0 5px'}}>
               <button className="nav-button" onClick={() => setActiveTab('dashboard')}>Dashboard</button>
               <button className="nav-button" onClick={() => setActiveTab('profile')}>My Profile</button>
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('members')}>Members</button>}
@@ -189,22 +192,25 @@ function App() {
       
       {userRole && (
         <footer style={{
-          marginTop: '10px',
-          padding: '10px 5px',
+          marginTop: '15px',
+          padding: '12px 8px',
           textAlign: 'center',
           background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
           color: 'white',
           borderRadius: '0',
-          boxShadow: 'none'
+          boxShadow: 'none',
+          width: '100%',
+          maxWidth: '100vw',
+          boxSizing: 'border-box'
         }}>
           <div style={{
             display: 'flex', 
             justifyContent: 'center', 
             gap: '8px', 
             flexWrap: 'wrap', 
-            marginBottom: '8px',
+            marginBottom: '10px',
             borderBottom: '1px solid rgba(255,255,255,0.3)',
-            paddingBottom: '8px'
+            paddingBottom: '10px'
           }}>
             {[
               {label: 'About Us', page: 'about'},
@@ -220,7 +226,7 @@ function App() {
                   padding: '5px 10px',
                   borderRadius: '5px',
                   transition: 'all 0.3s ease',
-                  fontSize: '10px'
+                  fontSize: 'clamp(10px, 2.5vw, 12px)'
                 }} 
                 onMouseOver={e => e.target.style.background = 'rgba(255,255,255,0.2)'}
                 onMouseOut={e => e.target.style.background = 'transparent'}>
@@ -228,7 +234,7 @@ function App() {
               </span>
             ))}
           </div>
-          <p style={{margin: '0', fontSize: '9px', opacity: '0.95', fontWeight: '500'}}>
+          <p style={{margin: '0', fontSize: 'clamp(9px, 2vw, 11px)', opacity: '0.95', fontWeight: '500'}}>
             &copy; 2025 Mbogo Welfare Empowerment Foundation. Empowering communities through transparency and trust.
           </p>
         </footer>
