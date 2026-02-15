@@ -24,6 +24,7 @@ class Member(db.Model):
     full_names = db.Column(db.String(150), nullable=False)
     national_id = db.Column(db.String(20), nullable=False, unique=True)
     phone_number = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(100))  # Added email field
     county = db.Column(db.String(50), nullable=False)
     constituency = db.Column(db.String(100), nullable=False)
     ward = db.Column(db.String(100), nullable=False)
@@ -46,6 +47,7 @@ class Member(db.Model):
             'full_names': self.full_names or self.name,
             'national_id': self.national_id or self.id_no,
             'phone_number': self.phone_number or self.phone,
+            'email': self.email,
             'county': self.county,
             'constituency': self.constituency,
             'ward': self.ward,
