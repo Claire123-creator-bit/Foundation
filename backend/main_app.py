@@ -3,17 +3,64 @@ from flask_cors import CORS
 from website_models import db, CallLog, AutoResponse, Member, Meeting, Attendance, MeetingMinutes, Admin, Resource, Payment
 from datetime import datetime
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import hashlib
 
 app = Flask(__name__)
 
-# Use absolute path for database
-db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance', 'foundation.db')
+# Use absolute path for database (use existing complete database)
+db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance', 'foundation_complete.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Email configuration - Update these with real values for production
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True').lower() == 'true'
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'your-email@gmail.com')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'your-app-password')
+app.config['FOUNDATION_EMAIL'] = os.environ.get('FOUNDATION_EMAIL', 'info@mbogofoundation.org')
 
 db.init_app(app)
 # Allow all origins for development
 CORS(app, supports_credentials=True)
+
+def send_email(to_email, subject, body):
+    """Send email to recipient"""
+    try:
+        # For development, just log the email
+        print(f"=" * 60)
+        print(f"EMAIL WOULD BE SENT TO: {to_email}")
+        print(f"SUBJECT: {subject}")
+        print(f"BODY: {body}")
+        print(f"=" * 60)
+        
+        # Uncomment below for production with real SMTP:
+        # msg = MIMEMultipart()
+        # msg['From'] = app.config['FOUNDATION_EMAIL']
+        # msg['To'] = to_email
+        # msg['Subject'] = subject
+        # msg.attach(MIMEText(body, 'html'))
+        # 
+        # with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as server:
+        #     server.starttls()
+        #     server.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+        #     server.send_message(msg)
+        
+        return True
+    except Exception as e:
+        print(f"Email error: {e}")
+        return False
+
+def hash_password(password):
+    """Hash password using SHA256"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def check_password(password, hashed):
+    """Verify password against hash"""
+    return hashlib.sha256(password.encode()).hexdigest() == hashed
 
 def get_user_role():
     user_role = request.headers.get('User-Role', 'guest')
@@ -40,11 +87,11 @@ def init_db():
         db.create_all()
         print("Database tables created successfully")
         
-        # Create default admin if not exists
+        # Create default admin if not exists (using hashed password)
         if not Admin.query.first():
             default_admin = Admin(
                 username='admin',
-                password='admin123',  # Change this in production!
+                password=hash_password('admin123'),  # Hashed password
                 full_name='System Administrator',
                 email='admin@mbogofoundation.org',
                 phone='+254700000000',
@@ -239,6 +286,7 @@ def register_member_pro():
             full_names=data['full_names'],
             national_id=data['national_id'],
             phone_number=data['phone_number'],
+            email=data.get('email', ''),  # Added email field
             county=data['county'],
             constituency=data['constituency'],
             ward=data['ward'],
@@ -252,6 +300,37 @@ def register_member_pro():
         db.session.commit()
         print(f"SUCCESS: Member created with ID: {member.id}")
         
+        # Send welcome email to member
+        member_email = data.get('email', '')
+        if member_email:
+            email_subject = "Welcome to Mbogo Welfare Empowerment Foundation!"
+            email_body = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; padding: 20px;">
+                <h2 style="color: #006064;">Welcome to Mbogo Welfare Empowerment Foundation!</h2>
+                <p>Dear {data['full_names']},</p>
+                <p>Thank you for registering as a member of our foundation. We are delighted to have you join our community.</p>
+                <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Member ID:</strong> {member.id}</p>
+                    <p><strong>Name:</strong> {data['full_names']}</p>
+                    <p><strong>Phone:</strong> {data['phone_number']}</p>
+                    <p><strong>Category:</strong> {data['category']}</p>
+                    <p><strong>Location:</strong> {data['ward']}, {data['constituency']}, {data['county']}</p>
+                </div>
+                <h3>Payment Details:</h3>
+                <p><strong>Paybill:</strong> 123456</p>
+                <p><strong>Account Name:</strong> Your Name</p>
+                <p>Join our WhatsApp group: https://chat.whatsapp.com/xyz</p>
+                <hr>
+                <p style="color: #666; font-size: 12px;">
+                    This is an automated message from Mbogo Welfare Empowerment Foundation.
+                    Please do not reply to this email.
+                </p>
+            </body>
+            </html>
+            """
+            send_email(member_email, email_subject, email_body)
+        
         response = jsonify({
             'message': 'Registration successful', 
             'user_id': member.id,
@@ -259,6 +338,7 @@ def register_member_pro():
                 'full_names': member.full_names,
                 'national_id': member.national_id,
                 'phone_number': member.phone_number,
+                'email': member.email,
                 'county': member.county,
                 'constituency': member.constituency,
                 'ward': member.ward,
@@ -532,8 +612,8 @@ def admin_login():
         if not admin:
             return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
         
-        # Check password (simple comparison - in production use proper hashing)
-        if admin.password != password:
+        # Check password (using hashed comparison)
+        if not check_password(password, admin.password):
             return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
         
         # Check if admin is active
@@ -550,7 +630,8 @@ def admin_login():
             'user_id': admin.id,
             'role': 'admin',
             'name': admin.full_name,
-            'username': admin.username
+            'username': admin.username,
+            'email': admin.email
         })
         
     except Exception as e:
@@ -558,6 +639,92 @@ def admin_login():
         import traceback
         traceback.print_exc()
         return jsonify({'success': False, 'message': 'Login failed. Please try again.'}), 500
+
+
+@app.route('/admin-register', methods=['POST'])
+def admin_register():
+    """Register a new admin user"""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'success': False, 'message': 'No data received'}), 400
+        
+        required_fields = ['username', 'password', 'full_name', 'email']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        if missing_fields:
+            return jsonify({'success': False, 'message': f'Missing required fields: {", ".join(missing_fields)}'}), 400
+        
+        username = data.get('username', '').strip()
+        password = data.get('password', '').strip()
+        full_name = data.get('full_name', '').strip()
+        email = data.get('email', '').strip().lower()
+        phone = data.get('phone', '').strip()
+        
+        # Check if username already exists
+        existing_admin = Admin.query.filter_by(username=username).first()
+        if existing_admin:
+            return jsonify({'success': False, 'message': 'Username already exists. Please choose a different username.'}), 400
+        
+        # Check if email already exists
+        if email:
+            existing_email = Admin.query.filter_by(email=email).first()
+            if existing_email:
+                return jsonify({'success': False, 'message': 'Email already registered. Please use a different email.'}), 400
+        
+        # Create new admin
+        new_admin = Admin(
+            username=username,
+            password=hash_password(password),  # Hash the password
+            full_name=full_name,
+            email=email,
+            phone=phone,
+            role='admin',
+            is_active=True
+        )
+        db.session.add(new_admin)
+        db.session.commit()
+        
+        print(f"New admin registered: {username} ({email})")
+        
+        # Send welcome email to admin
+        if email:
+            email_subject = "Welcome to Mbogo Welfare Empowerment Foundation - Admin Account"
+            email_body = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; padding: 20px;">
+                <h2 style="color: #006064;">Welcome to Mbogo Welfare Empowerment Foundation!</h2>
+                <p>Dear {full_name},</p>
+                <p>Your admin account has been successfully created.</p>
+                <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Username:</strong> {username}</p>
+                    <p><strong>Email:</strong> {email}</p>
+                    <p><strong>Role:</strong> Administrator</p>
+                </div>
+                <p>You can now login to the admin dashboard using your credentials.</p>
+                <p>Please change your password after first login for security.</p>
+                <hr>
+                <p style="color: #666; font-size: 12px;">
+                    This is an automated message from Mbogo Welfare Empowerment Foundation.
+                    Please do not reply to this email.
+                </p>
+            </body>
+            </html>
+            """
+            send_email(email, email_subject, email_body)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Admin account created successfully',
+            'user_id': new_admin.id,
+            'username': new_admin.username
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Admin registration error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': 'Registration failed. Please try again.'}), 500
 
 
 

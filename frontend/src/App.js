@@ -21,6 +21,7 @@ import MembershipConfirmation from './components/MembershipConfirmation';
 import Donate from './components/Donate';
 import ProfilePage from './components/ProfilePage';
 import Watermark from './components/Watermark';
+import AdminSignupPage from './components/AdminSignupPage';
 import API_BASE from './utils/apiConfig';
 
 function App() {
@@ -175,6 +176,7 @@ function App() {
       {!userRole && activeTab === 'registration' && <EnhancedRegistrationPro signupPhone={signupPhone} onRegistrationSuccess={handleRegistrationSuccess} />}
       {!userRole && activeTab === 'confirmation' && <MembershipConfirmation memberData={memberData} onContinue={handleConfirmationContinue} />}
       {!userRole && activeTab === 'login' && <LoginPage onLogin={handleLogin} onNavigate={setActiveTab} />}
+      {!userRole && activeTab === 'admin-signup' && <AdminSignupPage onNavigate={setActiveTab} />}
 {userRole && activeTab === 'dashboard' && <UserDashboard />}
       {userRole && activeTab === 'home' && <HomePage />}
       {userRole && activeTab === 'registration' && <EnhancedRegistrationPro onRegistered={() => setRefresh(!refresh)} />}

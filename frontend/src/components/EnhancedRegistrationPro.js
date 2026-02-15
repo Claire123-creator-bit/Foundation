@@ -10,6 +10,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
     full_names: storedName,
     national_id: storedId,
     phone_number: signupPhone || '',
+    email: '',  // Added email field
     county: '',
     constituency: '',
     ward: '',
@@ -250,6 +251,20 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
                 required 
               />
             </div>
+          </div>
+
+          <div style={{marginTop: '15px'}}>
+            <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
+              Email Address (Optional)
+            </label>
+            <input 
+              name="email" 
+              type="email"
+              placeholder="Enter your email address"
+              value={formData.email || ''} 
+              onChange={handleChange} 
+            />
+            <small style={{color: '#666', fontSize: '12px'}}>Enter your email to receive welcome notifications</small>
           </div>
         </div>
 

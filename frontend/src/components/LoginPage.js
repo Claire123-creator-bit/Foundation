@@ -205,6 +205,23 @@ const LoginPage = ({ onLogin, onNavigate }) => {
           </p>
         )}
       </div>
+      
+      {/* Admin Sign Up Link */}
+      {loginType === 'admin' && (
+        <div style={{ textAlign: 'center', marginTop: '15px', padding: '15px', background: 'rgba(255,152,0,0.1)', borderRadius: '10px', border: '1px solid rgba(255,152,0,0.3)' }}>
+          <p style={{ margin: '0', color: '#e65100', fontSize: '13px' }}>
+            New administrator?{' '}
+            <span onClick={() => onNavigate('admin-signup')} style={{
+              color: '#006064',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              textDecoration: 'underline'
+            }}>
+              Register here
+            </span>
+          </p>
+        </div>
+      )}
     </div>
   );
 };
