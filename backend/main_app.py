@@ -10,12 +10,12 @@ import hashlib
 
 app = Flask(__name__)
 
-# Use absolute path for database (use existing complete database)
+
 db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance', 'foundation_complete.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Email configuration - Update these with real values for production
+
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True').lower() == 'true'
@@ -24,13 +24,13 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'your-app-password
 app.config['FOUNDATION_EMAIL'] = os.environ.get('FOUNDATION_EMAIL', 'info@mbogofoundation.org')
 
 db.init_app(app)
-# Allow all origins for development
+
 CORS(app, supports_credentials=True)
 
 def send_email(to_email, subject, body):
     """Send email to recipient"""
     try:
-        # For development, just log the email
+        
         print(f"=" * 60)
         print(f"EMAIL WOULD BE SENT TO: {to_email}")
         print(f"SUBJECT: {subject}")
@@ -79,7 +79,7 @@ def init_db():
     from website_models import db, CallLog, AutoResponse, Member, Meeting, Attendance, MeetingMinutes, Admin, Resource, Payment
     from admin_models import Assignment, Report, FinancialRecord
     
-    # Ensure instance folder exists
+    
     instance_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance')
     os.makedirs(instance_path, exist_ok=True)
     
@@ -87,11 +87,11 @@ def init_db():
         db.create_all()
         print("Database tables created successfully")
         
-        # Create default admin if not exists (using hashed password)
+        
         if not Admin.query.first():
             default_admin = Admin(
                 username='admin',
-                password=hash_password('admin123'),  # Hashed password
+                password=hash_password('admin123'),  
                 full_name='System Administrator',
                 email='admin@mbogofoundation.org',
                 phone='+254700000000',
@@ -118,7 +118,7 @@ def init_db():
             db.session.commit()
             print("Default auto-responses added")
         
-        # Add default test members if they don't exist
+       
         peter = Member.query.filter(Member.full_names.ilike('%peter%')).first()
         if not peter:
             peter = Member(
@@ -270,13 +270,13 @@ def register_member_pro():
             print(f"Missing fields: {missing_fields}")
             return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
         
-        # Check for existing National ID
+        
         existing_member = Member.query.filter_by(national_id=data['national_id']).first()
         if existing_member:
             print(f"Duplicate registration attempt for national_id: {data['national_id']}")
             return jsonify({'error': 'This National ID is already registered. Please login instead.'}), 400
         
-        # Check for existing phone number
+        
         existing_phone = Member.query.filter_by(phone_number=data['phone_number']).first()
         if existing_phone:
             print(f"Duplicate registration attempt for phone_number: {data['phone_number']}")
@@ -286,7 +286,7 @@ def register_member_pro():
             full_names=data['full_names'],
             national_id=data['national_id'],
             phone_number=data['phone_number'],
-            email=data.get('email', ''),  # Added email field
+            email=data.get('email', ''),  
             county=data['county'],
             constituency=data['constituency'],
             ward=data['ward'],
@@ -300,7 +300,7 @@ def register_member_pro():
         db.session.commit()
         print(f"SUCCESS: Member created with ID: {member.id}")
         
-        # Send welcome email to member
+       
         member_email = data.get('email', '')
         if member_email:
             email_subject = "Welcome to Mbogo Welfare Empowerment Foundation!"
@@ -538,7 +538,6 @@ def get_member_categories():
     return jsonify([c[0] for c in categories if c[0]])
 
 
-# ========== LOGIN ENDPOINTS ==========
 
 @app.route('/member-login', methods=['POST'])
 def member_login():
@@ -554,14 +553,14 @@ def member_login():
         if not full_name or not national_id:
             return jsonify({'success': False, 'message': 'Full name and National ID are required'}), 400
         
-        # Query member by full_name (case-insensitive) and national_id
+        
         member = Member.query.filter(
             db.func.lower(Member.full_names) == db.func.lower(full_name),
             Member.national_id == national_id
         ).first()
         
         if not member:
-            # Try alternative: search by name containing the input (case-insensitive)
+           
             member = Member.query.filter(
                 db.func.lower(Member.full_names).contains(db.func.lower(full_name)),
                 Member.national_id == national_id
@@ -570,7 +569,7 @@ def member_login():
         if not member:
             return jsonify({'success': False, 'message': 'Invalid credentials. Please check your name and National ID.'}), 401
         
-        # Update last login
+        
         member.last_login = datetime.utcnow()
         db.session.commit()
         
@@ -606,21 +605,21 @@ def admin_login():
         if not username or not password:
             return jsonify({'success': False, 'message': 'Username and password are required'}), 400
         
-        # Query admin by username
+        
         admin = Admin.query.filter_by(username=username).first()
         
         if not admin:
             return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
         
-        # Check password (using hashed comparison)
+       
         if not check_password(password, admin.password):
             return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
         
-        # Check if admin is active
+        
         if not admin.is_active:
             return jsonify({'success': False, 'message': 'Your account has been deactivated'}), 401
         
-        # Update last login
+        
         admin.last_login = datetime.utcnow()
         db.session.commit()
         
@@ -660,18 +659,18 @@ def admin_register():
         email = data.get('email', '').strip().lower()
         phone = data.get('phone', '').strip()
         
-        # Check if username already exists
+        
         existing_admin = Admin.query.filter_by(username=username).first()
         if existing_admin:
             return jsonify({'success': False, 'message': 'Username already exists. Please choose a different username.'}), 400
         
-        # Check if email already exists
+       
         if email:
             existing_email = Admin.query.filter_by(email=email).first()
             if existing_email:
                 return jsonify({'success': False, 'message': 'Email already registered. Please use a different email.'}), 400
         
-        # Create new admin
+       
         new_admin = Admin(
             username=username,
             password=hash_password(password),  # Hash the password
