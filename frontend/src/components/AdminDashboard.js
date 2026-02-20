@@ -4,6 +4,8 @@ import API_BASE from '../utils/apiConfig';
 
 function AdminDashboard() {
   const [assignments, setAssignments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [newAssignment, setNewAssignment] = useState({
     title: '', description: '', assigned_to: '', priority: 'Medium', due_date: ''
   });
@@ -23,7 +25,10 @@ function AdminDashboard() {
     };
     
     fetch(`${API_BASE}/members`, { headers })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch members');
+        return res.json();
+      })
       .then(data => {
         const categories = {};
         data.forEach(member => {
@@ -35,14 +40,28 @@ function AdminDashboard() {
           categories: Object.entries(categories).map(([name, count]) => ({ name, count }))
         });
       })
-      .catch(err => console.log('Error fetching member stats'));
+      .catch(err => {
+        console.log('Error fetching member stats:', err);
+        setMemberStats({ total: 0, categories: [] });
+      });
   };
 
   const fetchAssignments = () => {
-    fetch(`${API_BASE}/assignments`)
-      .then(res => res.json())
+    const headers = {
+      'Content-Type': 'application/json',
+      'User-Role': 'admin'
+    };
+    
+    fetch(`${API_BASE}/assignments`, { headers })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch assignments');
+        return res.json();
+      })
       .then(data => setAssignments(data))
-      .catch(err => console.log('Backend offline'));
+      .catch(err => {
+        console.log('Error fetching assignments:', err);
+        setAssignments([]);
+      });
   };
 
   const fetchMetrics = () => {
@@ -82,24 +101,43 @@ function AdminDashboard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const headers = {
+      'Content-Type': 'application/json',
+      'User-Role': 'admin'
+    };
+    
     fetch(`${API_BASE}/assignments`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: headers,
       body: JSON.stringify(newAssignment)
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to create assignment');
+        return res.json();
+      })
       .then(() => {
         fetchAssignments();
         setNewAssignment({title: '', description: '', assigned_to: '', priority: 'Medium', due_date: ''});
-      });
+      })
+      .catch(err => console.log('Error creating assignment:', err));
   };
 
   const updateStatus = (id, status) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      'User-Role': 'admin'
+    };
+    
     fetch(`${API_BASE}/assignments/${id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: headers,
       body: JSON.stringify({status})
-    }).then(() => fetchAssignments());
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to update assignment');
+        fetchAssignments();
+      })
+      .catch(err => console.log('Error updating assignment:', err));
   };
 
   const startTraining = () => {
