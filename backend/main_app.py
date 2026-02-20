@@ -527,15 +527,6 @@ def admin_get_meeting_minutes():
     minutes = MeetingMinutes.query.order_by(MeetingMinutes.created_date.desc()).all()
     return jsonify([m.to_dict() for m in minutes])
 
-@app.route('/members/categories', methods=['GET'])
-def get_member_categories():
-    user_role, user_id = get_user_role()
-    
-    if not user_id:
-        return jsonify({'error': 'Authentication required'}), 401
-    
-    categories = db.session.query(Member.category).distinct().all()
-    return jsonify([c[0] for c in categories if c[0]])
 
 
 
