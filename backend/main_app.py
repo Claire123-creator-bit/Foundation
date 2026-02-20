@@ -257,9 +257,6 @@ def register_member_pro():
     
     try:
         data = request.json
-        print("=" * 50)
-        print("Registration attempt received")
-        print(f"Data keys: {list(data.keys()) if data else 'None'}")
         
         if not data:
             return jsonify({'error': 'No data received'}), 400
@@ -267,19 +264,14 @@ def register_member_pro():
         required_fields = ['full_names', 'national_id', 'phone_number', 'county', 'constituency', 'ward', 'physical_location', 'category']
         missing_fields = [field for field in required_fields if not data.get(field)]
         if missing_fields:
-            print(f"Missing fields: {missing_fields}")
             return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
-        
         
         existing_member = Member.query.filter_by(national_id=data['national_id']).first()
         if existing_member:
-            print(f"Duplicate registration attempt for national_id: {data['national_id']}")
             return jsonify({'error': 'This National ID is already registered. Please login instead.'}), 400
-        
         
         existing_phone = Member.query.filter_by(phone_number=data['phone_number']).first()
         if existing_phone:
-            print(f"Duplicate registration attempt for phone_number: {data['phone_number']}")
             return jsonify({'error': 'This phone number is already registered. Please login instead.'}), 400
         
         member = Member(

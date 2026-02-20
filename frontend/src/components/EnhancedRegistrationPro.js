@@ -47,11 +47,11 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          setFormData({
-            ...formData,
+          setFormData(prev => ({
+            ...prev,
             gps_latitude: latitude.toString(),
             gps_longitude: longitude.toString()
-          });
+          }));
           setLocationStatus(`Location captured: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
           setIsCapturingLocation(false);
         },
@@ -59,7 +59,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
           setLocationStatus('Location access denied. Please enter manually.');
           setIsCapturingLocation(false);
         },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+        { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
       );
     } else {
       setLocationStatus('GPS not supported. Please enter location manually.');
@@ -77,19 +77,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
     setErrorMessage('');
     setErrorDetails('');
     setSuccessMessage('');
-    
-    if (!formData.national_id || formData.national_id.length < 7) {
-      setErrorMessage('Please enter a valid National ID number');
-      return;
-    }
-    
-    if (!formData.phone_number || formData.phone_number.length < 10) {
-      setErrorMessage('Please enter a valid phone number');
-      return;
-    }
-
     setIsSubmitting(true);
-    console.log('Submitting registration data:', formData);
 
     fetch(`${API_BASE}/register-member-pro`, {
       method: 'POST',
@@ -100,41 +88,29 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
       body: JSON.stringify(formData)
     })
       .then(res => {
-        console.log('Response status:', res.status);
-        console.log('Response headers:', [...res.headers.entries()]);
-        
-        return res.text().then(text => {
-          console.log('Raw response:', text);
-          try {
-            const data = JSON.parse(text);
-            console.log('Parsed response:', data);
-            if (!res.ok) {
-              setErrorDetails(data.details || `Status: ${res.status}`);
+        if (!res.ok) {
+          return res.text().then(text => {
+            try {
+              const data = JSON.parse(text);
               throw new Error(data.error || `Server error (${res.status})`);
+            } catch (e) {
+              throw new Error(`Server error (${res.status})`);
             }
-            return data;
-          } catch (e) {
-            setErrorDetails(`Parse error: ${e.message}. Raw response: ${text.substring(0, 200)}`);
-            throw new Error(`Invalid server response (${res.status})`);
-          }
-        });
+          });
+        }
+        return res.json();
       })
       .then(data => {
         setIsSubmitting(false);
-        if (data.member_data) {
-          setSuccessMessage('Registration successful! Redirecting...');
-          onRegistrationSuccess(data);
-        } else if (data.message && data.user_id) {
+        if (data.member_data || (data.message && data.user_id)) {
           setSuccessMessage('Registration successful! Redirecting...');
           onRegistrationSuccess(data);
         } else {
           setErrorMessage('Registration completed but unexpected response from server.');
-          setErrorDetails(JSON.stringify(data, null, 2));
         }
       })
       .catch(err => {
         setIsSubmitting(false);
-        console.error('Registration error:', err);
         setErrorMessage(err.message || 'Registration failed. Please try again.');
       });
   };
