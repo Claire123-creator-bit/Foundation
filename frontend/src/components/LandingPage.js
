@@ -1,0 +1,745 @@
+import React, { useState } from 'react';
+import API_BASE from '../utils/apiConfig';
+
+// Icons as components for reusability
+const IconCheck = () => <span style={{color: '#00c853', marginRight: '8px'}}>✓</span>;
+const IconFeature = ({name}) => {
+  const icons = {
+    'Member Registration': '📝',
+    'Meeting Management': '📅',
+    'Bulk Messaging': '💬',
+    'Data Capture': '📊',
+    'Database Viewer': '🗄️',
+    'Admin Dashboard': '🎛️'
+  };
+  return <span style={{fontSize: '28px'}}>{icons[name] || '⭐'}</span>;
+};
+
+function LandingPage({ onGetStarted, onLogin }) {
+  const [activeTab, setActiveTab] = useState('register');
+  const [formData, setFormData] = useState({
+    full_name: '',
+    national_id: '',
+    confirm_id: '',
+    username: '',
+    password: ''
+  });
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showId, setShowId] = useState(false);
+  const [showConfirmId, setShowConfirmId] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const navigateTo = (page) => {
+    window.location.hash = page;
+    setTimeout(() => { window.location.reload(); }, 100);
+  };
+
+  const handleNavigation = (page) => {
+    window.location.hash = `#${page}`;
+  };
+
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+
+    if (formData.national_id !== formData.confirm_id) {
+      setMessage('ID numbers do not match');
+      setLoading(false);
+      return;
+    }
+
+    localStorage.setItem('signupName', formData.full_name);
+    localStorage.setItem('signupId', formData.national_id);
+    window.location.hash = '#registration';
+    setLoading(false);
+  };
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('Logging in...');
+
+    try {
+      const response = await fetch(`${API_BASE}/member-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ full_name: formData.full_name, national_id: formData.national_id })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        localStorage.setItem('userRole', data.role);
+        localStorage.setItem('userId', data.user_id);
+        localStorage.setItem('userName', data.name);
+        if (data.phone_number) localStorage.setItem('userPhone', data.phone_number);
+        window.location.hash = '#dashboard';
+        window.location.reload();
+      } else {
+        setMessage(data.message || 'Login failed');
+      }
+    } catch (error) {
+      setMessage('Connection error');
+    }
+    setLoading(false);
+  };
+
+  const handleAdminLoginSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('Logging in...');
+
+    try {
+      const response = await fetch(`${API_BASE}/admin-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: formData.username, password: formData.password })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        localStorage.setItem('userRole', data.role);
+        localStorage.setItem('userId', data.user_id);
+        localStorage.setItem('userName', data.name);
+        window.location.hash = '#dashboard';
+        window.location.reload();
+      } else {
+        setMessage(data.message || 'Login failed');
+      }
+    } catch (error) {
+      setMessage('Connection error');
+    }
+    setLoading(false);
+  };
+
+  const features = [
+    { title: 'Member Registration', desc: 'Easy registration' },
+    { title: 'Meeting Management', desc: 'Track meetings' },
+    { title: 'Bulk Messaging', desc: 'Send SMS' },
+    { title: 'Data Capture', desc: 'Manage data' },
+    { title: 'Database Viewer', desc: 'View records' },
+    { title: 'Admin Dashboard', desc: 'Full control' }
+  ];
+
+  const benefits = [
+    'Community Support',
+    'Transparent Governance',
+    'Member Benefits',
+    'Regular Updates',
+    'Networking',
+    'Empowerment'
+  ];
+
+  return (
+    <div style={styles.container}>
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+        input:focus {
+          outline: none;
+          border-color: #00c853 !important;
+          background: white !important;
+          box-shadow: 0 0 0 4px rgba(0,200,83,0.15) !important;
+        }
+        button:hover {
+          transform: translateY(-2px);
+        }
+        .feature-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 40px rgba(0,0,0,0.25) !important;
+        }
+        .benefit-item:hover {
+          transform: scale(1.03);
+          background: white !important;
+        }
+        .mission-card:hover {
+          transform: translateY(-5px);
+        }
+      `}</style>
+      
+      <div style={styles.backgroundPattern}></div>
+      
+      {/* Logo and Title */}
+      <div style={styles.logoSection}>
+        <div style={styles.logoCircle}>
+          <span style={styles.logoText}>M</span>
+        </div>
+        <h1 style={styles.title}>Mbogo Welfare Empowerment Foundation</h1>
+        <p style={styles.subtitle}>Empowering communities through transparency and trust</p>
+      </div>
+
+      {/* Tab Navigation */}
+      <div style={styles.tabContainer}>
+        <button 
+          onClick={() => { setActiveTab('register'); setMessage(''); }} 
+          style={styles.tabButton(activeTab === 'register', 'register')}
+        >
+          📝 Register as Member
+        </button>
+        <button 
+          onClick={() => { setActiveTab('login'); setMessage(''); }} 
+          style={styles.tabButton(activeTab === 'login', 'login')}
+        >
+          🔑 Member Login
+        </button>
+        <button 
+          onClick={() => { setActiveTab('admin'); setMessage(''); }} 
+          style={styles.tabButton(activeTab === 'admin', 'admin')}
+        >
+          ⚙️ Admin Login
+        </button>
+      </div>
+
+      {/* Registration Form */}
+      {activeTab === 'register' && (
+        <div style={styles.formCard}>
+          <h2 style={styles.formTitle}>📝 Register as a Member</h2>
+          <form onSubmit={handleRegisterSubmit}>
+            <div style={styles.inputGroup}>
+              <label style={styles.inputLabel}>Full Name</label>
+              <input 
+                type="text" 
+                value={formData.full_name} 
+                onChange={(e) => setFormData({...formData, full_name: e.target.value})} 
+                required 
+                placeholder="Enter your full name"
+                style={styles.input}
+              />
+            </div>
+            <div style={styles.inputGroup}>
+              <label style={styles.inputLabel}>National ID Number</label>
+              <div style={styles.inputWrapper}>
+                <input 
+                  type={showId ? "text" : "password"} 
+                  value={formData.national_id} 
+                  onChange={(e) => setFormData({...formData, national_id: e.target.value})} 
+                  required 
+                  placeholder="Enter your National ID"
+                  style={styles.input}
+                />
+                <button type="button" onClick={() => setShowId(!showId)} style={styles.showButton}>
+                  {showId ? '👁️ Hide' : '👁️ Show'}
+                </button>
+              </div>
+            </div>
+            <div style={styles.inputGroup}>
+              <label style={styles.inputLabel}>Confirm National ID</label>
+              <div style={styles.inputWrapper}>
+                <input 
+                  type={showConfirmId ? "text" : "password"} 
+                  value={formData.confirm_id} 
+                  onChange={(e) => setFormData({...formData, confirm_id: e.target.value})} 
+                  required 
+                  placeholder="Confirm your National ID"
+                  style={styles.input}
+                />
+                <button type="button" onClick={() => setShowConfirmId(!showConfirmId)} style={styles.showButton}>
+                  {showConfirmId ? '👁️ Hide' : '👁️ Show'}
+                </button>
+              </div>
+            </div>
+            <button type="submit" disabled={loading} style={styles.submitButton}>
+              {loading ? '⏳ Processing...' : '🚀 Register Now'}
+            </button>
+          </form>
+          {message && <div style={styles.message}>{message}</div>}
+        </div>
+      )}
+
+      {/* Member Login Form */}
+      {activeTab === 'login' && (
+        <div style={styles.formCard}>
+          <h2 style={styles.formTitle}>🔑 Member Login</h2>
+          <form onSubmit={handleLoginSubmit}>
+            <div style={styles.inputGroup}>
+              <label style={styles.inputLabel}>Full Name (as registered)</label>
+              <input 
+                type="text" 
+                value={formData.full_name} 
+                onChange={(e) => setFormData({...formData, full_name: e.target.value})} 
+                required 
+                placeholder="Enter your full name exactly as registered"
+                style={styles.input}
+              />
+            </div>
+            <div style={styles.inputGroup}>
+              <label style={styles.inputLabel}>National ID</label>
+              <div style={styles.inputWrapper}>
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  value={formData.national_id} 
+                  onChange={(e) => setFormData({...formData, national_id: e.target.value})} 
+                  required 
+                  placeholder="Enter your National ID"
+                  style={styles.input}
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.showButton}>
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
+            </div>
+            <button type="submit" disabled={loading} style={styles.submitButton}>
+              {loading ? '⏳ Logging in...' : '🔓 Login'}
+            </button>
+          </form>
+          {message && <div style={styles.message}>{message}</div>}
+        </div>
+      )}
+
+      {/* Admin Login Form */}
+      {activeTab === 'admin' && (
+        <div style={styles.formCard}>
+          <h2 style={{...styles.formTitle, color: '#f57c00'}}>⚙️ Admin Login</h2>
+          <form onSubmit={handleAdminLoginSubmit}>
+            <div style={styles.inputGroup}>
+              <label style={styles.inputLabel}>Username</label>
+              <input 
+                type="text" 
+                value={formData.username} 
+                onChange={(e) => setFormData({...formData, username: e.target.value})} 
+                required 
+                placeholder="Enter admin username"
+                style={styles.input}
+              />
+            </div>
+            <div style={styles.inputGroup}>
+              <label style={styles.inputLabel}>Password</label>
+              <div style={styles.inputWrapper}>
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  value={formData.password} 
+                  onChange={(e) => setFormData({...formData, password: e.target.value})} 
+                  required 
+                  placeholder="Enter admin password"
+                  style={styles.input}
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.showButton}>
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
+            </div>
+            <button type="submit" disabled={loading} style={{...styles.submitButton, background: 'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)', boxShadow: '0 8px 25px rgba(255,152,0,0.4)'}}>
+              {loading ? '⏳ Logging in...' : '⚙️ Admin Login'}
+            </button>
+          </form>
+          {message && <div style={styles.message}>{message}</div>}
+          <div style={styles.linkSection}>
+            <p style={styles.linkText}>
+              New administrator? 
+              <button onClick={() => navigateTo('admin-signup')} style={styles.linkButton}>
+                Register here
+              </button>
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Info Links */}
+      <div style={styles.navLinks}>
+        {[
+          {label: 'About Us', page: 'about'},
+          {label: 'Contact Us', page: 'contact'},
+          {label: 'FAQ', page: 'faq'},
+          {label: 'Terms & Conditions', page: 'terms'},
+          {label: 'Privacy Policy', page: 'privacy'}
+        ].map(item => (
+          <button key={item.page} onClick={() => handleNavigation(item.page)} style={styles.navLink}>
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Features Section */}
+      <div style={styles.featuresSection}>
+        <h2 style={styles.sectionTitle}>🚀 Platform Features</h2>
+        <div style={styles.featuresGrid}>
+          {features.map((feature, idx) => (
+            <div 
+              key={idx} 
+              className="feature-card"
+              style={styles.featureCard}
+            >
+              <span style={styles.featureIcon}>
+                <IconFeature name={feature.title} />
+              </span>
+              <h4 style={styles.featureTitle}>{feature.title}</h4>
+              <p style={styles.featureDesc}>{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Mission Section */}
+      <div style={styles.missionSection}>
+        {[
+          { title: 'Our Mission', text: 'Building stronger communities through transparent governance.' },
+          { title: 'Get Involved', text: 'Join our programs and make a difference.' },
+          { title: 'Support Us', text: 'Contribute through donations and volunteering.' }
+        ].map((item, idx) => (
+          <div 
+            key={idx} 
+            className="mission-card"
+            style={styles.missionCard(idx)}
+          >
+            <h3 style={styles.missionTitle}>{item.title}</h3>
+            <p style={styles.missionText}>{item.text}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Benefits Section */}
+      <div style={styles.benefitsSection}>
+        <h2 style={styles.benefitsTitle}>💚 Why Join Us?</h2>
+        <div style={styles.benefitsGrid}>
+          {benefits.map((item, idx) => (
+            <div 
+              key={idx} 
+              className="benefit-item"
+              style={styles.benefitItem}
+            >
+              <IconCheck />{item}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Styles object
+const styles = {
+  container: {
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #0a1628 0%, #1a365d 50%, #0f2744 100%)',
+    position: 'relative',
+    overflow: 'hidden',
+    padding: '40px 20px'
+  },
+  backgroundPattern: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundImage: `
+      radial-gradient(circle at 20% 80%, rgba(0, 200, 83, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(0, 188, 212, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(255, 152, 0, 0.05) 0%, transparent 30%)
+    `,
+    pointerEvents: 'none'
+  },
+  logoSection: {
+    textAlign: 'center',
+    marginBottom: '40px',
+    position: 'relative',
+    zIndex: 1
+  },
+  logoCircle: {
+    width: '100px',
+    height: '100px',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #00c853 0%, #0097a7 100%)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '0 auto 20px auto',
+    boxShadow: '0 10px 40px rgba(0, 200, 83, 0.4), 0 0 60px rgba(0, 200, 83, 0.2)',
+    animation: 'pulse 2s infinite'
+  },
+  logoText: {
+    color: 'white',
+    fontSize: '42px',
+    fontWeight: 'bold',
+    textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+  },
+  title: {
+    fontSize: '2.2em',
+    background: 'linear-gradient(135deg, #ffffff 0%, #00e676 50%, #00bcd4 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    marginBottom: '10px',
+    fontWeight: '800',
+    letterSpacing: '-0.5px',
+    textShadow: 'none'
+  },
+  subtitle: {
+    fontSize: '1.2em',
+    color: 'rgba(255,255,255,0.8)',
+    marginBottom: '0',
+    fontWeight: '400'
+  },
+  tabContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '12px',
+    marginBottom: '30px',
+    flexWrap: 'wrap',
+    position: 'relative',
+    zIndex: 1
+  },
+  tabButton: (isActive, type) => ({
+    padding: '14px 32px',
+    background: isActive 
+      ? type === 'admin' 
+        ? 'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)'
+        : 'linear-gradient(135deg, #00c853 0%, #0097a7 100%)'
+      : 'rgba(255,255,255,0.1)',
+    color: 'white',
+    border: `2px solid ${isActive ? 'transparent' : 'rgba(255,255,255,0.3)'}`,
+    borderRadius: '30px',
+    cursor: 'pointer',
+    fontWeight: '700',
+    fontSize: '14px',
+    transition: 'all 0.3s ease',
+    boxShadow: isActive ? '0 8px 25px rgba(0,200,83,0.4)' : 'none',
+    backdropFilter: 'blur(10px)'
+  }),
+  formCard: {
+    maxWidth: '480px',
+    margin: '0 auto',
+    padding: '40px',
+    background: 'rgba(255, 255, 255, 0.98)',
+    borderRadius: '24px',
+    boxShadow: '0 20px 60px rgba(0,0,0,0.3), 0 0 40px rgba(0,200,83,0.1)',
+    marginBottom: '40px',
+    position: 'relative',
+    zIndex: 1,
+    border: '1px solid rgba(255,255,255,0.2)'
+  },
+  formTitle: {
+    color: '#1a365d',
+    marginBottom: '30px',
+    textAlign: 'center',
+    fontSize: '1.8em',
+    fontWeight: '700'
+  },
+  inputGroup: {
+    marginBottom: '20px',
+    position: 'relative'
+  },
+  inputLabel: {
+    display: 'block',
+    color: '#2d3748',
+    fontWeight: '600',
+    fontSize: '13px',
+    marginBottom: '8px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px'
+  },
+  input: {
+    width: '100%',
+    padding: '16px 20px',
+    border: '2px solid #e2e8f0',
+    borderRadius: '12px',
+    fontSize: '15px',
+    background: '#f8fafc',
+    transition: 'all 0.3s ease',
+    fontWeight: '500',
+    boxSizing: 'border-box'
+  },
+  submitButton: {
+    width: '100%',
+    padding: '18px',
+    background: 'linear-gradient(135deg, #00c853 0%, #0097a7 100%)',
+    color: 'white',
+    border: 'none',
+    borderRadius: '12px',
+    fontSize: '16px',
+    fontWeight: '700',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 8px 25px rgba(0,200,83,0.4)',
+    marginTop: '10px'
+  },
+  message: {
+    marginTop: '20px',
+    padding: '14px',
+    borderRadius: '10px',
+    background: '#fee',
+    color: '#c53030',
+    textAlign: 'center',
+    fontWeight: '500'
+  },
+  linkSection: {
+    textAlign: 'center',
+    marginTop: '20px',
+    padding: '15px',
+    background: 'rgba(255,152,0,0.1)',
+    borderRadius: '12px'
+  },
+  linkText: {
+    color: '#e65100',
+    fontSize: '13px'
+  },
+  linkButton: {
+    color: '#00c853',
+    fontWeight: '700',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+    background: 'none',
+    border: 'none',
+    fontSize: '13px',
+    marginLeft: '5px'
+  },
+  navLinks: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '10px',
+    flexWrap: 'wrap',
+    marginBottom: '40px',
+    position: 'relative',
+    zIndex: 1
+  },
+  navLink: {
+    padding: '10px 20px',
+    background: 'rgba(255,255,255,0.1)',
+    color: 'rgba(255,255,255,0.9)',
+    border: '1px solid rgba(255,255,255,0.2)',
+    borderRadius: '20px',
+    cursor: 'pointer',
+    fontSize: '12px',
+    fontWeight: '600',
+    transition: 'all 0.3s ease',
+    backdropFilter: 'blur(10px)'
+  },
+  featuresSection: {
+    padding: '50px 30px',
+    background: 'rgba(255,255,255,0.05)',
+    borderRadius: '24px',
+    marginBottom: '40px',
+    position: 'relative',
+    zIndex: 1,
+    backdropFilter: 'blur(10px)',
+    border: '1px solid rgba(255,255,255,0.1)'
+  },
+  sectionTitle: {
+    color: 'white',
+    marginBottom: '30px',
+    fontSize: '1.8em',
+    textAlign: 'center',
+    fontWeight: '700'
+  },
+  featuresGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: '20px'
+  },
+  featureCard: {
+    padding: '25px',
+    background: 'rgba(255,255,255,0.95)',
+    borderRadius: '16px',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+    borderLeft: '4px solid #00c853',
+    textAlign: 'center',
+    transition: 'all 0.3s ease',
+    cursor: 'pointer'
+  },
+  featureIcon: {
+    fontSize: '36px',
+    marginBottom: '12px',
+    display: 'block'
+  },
+  featureTitle: {
+    color: '#1a365d',
+    marginBottom: '8px',
+    fontSize: '1.1em',
+    fontWeight: '700'
+  },
+  featureDesc: {
+    color: '#64748b',
+    fontSize: '0.9em',
+    margin: 0
+  },
+  missionSection: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+    gap: '20px',
+    marginBottom: '40px',
+    position: 'relative',
+    zIndex: 1
+  },
+  missionCard: (index) => ({
+    padding: '30px',
+    background: index === 0 
+      ? 'linear-gradient(135deg, #00c853 0%, #0097a7 100%)'
+      : index === 1
+      ? 'linear-gradient(135deg, #0097a7 0%, #00796b 100%)'
+      : 'linear-gradient(135deg, #00bcd4 0%, #006064 100%)',
+    borderRadius: '20px',
+    color: 'white',
+    boxShadow: '0 15px 40px rgba(0,0,0,0.3)',
+    transition: 'all 0.3s ease'
+  }),
+  missionTitle: {
+    fontSize: '1.3em',
+    marginBottom: '12px',
+    fontWeight: '700'
+  },
+  missionText: {
+    lineHeight: '1.6',
+    opacity: 0.95,
+    fontSize: '0.95em'
+  },
+  benefitsSection: {
+    padding: '40px',
+    background: 'rgba(255,255,255,0.08)',
+    borderRadius: '24px',
+    border: '1px solid rgba(255,255,255,0.15)',
+    marginBottom: '20px',
+    position: 'relative',
+    zIndex: 1,
+    backdropFilter: 'blur(10px)'
+  },
+  benefitsTitle: {
+    color: 'white',
+    marginBottom: '25px',
+    textAlign: 'center',
+    fontSize: '1.6em',
+    fontWeight: '700'
+  },
+  benefitsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gap: '15px'
+  },
+  benefitItem: {
+    padding: '18px',
+    background: 'rgba(255,255,255,0.95)',
+    borderRadius: '12px',
+    boxShadow: '0 5px 20px rgba(0,0,0,0.15)',
+    fontSize: '0.95em',
+    color: '#1a365d',
+    fontWeight: '600',
+    display: 'flex',
+    alignItems: 'center',
+    transition: 'all 0.3s ease'
+  },
+  showButton: {
+    position: 'absolute',
+    right: '12px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '14px',
+    padding: '6px 10px',
+    color: '#64748b',
+    fontWeight: '600'
+  },
+  inputWrapper: {
+    position: 'relative'
+  }
+};
+
+export default LandingPage;
+
