@@ -96,7 +96,7 @@ function ContactUs() {
 
           <div>
             <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Office Hours</h4>
-            <p style={{color: '#4a5568'}}>Monday - Friday<br/>8:00 AM - 5:00 PM</p>
+            <p style={{color: '#4a5568'}}>Monday - Friday<br/>8:00 AM - 5:00 PM<br/><br/>Saturday<br/>8:00 AM - 12:00 PM</p>
           </div>
         </div>
         
