@@ -68,7 +68,7 @@ function MeetingMinutes({ userRole, userId }) {
 
   return (
     <div className="form-container">
-      <h2 className="page-title">📝 Meeting Minutes</h2>
+      <h2 className="page-title">Meeting Minutes</h2>
       
       <nav style={{display: 'flex', gap: '10px', marginBottom: '30px', justifyContent: 'center'}}>
         {isAdmin && (
@@ -83,7 +83,7 @@ function MeetingMinutes({ userRole, userId }) {
               cursor: 'pointer'
             }}
           >
-            ✍️ Write Minutes
+            Write Minutes
           </button>
         )}
         <button 
@@ -97,13 +97,13 @@ function MeetingMinutes({ userRole, userId }) {
             cursor: 'pointer'
           }}
         >
-          📋 View Minutes ({minutes.length})
+          View Minutes ({minutes.length})
         </button>
       </nav>
 
       {activeSection === 'create' && isAdmin && (
         <div>
-          <h3 className="section-title">✍️ Create Meeting Minutes</h3>
+          <h3 className="section-title">Create Meeting Minutes</h3>
           <form onSubmit={handleSubmit} className="info-card">
             
             <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
@@ -142,7 +142,7 @@ function MeetingMinutes({ userRole, userId }) {
                 border: '1px solid #87CEEB',
                 marginBottom: '20px'
               }}>
-                <h4 style={{color: '#87CEEB', margin: '0 0 10px 0'}}>📋 Meeting Details</h4>
+                <h4 style={{color: '#87CEEB', margin: '0 0 10px 0'}}>Meeting Details</h4>
                 <p style={{margin: '5px 0'}}><strong>Title:</strong> {selectedMeeting.title}</p>
                 <p style={{margin: '5px 0'}}><strong>Date:</strong> {selectedMeeting.date} at {selectedMeeting.time}</p>
                 <p style={{margin: '5px 0'}}><strong>Venue:</strong> {selectedMeeting.venue || selectedMeeting.meeting_link}</p>
@@ -203,7 +203,7 @@ function MeetingMinutes({ userRole, userId }) {
             </div>
             
             <button type="submit" style={{width: '100%', padding: '15px', fontSize: '16px', marginTop: '20px'}}>
-              📝 Save Meeting Minutes
+              Save Meeting Minutes
             </button>
           </form>
         </div>
@@ -211,7 +211,7 @@ function MeetingMinutes({ userRole, userId }) {
 
       {activeSection === 'view' && (
         <div>
-          <h3 className="section-title">📋 Meeting Minutes Records</h3>
+          <h3 className="section-title">Meeting Minutes Records</h3>
           {minutes.length > 0 ? (
             minutes.map(minute => (
               <div key={minute.id} className="faq-item" style={{marginBottom: '25px'}}>
@@ -219,46 +219,46 @@ function MeetingMinutes({ userRole, userId }) {
                   <div>
                     <h4 style={{color: '#87CEEB', margin: '0 0 5px 0'}}>{minute.meeting_title}</h4>
                     <p style={{margin: '0', color: '#666', fontSize: '14px'}}>
-                      📅 {minute.meeting_date} | ✍️ Secretary: {minute.secretary_name} | 📝 {new Date(minute.created_date).toLocaleDateString()}
+                      {minute.meeting_date} | Secretary: {minute.secretary_name} | {new Date(minute.created_date).toLocaleDateString()}
                     </p>
                   </div>
                   <button 
                     onClick={() => window.print()}
                     style={{fontSize: '12px', padding: '8px 16px'}}
                   >
-                    🖨️ Print
+                    Print
                   </button>
                 </div>
                 
                 <div style={{background: '#f9f9f9', padding: '15px', borderRadius: '8px', marginBottom: '15px'}}>
-                  <h5 style={{color: '#87CEEB', margin: '0 0 10px 0'}}>📝 Meeting Content:</h5>
+                  <h5 style={{color: '#87CEEB', margin: '0 0 10px 0'}}>Meeting Content:</h5>
                   <p style={{margin: '0', lineHeight: '1.6', whiteSpace: 'pre-wrap'}}>{minute.content}</p>
                 </div>
                 
                 {minute.attendees_present && (
                   <div style={{marginBottom: '10px'}}>
-                    <strong style={{color: '#4caf50'}}>✅ Present:</strong>
+                    <strong style={{color: '#4caf50'}}>Present:</strong>
                     <p style={{margin: '5px 0', whiteSpace: 'pre-wrap'}}>{minute.attendees_present}</p>
                   </div>
                 )}
                 
                 {minute.attendees_absent && (
                   <div style={{marginBottom: '10px'}}>
-                    <strong style={{color: '#f44336'}}>❌ Absent:</strong>
+                    <strong style={{color: '#f44336'}}>Absent:</strong>
                     <p style={{margin: '5px 0', whiteSpace: 'pre-wrap'}}>{minute.attendees_absent}</p>
                   </div>
                 )}
                 
                 {minute.action_items && (
                   <div style={{marginBottom: '10px'}}>
-                    <strong style={{color: '#ff9800'}}>📋 Action Items:</strong>
+                    <strong style={{color: '#ff9800'}}>Action Items:</strong>
                     <p style={{margin: '5px 0', whiteSpace: 'pre-wrap'}}>{minute.action_items}</p>
                   </div>
                 )}
                 
                 {minute.next_meeting_date && (
                   <div>
-                    <strong style={{color: '#87CEEB'}}>📅 Next Meeting:</strong>
+                    <strong style={{color: '#87CEEB'}}>Next Meeting:</strong>
                     <span style={{marginLeft: '10px'}}>{minute.next_meeting_date}</span>
                   </div>
                 )}

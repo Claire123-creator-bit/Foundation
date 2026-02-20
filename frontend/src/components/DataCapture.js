@@ -84,7 +84,7 @@ function DataCapture() {
       locationInfo = `Venue: ${meeting.venue}`;
     }
     
-    const message = `📅 MEETING ALERT: ${meeting.title}\nDate: ${meeting.date} at ${meeting.time}\n${locationInfo}\nPlease confirm attendance.`;
+    const message = `MEETING ALERT: ${meeting.title}\nDate: ${meeting.date} at ${meeting.time}\n${locationInfo}\nPlease confirm attendance.`;
     
     fetch(`${API_BASE}/send-bulk-sms`, {
       method: 'POST',
@@ -107,12 +107,12 @@ function DataCapture() {
     
     window.open(googleCalendarUrl, '_blank');
     
-    alert('📹 Google Meet Integration:\n\n1. Google Calendar will open\n2. Add the event to create a Meet link\n3. Copy the Meet link and update the meeting\n4. Share the link with members');
+    alert('Google Meet Integration:\n\n1. Google Calendar will open\n2. Add event to create a Meet link\n3. Copy Meet link and update meeting\n4. Share link with members');
   };
 
   return (
     <div className="form-container">
-      <h2 className="page-title">📊 Data Capture System</h2>
+      <h2 className="page-title">Data Capture System</h2>
       
       <nav style={{display: 'flex', gap: '10px', marginBottom: '30px', justifyContent: 'center'}}>
         <button 
@@ -120,21 +120,21 @@ function DataCapture() {
           onClick={() => setActiveSection('meetings')}
           style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'meetings' ? '#87CEEB' : '#f0f0f0'}}
         >
-          📅 Meetings
+          Meetings
         </button>
         <button 
           className={activeSection === 'attendance' ? 'nav-button' : ''}
           onClick={() => setActiveSection('attendance')}
           style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'attendance' ? '#87CEEB' : '#f0f0f0'}}
         >
-          ✅ Attendance
+          Attendance
         </button>
         <button 
           className={activeSection === 'upload' ? 'nav-button' : ''}
           onClick={() => setActiveSection('upload')}
           style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'upload' ? '#87CEEB' : '#f0f0f0'}}
         >
-          📤 Data Upload
+          Data Upload
         </button>
       </nav>
 
@@ -184,9 +184,9 @@ function DataCapture() {
                 onChange={e => setMeetingForm({...meetingForm, meeting_type: e.target.value})}
                 required
               >
-                <option value="physical">🏢 Physical Meeting</option>
-                <option value="online">💻 Online Meeting</option>
-                <option value="hybrid">🔄 Hybrid Meeting</option>
+                <option value="physical">Physical Meeting</option>
+                <option value="online">Online Meeting</option>
+                <option value="hybrid">Hybrid Meeting</option>
               </select>
               
               <input 
@@ -220,7 +220,7 @@ function DataCapture() {
             
             {meetingForm.meeting_type === 'online' && (
               <div style={{padding: '15px', background: 'rgba(66, 133, 244, 0.1)', borderRadius: '8px', border: '1px solid #4285f4'}}>
-                <h4 style={{color: '#4285f4', margin: '0 0 10px 0'}}>📹 Online Meeting Setup</h4>
+                <h4 style={{color: '#4285f4', margin: '0 0 10px 0'}}>Online Meeting Setup</h4>
                 <p style={{margin: '0', fontSize: '14px', color: '#666'}}>
                   • Create a Google Meet link or use Zoom<br/>
                   • Paste the meeting link above<br/>
@@ -229,7 +229,7 @@ function DataCapture() {
               </div>
             )}
             
-            <button type="submit">📅 Register Meeting</button>
+            <button type="submit">Register Meeting</button>
           </form>
 
           <h3 className="section-title">Registered Meetings</h3>
@@ -238,10 +238,11 @@ function DataCapture() {
               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
                 <div style={{flex: 1}}>
                   <h4 style={{color: '#87CEEB', marginBottom: '10px'}}>
-                    {meeting.meeting_type === 'online' ? '💻' : meeting.meeting_type === 'hybrid' ? '🔄' : '🏢'} {meeting.title}
+                    {meeting.meeting_type === 'online' ? 'Online' : meeting.meeting_type === 'hybrid' ? 'Hybrid' : 'Physical'} {meeting.title}
                   </h4>
-                  <p><strong>📅 Date:</strong> {meeting.date} at {meeting.time}</p>
-                  <p><strong>📍 {meeting.meeting_type === 'online' ? 'Meeting Link' : 'Venue'}:</strong> 
+                  <p><strong>Agenda:</strong> {meeting.agenda}</p>
+                  <p><strong>Date:</strong> {meeting.date} at {meeting.time}</p>
+                  <p><strong>{meeting.meeting_type === 'online' ? 'Meeting Link' : 'Venue'}:</strong> 
                     {meeting.meeting_type === 'online' || meeting.meeting_link ? (
                       <a href={meeting.meeting_link || meeting.venue} target="_blank" rel="noopener noreferrer" 
                          style={{color: '#87CEEB', textDecoration: 'underline', marginLeft: '5px'}}>
@@ -250,14 +251,14 @@ function DataCapture() {
                     ) : meeting.venue}
                   </p>
                   {meeting.meeting_type === 'hybrid' && meeting.meeting_link && (
-                    <p><strong>💻 Online Link:</strong> 
+                    <p><strong>Online Link:</strong> 
                       <a href={meeting.meeting_link} target="_blank" rel="noopener noreferrer" 
                          style={{color: '#87CEEB', textDecoration: 'underline', marginLeft: '5px'}}>
                         Join Online
                       </a>
                     </p>
                   )}
-                  <p><strong>👥 Target:</strong> {meeting.category || 'All Members'}</p>
+                  <p><strong>Target:</strong> {meeting.category || 'All Members'}</p>
                   {meeting.agenda && <p><strong>📋 Agenda:</strong> {meeting.agenda}</p>}
                 </div>
                 <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
@@ -265,14 +266,14 @@ function DataCapture() {
                     onClick={() => sendMeetingNotification(meeting.id)}
                     style={{fontSize: '12px', padding: '8px 16px', whiteSpace: 'nowrap'}}
                   >
-                    📱 Send SMS
+                    Send SMS
                   </button>
                   {(meeting.meeting_type === 'online' || meeting.meeting_link) && (
                     <button 
                       onClick={() => generateGoogleMeetLink(meeting)}
                       style={{fontSize: '12px', padding: '8px 16px', whiteSpace: 'nowrap', background: '#4285f4'}}
                     >
-                      📹 Google Meet
+                      Google Meet
                     </button>
                   )}
                 </div>
