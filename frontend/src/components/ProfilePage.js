@@ -66,7 +66,7 @@ function ProfilePage({ userId, onLogout }) {
           width: '50px',
           height: '50px',
           border: '4px solid #f3f3f3',
-          borderTop: '4px solid #00bcd4',
+          borderTop: '4px solid #87CEEB',
           borderRadius: '50%',
           animation: 'spin 1s linear infinite'
         }}></div>
@@ -95,7 +95,7 @@ function ProfilePage({ userId, onLogout }) {
           <h3 style={{ color: '#f44336', margin: '0 0 15px 0' }}>Error</h3>
           <p style={{ color: '#666', margin: '0 0 20px 0' }}>{error}</p>
           <button onClick={handleRetry} style={{
-            background: '#00bcd4',
+            background: '#87CEEB',
             color: 'white',
             border: 'none',
             padding: '10px 20px',
@@ -113,7 +113,7 @@ function ProfilePage({ userId, onLogout }) {
   return (
     <div className="form-container">
       <div style={{
-        background: 'linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         color: 'white',
         padding: 'clamp(15px, 4vw, 30px)',
         borderRadius: '15px',
@@ -130,12 +130,12 @@ function ProfilePage({ userId, onLogout }) {
         background: 'white',
         borderRadius: '12px',
         padding: 'clamp(15px, 4vw, 30px)',
-        boxShadow: '0 4px 15px rgba(0,188,212,0.1)',
+        boxShadow: '0 4px 15px rgba(135,206,235,0.1)',
         width: '100%',
         boxSizing: 'border-box'
       }}>
         <div style={{ marginBottom: 'clamp(15px, 4vw, 30px)' }}>
-          <h3 style={{ color: '#00bcd4', marginBottom: '20px', borderBottom: '2px solid #00bcd4', paddingBottom: '10px', fontSize: 'clamp(16px, 3.5vw, 18px)' }}>
+          <h3 style={{ color: '#87CEEB', marginBottom: '20px', borderBottom: '2px solid #87CEEB', paddingBottom: '10px', fontSize: 'clamp(16px, 3.5vw, 18px)' }}>
             Personal Information
           </h3>
           
@@ -149,7 +149,7 @@ function ProfilePage({ userId, onLogout }) {
 
             <div className="profile-field">
               <label style={{ fontWeight: 'bold', color: '#666', display: 'block', marginBottom: '5px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
-                National ID
+                National Id
               </label>
               <p style={{ margin: '0', fontSize: 'clamp(14px, 3vw, 16px)', color: '#333' }}>{member.national_id}</p>
             </div>
@@ -171,7 +171,7 @@ function ProfilePage({ userId, onLogout }) {
         </div>
 
         <div style={{ marginBottom: 'clamp(15px, 4vw, 30px)' }}>
-          <h3 style={{ color: '#00bcd4', marginBottom: '20px', borderBottom: '2px solid #00bcd4', paddingBottom: '10px', fontSize: 'clamp(16px, 3.5vw, 18px)' }}>
+          <h3 style={{ color: '#87CEEB', marginBottom: '20px', borderBottom: '2px solid #87CEEB', paddingBottom: '10px', fontSize: 'clamp(16px, 3.5vw, 18px)' }}>
             Location Details
           </h3>
           
@@ -207,7 +207,7 @@ function ProfilePage({ userId, onLogout }) {
         </div>
 
         <div style={{ marginBottom: 'clamp(15px, 4vw, 30px)' }}>
-          <h3 style={{ color: '#00bcd4', marginBottom: '20px', borderBottom: '2px solid #00bcd4', paddingBottom: '10px', fontSize: 'clamp(16px, 3.5vw, 18px)' }}>
+          <h3 style={{ color: '#87CEEB', marginBottom: '20px', borderBottom: '2px solid #87CEEB', paddingBottom: '10px', fontSize: 'clamp(16px, 3.5vw, 18px)' }}>
             Account Status
           </h3>
           
@@ -264,3 +264,4 @@ function ProfilePage({ userId, onLogout }) {
 }
 
 export default ProfilePage;
+

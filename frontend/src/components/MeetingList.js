@@ -50,7 +50,7 @@ function MeetingList() {
             )}
             <button onClick={() => handleRSVP(meeting.id)} style={{
               padding: '10px 15px',
-              background: '#00bcd4',
+              background: '#87CEEB',
               color: 'white',
               border: 'none',
               borderRadius: '5px',

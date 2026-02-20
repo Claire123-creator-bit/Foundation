@@ -42,7 +42,7 @@ function ContactUs() {
       <button onClick={goBack} style={{
         marginBottom: '30px',
         padding: '12px 30px',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         color: 'white',
         border: 'none',
         borderRadius: '50px',
@@ -56,7 +56,7 @@ function ContactUs() {
       <h2 className="page-title">Contact Us</h2>
       
       <div style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         padding: '40px',
         borderRadius: '25px',
         color: 'white',
@@ -74,10 +74,10 @@ function ContactUs() {
           background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
           padding: '35px',
           borderRadius: '25px',
-          boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
-          border: '1px solid rgba(102, 126, 234, 0.1)'
+          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
+          border: '1px solid rgba(135, 206, 235, 0.1)'
         }}>
-          <h3 style={{color: '#667eea', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Contact Information</h3>
+          <h3 style={{color: '#87CEEB', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Contact Information</h3>
           
           <div style={{marginBottom: '20px'}}>
             <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Address</h4>
@@ -104,10 +104,10 @@ function ContactUs() {
           background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
           padding: '35px',
           borderRadius: '25px',
-          boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
-          border: '1px solid rgba(102, 126, 234, 0.1)'
+          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
+          border: '1px solid rgba(135, 206, 235, 0.1)'
         }}>
-          <h3 style={{color: '#667eea', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Send Us a Message</h3>
+          <h3 style={{color: '#87CEEB', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Send Us a Message</h3>
           
           <label style={{display: 'block', marginBottom: '8px'}}>Your Name</label>
           <input 
@@ -145,8 +145,8 @@ function ContactUs() {
         background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
         padding: '40px',
         borderRadius: '25px',
-        boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
-        border: '1px solid rgba(102, 126, 234, 0.1)',
+        boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
+        border: '1px solid rgba(135, 206, 235, 0.1)',
         textAlign: 'center'
       }}>
         <h3 style={{color: '#2d3748', fontSize: '1.8em', marginBottom: '15px', fontWeight: '700'}}>Visit Our Office</h3>

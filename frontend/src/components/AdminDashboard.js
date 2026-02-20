@@ -132,7 +132,7 @@ function AdminDashboard() {
         marginBottom: '30px'
       }}>
         <div className="info-card" style={{
-          background: 'linear-gradient(135deg, #006064 0%, #00838f 100%)',
+          background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
           color: 'white',
           textAlign: 'center'
         }}>
@@ -217,7 +217,7 @@ function AdminDashboard() {
         <h3 className="section-title">Assignments</h3>
         {assignments.map(assignment => (
           <div key={assignment.id} className="faq-item" style={{marginBottom: '20px'}}>
-            <h4 style={{color: '#00bcd4', marginBottom: '10px'}}>{assignment.title}</h4>
+            <h4 style={{color: '#87CEEB', marginBottom: '10px'}}>{assignment.title}</h4>
             <p style={{marginBottom: '10px'}}>{assignment.description}</p>
             <div style={{display: 'flex', gap: '20px', marginBottom: '10px', fontSize: '14px', color: '#666'}}>
               <span><strong>Assigned to:</strong> {assignment.assigned_to}</span>
@@ -238,7 +238,7 @@ function AdminDashboard() {
         {isTraining && (
           <div style={{marginBottom: '20px'}}>
             <div style={{width: '100%', backgroundColor: '#f3f3f3', borderRadius: '5px', height: '20px'}}>
-              <div style={{width: `${trainingProgress}%`, backgroundColor: '#00bcd4', height: '20px', borderRadius: '5px'}}></div>
+              <div style={{width: `${trainingProgress}%`, backgroundColor: '#87CEEB', height: '20px', borderRadius: '5px'}}></div>
             </div>
             <p style={{marginTop: '10px'}}>{trainingMessage}</p>
           </div>
@@ -269,3 +269,4 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
+

@@ -202,13 +202,13 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
 
       <form onSubmit={handleSubmit}>
         <div style={{
-          background: 'rgba(0,188,212,0.1)', 
+          background: 'rgba(135,206,235,0.1)', 
           padding: '20px', 
           borderRadius: '12px', 
           marginBottom: '25px',
-          border: '1px solid rgba(0,188,212,0.3)'
+          border: '1px solid rgba(135,206,235,0.3)'
         }}>
-          <h3 style={{color: '#00bcd4', margin: '0 0 20px 0'}}>Personal Information</h3>
+          <h3 style={{color: '#87CEEB', margin: '0 0 20px 0'}}>Personal Information</h3>
           
           <div style={{marginBottom: '15px'}}>
             <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
@@ -227,7 +227,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
           <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
             <div>
               <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
-                National ID Number *
+                National Id Number *
               </label>
               <input 
                 name="national_id" 
@@ -419,7 +419,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
             padding: '18px', 
             fontSize: '18px', 
             fontWeight: 'bold',
-            background: isSubmitting ? '#ccc' : 'linear-gradient(45deg, #00bcd4, #0097a7)',
+            background: isSubmitting ? '#ccc' : 'linear-gradient(45deg, #87CEEB, #87CEEB)',
             color: 'white',
             border: 'none',
             borderRadius: '12px',

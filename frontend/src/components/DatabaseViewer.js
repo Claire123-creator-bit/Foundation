@@ -55,7 +55,7 @@ function DatabaseViewer({ userRole, userId }) {
   };
 
   const thStyle = {
-    background: 'linear-gradient(45deg, #00bcd4, #0097a7)',
+    background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
     color: 'white',
     padding: '12px 8px',
     textAlign: 'left',
@@ -79,7 +79,7 @@ function DatabaseViewer({ userRole, userId }) {
           style={{
             padding: '10px 20px', 
             borderRadius: '8px', 
-            background: activeTable === 'members' ? '#00bcd4' : '#f0f0f0',
+            background: activeTable === 'members' ? '#87CEEB' : '#f0f0f0',
             color: activeTable === 'members' ? 'white' : '#333',
             border: 'none',
             cursor: 'pointer'
@@ -92,7 +92,7 @@ function DatabaseViewer({ userRole, userId }) {
           style={{
             padding: '10px 20px', 
             borderRadius: '8px', 
-            background: activeTable === 'meetings' ? '#00bcd4' : '#f0f0f0',
+            background: activeTable === 'meetings' ? '#87CEEB' : '#f0f0f0',
             color: activeTable === 'meetings' ? 'white' : '#333',
             border: 'none',
             cursor: 'pointer'
@@ -105,7 +105,7 @@ function DatabaseViewer({ userRole, userId }) {
           style={{
             padding: '10px 20px', 
             borderRadius: '8px', 
-            background: activeTable === 'attendance' ? '#00bcd4' : '#f0f0f0',
+            background: activeTable === 'attendance' ? '#87CEEB' : '#f0f0f0',
             color: activeTable === 'attendance' ? 'white' : '#333',
             border: 'none',
             cursor: 'pointer'
@@ -117,7 +117,7 @@ function DatabaseViewer({ userRole, userId }) {
 
       {activeTable === 'members' && (
         <div>
-          <h3 style={{color: '#00bcd4'}}>👥 Members Table</h3>
+          <h3 style={{color: '#87CEEB'}}>👥 Members Table</h3>
           {members.length > 0 ? (
             <table style={tableStyle}>
               <thead>
@@ -145,7 +145,7 @@ function DatabaseViewer({ userRole, userId }) {
                     <td style={tdStyle}>{member.constituency}</td>
                     <td style={tdStyle}>{member.ward}</td>
                     <td style={tdStyle}>{member.polling_centre}</td>
-                    <td style={tdStyle}><span style={{background: '#00bcd4', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '11px'}}>{member.category}</span></td>
+                    <td style={tdStyle}><span style={{background: '#87CEEB', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '11px'}}>{member.category}</span></td>
                     <td style={tdStyle}>{new Date(member.registration_date).toLocaleDateString()}</td>
                   </tr>
                 ))}
@@ -161,7 +161,7 @@ function DatabaseViewer({ userRole, userId }) {
 
       {activeTable === 'meetings' && (
         <div>
-          <h3 style={{color: '#00bcd4'}}>📅 Meetings Table</h3>
+          <h3 style={{color: '#87CEEB'}}>📅 Meetings Table</h3>
           {meetings.length > 0 ? (
             <table style={tableStyle}>
               <thead>
@@ -184,7 +184,7 @@ function DatabaseViewer({ userRole, userId }) {
                     <td style={tdStyle}>{meeting.date}</td>
                     <td style={tdStyle}>{meeting.time}</td>
                     <td style={tdStyle}>
-                      <span style={{background: meeting.meeting_type === 'online' ? '#4285f4' : '#00bcd4', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '11px'}}>
+                      <span style={{background: meeting.meeting_type === 'online' ? '#4285f4' : '#87CEEB', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '11px'}}>
                         {meeting.meeting_type || 'physical'}
                       </span>
                     </td>
@@ -205,7 +205,7 @@ function DatabaseViewer({ userRole, userId }) {
 
       {activeTable === 'attendance' && (
         <div>
-          <h3 style={{color: '#00bcd4'}}>✅ Attendance Table</h3>
+          <h3 style={{color: '#87CEEB'}}>✅ Attendance Table</h3>
           {attendance.length > 0 ? (
             <table style={tableStyle}>
               <thead>

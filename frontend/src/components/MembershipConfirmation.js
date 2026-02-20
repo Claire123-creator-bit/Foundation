@@ -22,13 +22,13 @@ const MembershipConfirmation = ({ memberData, onContinue }) => {
         borderRadius: '20px 18px 22px 16px',
         maxWidth: '500px',
         textAlign: 'center',
-        boxShadow: '3px 8px 25px rgba(0, 96, 100, 0.2)',
-        border: '3px solid #006064'
+        boxShadow: '3px 8px 25px rgba(135,206,235, 0.2)',
+        border: '3px solid #87CEEB'
       }}>
         <div style={{
           width: '80px',
           height: '80px',
-          background: 'linear-gradient(135deg, #006064, #00838f)',
+          background: 'linear-gradient(135deg, #87CEEB, #87CEEB)',
           borderRadius: '50%',
           margin: '0 auto 20px',
           display: 'flex',
@@ -40,7 +40,7 @@ const MembershipConfirmation = ({ memberData, onContinue }) => {
           ✓
         </div>
         
-        <h2 style={{ color: '#006064', marginBottom: '20px' }}>
+        <h2 style={{ color: '#87CEEB', marginBottom: '20px' }}>
           Welcome to Mbogo Welfare Empowerment Foundation!
         </h2>
         
@@ -58,9 +58,9 @@ const MembershipConfirmation = ({ memberData, onContinue }) => {
           padding: '15px',
           borderRadius: '10px',
           marginBottom: '25px',
-          border: '2px solid #006064'
+          border: '2px solid #87CEEB'
         }}>
-          <p style={{ margin: '0', color: '#006064', fontWeight: 'bold' }}>
+          <p style={{ margin: '0', color: '#87CEEB', fontWeight: 'bold' }}>
             📱 SMS Confirmation Sent
           </p>
           <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
@@ -74,7 +74,7 @@ const MembershipConfirmation = ({ memberData, onContinue }) => {
             onContinue();
           }}
           style={{
-            background: 'linear-gradient(135deg, #006064, #00838f)',
+            background: 'linear-gradient(135deg, #87CEEB, #87CEEB)',
             color: 'white',
             border: 'none',
             padding: '15px 30px',
@@ -82,7 +82,7 @@ const MembershipConfirmation = ({ memberData, onContinue }) => {
             fontSize: '16px',
             fontWeight: 'bold',
             cursor: 'pointer',
-            boxShadow: '0 4px 15px rgba(0, 96, 100, 0.3)'
+            boxShadow: '0 4px 15px rgba(135,206,235, 0.3)'
           }}
         >
           Continue to Dashboard
@@ -97,7 +97,7 @@ const MembershipConfirmation = ({ memberData, onContinue }) => {
         <div style={{
           width: '100px',
           height: '100px',
-          background: 'linear-gradient(135deg, #006064, #00838f)',
+          background: 'linear-gradient(135deg, #87CEEB, #87CEEB)',
           borderRadius: '50%',
           margin: '0 auto 20px',
           display: 'flex',
@@ -109,13 +109,13 @@ const MembershipConfirmation = ({ memberData, onContinue }) => {
           ✓
         </div>
         
-        <h1 style={{ color: '#006064', fontSize: '2.2em', marginBottom: '10px' }}>
+        <h1 style={{ color: '#87CEEB', fontSize: '2.2em', marginBottom: '10px' }}>
           Registration Successful
         </h1>
       </div>
 
       <div className="card" style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <h3 style={{ color: '#006064', marginBottom: '20px' }}>
+        <h3 style={{ color: '#87CEEB', marginBottom: '20px' }}>
           Membership Confirmation
         </h3>
         
@@ -124,7 +124,7 @@ const MembershipConfirmation = ({ memberData, onContinue }) => {
         </div>
         
         <div style={{
-          background: 'linear-gradient(135deg, #006064, #00838f)',
+          background: 'linear-gradient(135deg, #87CEEB, #87CEEB)',
           color: 'white',
           padding: '10px 20px',
           borderRadius: '20px',
@@ -137,7 +137,7 @@ const MembershipConfirmation = ({ memberData, onContinue }) => {
         </div>
         
         <div style={{ color: '#666', fontSize: '14px', lineHeight: '1.6' }}>
-          <p><strong>National ID:</strong> {memberData.national_id}</p>
+          <p><strong>National Id:</strong> {memberData.national_id}</p>
           <p><strong>Phone:</strong> {memberData.phone_number}</p>
           <p><strong>Location:</strong> {memberData.ward} Ward, {memberData.constituency}, {memberData.county}</p>
           <p><strong>Category:</strong> {memberData.category}</p>
@@ -145,7 +145,7 @@ const MembershipConfirmation = ({ memberData, onContinue }) => {
       </div>
 
       <div style={{ textAlign: 'center' }}>
-        <p style={{ color: '#006064', fontSize: '16px', fontWeight: 'bold' }}>
+        <p style={{ color: '#87CEEB', fontSize: '16px', fontWeight: 'bold' }}>
           🎉 You are now officially a member of Mbogo Welfare Empowerment Foundation
         </p>
       </div>
@@ -156,3 +156,4 @@ const MembershipConfirmation = ({ memberData, onContinue }) => {
 };
 
 export default MembershipConfirmation;
+

@@ -64,7 +64,7 @@ const LoginPage = ({ onLogin, onNavigate }) => {
       <button type="button" onClick={() => onNavigate('landing')} style={{
         marginBottom: '20px',
         padding: '10px 20px',
-        background: 'linear-gradient(45deg, #006064, #00838f)',
+        background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
         color: 'white',
         border: 'none',
         borderRadius: '15px',
@@ -80,7 +80,7 @@ const LoginPage = ({ onLogin, onNavigate }) => {
           type="button"
           onClick={() => { setLoginType('member'); setMessage(''); }}
           style={{
-            background: loginType === 'member' ? '#006064' : '#ccc',
+            background: loginType === 'member' ? '#87CEEB' : '#ccc',
             color: 'white',
             border: 'none',
             padding: '10px 20px',
@@ -95,7 +95,7 @@ const LoginPage = ({ onLogin, onNavigate }) => {
           type="button"
           onClick={() => { setLoginType('admin'); setMessage(''); }}
           style={{
-            background: loginType === 'admin' ? '#006064' : '#ccc',
+            background: loginType === 'admin' ? '#87CEEB' : '#ccc',
             color: 'white',
             border: 'none',
             padding: '10px 20px',
@@ -145,14 +145,14 @@ const LoginPage = ({ onLogin, onNavigate }) => {
               />
             </div>
             <div className="form-group">
-              <label>National ID:</label>
+              <label>National Id:</label>
               <div style={{position: 'relative'}}>
                 <input
                   type={showPassword ? "text" : "password"}
                   value={formData.national_id}
                   onChange={(e) => setFormData({...formData, national_id: e.target.value})}
                   required
-                  placeholder="Enter your National ID"
+                  placeholder="Enter your National Id"
                 />
                 <button
                   type="button"
@@ -187,11 +187,11 @@ const LoginPage = ({ onLogin, onNavigate }) => {
         </div>
       )}
       
-      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: 'rgba(0,96,100,0.05)', borderRadius: '10px' }}>
+      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: 'rgba(135,206,235,0.05)', borderRadius: '10px' }}>
         <p style={{ margin: '0', color: '#666' }}>
           Don't have an account?{' '}
           <span onClick={() => onNavigate('signup')} style={{
-            color: '#006064',
+            color: '#87CEEB',
             fontWeight: 'bold',
             cursor: 'pointer',
             textDecoration: 'underline'
@@ -201,18 +201,18 @@ const LoginPage = ({ onLogin, onNavigate }) => {
         </p>
         {loginType === 'member' && (
           <p style={{ margin: '10px 0 0 0', color: '#666', fontSize: '12px' }}>
-            Forgot your National ID? Please contact support or re-register.
+            Forgot your National Id? Please contact support or re-register.
           </p>
         )}
       </div>
       
       {/* Admin Sign Up Link */}
       {loginType === 'admin' && (
-        <div style={{ textAlign: 'center', marginTop: '15px', padding: '15px', background: 'rgba(255,152,0,0.1)', borderRadius: '10px', border: '1px solid rgba(255,152,0,0.3)' }}>
-          <p style={{ margin: '0', color: '#e65100', fontSize: '13px' }}>
+        <div style={{ textAlign: 'center', marginTop: '15px', padding: '15px', background: 'rgba(135,206,235,0.1)', borderRadius: '10px', border: '1px solid rgba(135,206,235,0.3)' }}>
+          <p style={{ margin: '0', color: '#666', fontSize: '13px' }}>
             New administrator?{' '}
             <span onClick={() => onNavigate('admin-signup')} style={{
-              color: '#006064',
+              color: '#87CEEB',
               fontWeight: 'bold',
               cursor: 'pointer',
               textDecoration: 'underline'
@@ -227,3 +227,4 @@ const LoginPage = ({ onLogin, onNavigate }) => {
 };
 
 export default LoginPage;
+

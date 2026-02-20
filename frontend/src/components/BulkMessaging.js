@@ -58,7 +58,7 @@ function BulkMessaging({ userRole, userId }) {
       <p style={{textAlign: 'center', color: '#666', marginBottom: '30px'}}>Send instant SMS updates to all registered members</p>
       <form onSubmit={handleSend}>
         <div style={{marginBottom: '20px'}}>
-          <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#00bcd4'}}>Target Audience:</label>
+          <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#87CEEB'}}>Target Audience:</label>
           <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} style={{width: '100%'}}>
             <option value="">All Members (Broadcast to Everyone)</option>
             {categories.map(cat => <option key={cat} value={cat}>{cat} Members Only</option>)}
@@ -66,7 +66,7 @@ function BulkMessaging({ userRole, userId }) {
         </div>
         
         <div style={{marginBottom: '20px'}}>
-          <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#00bcd4'}}>Message Content:</label>
+          <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#87CEEB'}}>Message Content:</label>
           <textarea 
             placeholder="Type your message here... (e.g., Meeting tomorrow at 2PM, venue: Community Hall)" 
             value={message} 
@@ -77,7 +77,7 @@ function BulkMessaging({ userRole, userId }) {
           <small style={{color: '#666'}}>Characters: {message.length}/160</small>
         </div>
         <button type="submit" style={{
-          background: 'linear-gradient(45deg, #00bcd4, #0097a7)',
+          background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
           padding: '15px 30px',
           fontSize: '16px',
           fontWeight: 'bold',

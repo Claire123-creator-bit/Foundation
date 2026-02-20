@@ -108,7 +108,7 @@ function MembersList({ userRole, userId }) {
         <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px'}}>
           {members.map(member => (
             <div key={member.id} className="faq-item">
-              <h4 style={{color: '#00bcd4', margin: '0 0 10px 0'}}>
+              <h4 style={{color: '#87CEEB', margin: '0 0 10px 0'}}>
                 {member.full_names || member.name}
               </h4>
               <div style={{fontSize: '14px', color: '#666', lineHeight: '1.6'}}>

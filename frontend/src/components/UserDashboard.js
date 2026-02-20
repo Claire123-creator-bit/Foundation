@@ -173,7 +173,7 @@ fetch(`${API_BASE}/members`, { headers })
           width: '50px',
           height: '50px',
           border: '4px solid #f3f3f3',
-          borderTop: '4px solid #00bcd4',
+          borderTop: '4px solid #87CEEB',
           borderRadius: '50%',
           animation: 'spin 1s linear infinite'
         }}></div>
@@ -191,7 +191,7 @@ fetch(`${API_BASE}/members`, { headers })
   return (
     <div className="form-container">
       <div style={{
-        background: 'linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         color: 'white',
         padding: 'clamp(15px, 4vw, 25px)',
         borderRadius: '15px',
@@ -220,21 +220,21 @@ fetch(`${API_BASE}/members`, { headers })
         width: '100%'
       }}>
         <div className="info-card" style={{textAlign: 'center', padding: 'clamp(12px, 3vw, 20px)'}}>
-          <h4 style={{color: '#00bcd4', margin: '0 0 10px 0', fontSize: 'clamp(14px, 3vw, 16px)'}}>Messages</h4>
+          <h4 style={{color: '#87CEEB', margin: '0 0 10px 0', fontSize: 'clamp(14px, 3vw, 16px)'}}>Messages</h4>
           <p style={{margin: '0', fontSize: 'clamp(12px, 2.5vw, 14px)', color: '#666'}}>
             {announcements.length} new announcements
           </p>
         </div>
         
         <div className="info-card" style={{textAlign: 'center', padding: 'clamp(12px, 3vw, 20px)'}}>
-          <h4 style={{color: '#00bcd4', margin: '0 0 10px 0', fontSize: 'clamp(14px, 3vw, 16px)'}}>Meetings</h4>
+          <h4 style={{color: '#87CEEB', margin: '0 0 10px 0', fontSize: 'clamp(14px, 3vw, 16px)'}}>Meetings</h4>
           <p style={{margin: '0', fontSize: 'clamp(12px, 2.5vw, 14px)', color: '#666'}}>
             {upcomingMeetings.length} upcoming meetings
           </p>
         </div>
         
         <div className="info-card" style={{textAlign: 'center', padding: 'clamp(12px, 3vw, 20px)'}}>
-          <h4 style={{color: '#00bcd4', margin: '0 0 10px 0', fontSize: 'clamp(14px, 3vw, 16px)'}}>Attendance</h4>
+          <h4 style={{color: '#87CEEB', margin: '0 0 10px 0', fontSize: 'clamp(14px, 3vw, 16px)'}}>Attendance</h4>
           <p style={{margin: '0', fontSize: 'clamp(12px, 2.5vw, 14px)', color: '#666'}}>
             {attendanceHistory.length} meetings attended
           </p>
@@ -248,7 +248,7 @@ fetch(`${API_BASE}/members`, { headers })
             <div key={index} className="faq-item" style={{marginBottom: '15px', width: '100%', boxSizing: 'border-box'}}>
               <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
                 <div style={{flex: 1}}>
-                  <h4 style={{color: '#00bcd4', margin: '0 0 8px 0', fontSize: 'clamp(14px, 3vw, 16px)', wordBreak: 'break-word'}}>{announcement.title}</h4>
+                  <h4 style={{color: '#87CEEB', margin: '0 0 8px 0', fontSize: 'clamp(14px, 3vw, 16px)', wordBreak: 'break-word'}}>{announcement.title}</h4>
                   <p style={{margin: '0', fontSize: 'clamp(12px, 2.5vw, 14px)', lineHeight: '1.5', wordBreak: 'break-word'}}>{announcement.content}</p>
                 </div>
                 <span style={{
@@ -278,7 +278,7 @@ fetch(`${API_BASE}/members`, { headers })
             <div key={meeting.id} className="faq-item" style={{marginBottom: '15px', width: '100%', boxSizing: 'border-box'}}>
               <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
                 <div style={{flex: 1}}>
-                  <h4 style={{color: '#00bcd4', margin: '0 0 8px 0', fontSize: 'clamp(14px, 3vw, 16px)', wordBreak: 'break-word'}}>
+                  <h4 style={{color: '#87CEEB', margin: '0 0 8px 0', fontSize: 'clamp(14px, 3vw, 16px)', wordBreak: 'break-word'}}>
                     {meeting.title}
                   </h4>
                   <p style={{margin: '0', fontSize: 'clamp(12px, 2.5vw, 14px)', color: '#666'}}>
@@ -317,10 +317,10 @@ fetch(`${API_BASE}/members`, { headers })
       <div>
         <h3 className="section-title">Recent Attendance History</h3>
         {attendanceHistory.length > 0 ? (
-          <div style={{background: 'white', borderRadius: '12px', overflow: 'auto', boxShadow: '0 4px 15px rgba(0,188,212,0.1)', width: '100%', maxWidth: '100%'}}>
+          <div style={{background: 'white', borderRadius: '12px', overflow: 'auto', boxShadow: '0 4px 15px rgba(135,206,235,0.1)', width: '100%', maxWidth: '100%'}}>
             <table style={{width: '100%', borderCollapse: 'collapse', minWidth: '500px'}}>
               <thead>
-                <tr style={{background: 'linear-gradient(45deg, #00bcd4, #0097a7)'}}>
+                <tr style={{background: 'linear-gradient(45deg, #87CEEB, #87CEEB)'}}>
                   <th style={{color: 'white', padding: '12px 8px', textAlign: 'left', fontSize: '14px'}}>Meeting</th>
                   <th style={{color: 'white', padding: '12px 8px', textAlign: 'left', fontSize: '14px'}}>Date</th>
                   <th style={{color: 'white', padding: '12px 8px', textAlign: 'left', fontSize: '14px'}}>Status</th>

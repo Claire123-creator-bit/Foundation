@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Icons as components for reusability
-const IconCheck = () => <span style={{color: '#667eea', marginRight: '8px'}}>✓</span>;
+const IconCheck = () => <span style={{color: '#87CEEB', marginRight: '8px'}}>✓</span>;
 const IconFeature = ({name}) => {
   const icons = {
     'Member Registration': '📁',
@@ -50,16 +50,16 @@ function LandingPage({ onGetStarted, onLogin }) {
         }
         input:focus {
           outline: none;
-          border-color: #667eea !important;
+          border-color: #87CEEB !important;
           background: white !important;
-          box-shadow: 0 0 0 4px rgba(102,126,234,0.15) !important;
+          box-shadow: 0 0 0 4px rgba(135,206,235,0.15) !important;
         }
         button:hover {
           transform: translateY(-2px);
         }
         .feature-card:hover {
           transform: translateY(-5px);
-          box-shadow: 0 15px 40px rgba(102,126,234,0.25) !important;
+          box-shadow: 0 15px 40px rgba(135,206,235,0.25) !important;
         }
         .benefit-item:hover {
           transform: scale(1.03);
@@ -72,7 +72,7 @@ function LandingPage({ onGetStarted, onLogin }) {
 
       {/* Hero Section */}
       <div style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         padding: '50px 30px',
         borderRadius: '25px',
         color: 'white',
@@ -112,7 +112,7 @@ function LandingPage({ onGetStarted, onLogin }) {
               fontSize: '1.1em',
               fontWeight: '600',
               backgroundColor: 'white',
-              color: '#667eea',
+              color: '#87CEEB',
               border: 'none',
               borderRadius: '50px',
               cursor: 'pointer',
@@ -147,9 +147,9 @@ function LandingPage({ onGetStarted, onLogin }) {
         background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,249,250,0.98) 100%)',
         padding: '30px 40px',
         borderRadius: '25px',
-        boxShadow: '0 20px 60px rgba(102,126,234,0.25)',
+        boxShadow: '0 20px 60px rgba(135,206,235,0.25)',
         backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(102,126,234,0.2)',
+        border: '1px solid rgba(135,206,235,0.2)',
         maxWidth: '420px',
         width: '100%',
         margin: '-20px auto 50px auto',
@@ -161,21 +161,21 @@ function LandingPage({ onGetStarted, onLogin }) {
           <div style={{
             width: '60px',
             height: '60px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
             borderRadius: '50%',
             margin: '0 auto 15px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '28px',
-            boxShadow: '0 8px 25px rgba(102,126,234,0.4)'
+            boxShadow: '0 8px 25px rgba(135,206,235,0.4)'
           }}>🔐</div>
           <h3 style={{
             color: '#333',
             margin: '0 0 8px 0',
             fontSize: '1.5em',
             fontWeight: '700',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text'
@@ -191,12 +191,12 @@ function LandingPage({ onGetStarted, onLogin }) {
             fontSize: '15px',
             fontWeight: '700',
             borderRadius: '14px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
             border: 'none',
             color: 'white',
             cursor: 'pointer',
             transition: 'all 0.3s ease',
-            boxShadow: '0 6px 20px rgba(102,126,234,0.4)'
+            boxShadow: '0 6px 20px rgba(135,206,235,0.4)'
           }}
         >
           Admin Sign Up
@@ -220,14 +220,14 @@ function LandingPage({ onGetStarted, onLogin }) {
             padding: '30px',
             borderRadius: '25px',
             textAlign: 'center',
-            boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
+            boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
             transition: 'all 0.3s ease',
-            border: '1px solid rgba(102, 126, 234, 0.1)',
+            border: '1px solid rgba(135, 206, 235, 0.1)',
           }}>
             <div style={{fontSize: '48px', marginBottom: '20px'}}>
               <IconFeature name={feature.title} />
             </div>
-            <h3 style={{color: '#667eea', marginBottom: '15px', fontWeight: '700', fontSize: '1.3em'}}>{feature.title}</h3>
+            <h3 style={{color: '#87CEEB', marginBottom: '15px', fontWeight: '700', fontSize: '1.3em'}}>{feature.title}</h3>
             <p style={{color: '#666', lineHeight: '1.6', margin: 0}}>{feature.desc}</p>
           </div>
         ))}
@@ -251,10 +251,10 @@ function LandingPage({ onGetStarted, onLogin }) {
             background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
             padding: '20px 25px',
             borderRadius: '15px',
-            boxShadow: '0 5px 20px rgba(102, 126, 234, 0.1)',
+            boxShadow: '0 5px 20px rgba(135, 206, 235, 0.1)',
             transition: 'all 0.3s ease',
             cursor: 'default',
-            border: '1px solid rgba(102, 126, 234, 0.1)',
+            border: '1px solid rgba(135, 206, 235, 0.1)',
           }}>
             <IconCheck />
             <span style={{color: '#333', fontWeight: '500', fontSize: '1.1em'}}>{benefit}</span>
@@ -275,12 +275,12 @@ function LandingPage({ onGetStarted, onLogin }) {
           padding: '35px',
           borderRadius: '25px',
           textAlign: 'center',
-          boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
+          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
           transition: 'all 0.3s ease',
-          borderTop: '4px solid #667eea',
-          border: '1px solid rgba(102, 126, 234, 0.1)',
+          borderTop: '4px solid #87CEEB',
+          border: '1px solid rgba(135, 206, 235, 0.1)',
         }}>
-          <h3 style={{color: '#667eea', marginBottom: '20px', fontWeight: '700', fontSize: '1.4em'}}>Transparency</h3>
+          <h3 style={{color: '#87CEEB', marginBottom: '20px', fontWeight: '700', fontSize: '1.4em'}}>Transparency</h3>
           <p style={{lineHeight: '1.7', margin: 0}}>
             We believe in open and honest communication with all our members. 
             Every decision and financial transaction is shared with the community.
@@ -291,12 +291,12 @@ function LandingPage({ onGetStarted, onLogin }) {
           padding: '35px',
           borderRadius: '25px',
           textAlign: 'center',
-          boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
+          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
           transition: 'all 0.3s ease',
-          borderTop: '4px solid #764ba2',
-          border: '1px solid rgba(102, 126, 234, 0.1)',
+          borderTop: '4px solid #87CEEB',
+          border: '1px solid rgba(135, 206, 235, 0.1)',
         }}>
-          <h3 style={{color: '#764ba2', marginBottom: '20px', fontWeight: '700', fontSize: '1.4em'}}>Community</h3>
+          <h3 style={{color: '#87CEEB', marginBottom: '20px', fontWeight: '700', fontSize: '1.4em'}}>Community</h3>
           <p style={{lineHeight: '1.7', margin: 0}}>
             Building strong bonds between community members through regular 
             meetings, events, and collaborative initiatives.
@@ -307,12 +307,12 @@ function LandingPage({ onGetStarted, onLogin }) {
           padding: '35px',
           borderRadius: '25px',
           textAlign: 'center',
-          boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
+          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
           transition: 'all 0.3s ease',
-          borderTop: '4px solid #f093fb',
-          border: '1px solid rgba(102, 126, 234, 0.1)',
+          borderTop: '4px solid #87CEEB',
+          border: '1px solid rgba(135, 206, 235, 0.1)',
         }}>
-          <h3 style={{color: '#f093fb', marginBottom: '20px', fontWeight: '700', fontSize: '1.4em'}}>Empowerment</h3>
+          <h3 style={{color: '#87CEEB', marginBottom: '20px', fontWeight: '700', fontSize: '1.4em'}}>Empowerment</h3>
           <p style={{lineHeight: '1.7', margin: 0}}>
             Providing resources, education, and support to help all members 
             achieve their full potential and improve their quality of life.
@@ -322,7 +322,7 @@ function LandingPage({ onGetStarted, onLogin }) {
 
       {/* CTA Section */}
       <div style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         padding: '50px 30px',
         borderRadius: '25px',
         textAlign: 'center',
@@ -344,7 +344,7 @@ function LandingPage({ onGetStarted, onLogin }) {
         <button 
           style={{
             background: 'white',
-            color: '#667eea',
+            color: '#87CEEB',
             padding: '18px 45px',
             fontSize: '16px',
             fontWeight: '700',
@@ -364,8 +364,8 @@ function LandingPage({ onGetStarted, onLogin }) {
         background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
         padding: '40px',
         borderRadius: '25px',
-        boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
-        border: '1px solid rgba(102, 126, 234, 0.1)',
+        boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
+        border: '1px solid rgba(135, 206, 235, 0.1)',
       }}>
         <div style={{
           display: 'grid',
@@ -374,20 +374,20 @@ function LandingPage({ onGetStarted, onLogin }) {
           textAlign: 'center'
         }}>
           <div>
-            <h4 style={{color: '#667eea', marginBottom: '15px', fontWeight: '700', fontSize: '1.2em'}}>Contact Us</h4>
+            <h4 style={{color: '#87CEEB', marginBottom: '15px', fontWeight: '700', fontSize: '1.2em'}}>Contact Us</h4>
             <p style={{margin: '5px 0', color: '#666'}}>Email: info@mbogowelfare.org</p>
             <p style={{margin: '5px 0', color: '#666'}}>Phone: +254 XXX XXX XXX</p>
           </div>
           <div>
-            <h4 style={{color: '#667eea', marginBottom: '15px', fontWeight: '700', fontSize: '1.2em'}}>Quick Links</h4>
-            <p style={{margin: '8px 0', color: '#667eea', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('about')}>About Us</p>
-            <p style={{margin: '8px 0', color: '#667eea', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('faq')}>FAQ</p>
-            <p style={{margin: '8px 0', color: '#667eea', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('contact')}>Contact</p>
+            <h4 style={{color: '#87CEEB', marginBottom: '15px', fontWeight: '700', fontSize: '1.2em'}}>Quick Links</h4>
+            <p style={{margin: '8px 0', color: '#87CEEB', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('about')}>About Us</p>
+            <p style={{margin: '8px 0', color: '#87CEEB', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('faq')}>FAQ</p>
+            <p style={{margin: '8px 0', color: '#87CEEB', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('contact')}>Contact</p>
           </div>
           <div>
-            <h4 style={{color: '#667eea', marginBottom: '15px', fontWeight: '700', fontSize: '1.2em'}}>Legal</h4>
-            <p style={{margin: '8px 0', color: '#667eea', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('terms')}>Terms & Conditions</p>
-            <p style={{margin: '8px 0', color: '#667eea', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('privacy')}>Privacy Policy</p>
+            <h4 style={{color: '#87CEEB', marginBottom: '15px', fontWeight: '700', fontSize: '1.2em'}}>Legal</h4>
+            <p style={{margin: '8px 0', color: '#87CEEB', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('terms')}>Terms & Conditions</p>
+            <p style={{margin: '8px 0', color: '#87CEEB', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('privacy')}>Privacy Policy</p>
           </div>
         </div>
       </div>
