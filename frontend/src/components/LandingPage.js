@@ -5,14 +5,14 @@ import API_BASE from '../utils/apiConfig';
 const IconCheck = () => <span style={{color: '#00c853', marginRight: '8px'}}>✓</span>;
 const IconFeature = ({name}) => {
   const icons = {
-    'Member Registration': '\uD83D\uDCC4',
-    'Meeting Management': '\uD83D\uDCC5',
-    'Bulk Messaging': '\uD83D\uDCAC',
-    'Data Capture': '\uD83D\uDCCA',
-    'Database Viewer': '\uD83D\uDCC4',
-    'Admin Dashboard': '\uD83C\uDF9B'
+    'Member Registration': '📁',
+    'Meeting Management': '📅',
+    'Bulk Messaging': '💬',
+    'Data Capture': '📊',
+    'Database Viewer': '🗄️',
+    'Admin Dashboard': '🔧'
   };
-  return <span style={{fontSize: '28px'}}>{icons[name] || '\u2B50'}</span>;
+  return <span style={{fontSize: '28px'}}>{icons[name] || '⭐'}</span>;
 };
 
 function LandingPage({ onGetStarted, onLogin }) {
@@ -63,12 +63,12 @@ function LandingPage({ onGetStarted, onLogin }) {
   };
 
   const features = [
-    { title: 'Member Registration', desc: 'Easy registration' },
-    { title: 'Meeting Management', desc: 'Track meetings' },
-    { title: 'Bulk Messaging', desc: 'Send SMS' },
-    { title: 'Data Capture', desc: 'Manage data' },
-    { title: 'Database Viewer', desc: 'View records' },
-    { title: 'Admin Dashboard', desc: 'Full control' }
+    { title: 'Member Registration', desc: 'Easy and secure registration process for all community members' },
+    { title: 'Meeting Management', desc: 'Schedule and track all community meetings efficiently' },
+    { title: 'Bulk Messaging', desc: 'Send SMS notifications to all members instantly' },
+    { title: 'Data Capture', desc: 'Collect and manage member data securely' },
+    { title: 'Database Viewer', desc: 'Access and view all community records' },
+    { title: 'Admin Dashboard', desc: 'Complete control over all platform features' }
   ];
 
   const benefits = [
@@ -113,195 +113,507 @@ function LandingPage({ onGetStarted, onLogin }) {
         }
       `}</style>
 
-      <div style={styles.backgroundPattern}></div>
-
-      {/* Hero: two-column layout */}
-      <div style={styles.hero}>
-        <div style={styles.heroLeft}>
-          <div style={styles.logoCircle}>
-            <span style={styles.logoText}>M</span>
-          </div>
-          <h1 style={styles.title}>Mbogo Welfare Empowerment Foundation</h1>
-          <p style={styles.subtitle}>Empowering communities through transparency and trust</p>
-
-          <p style={{color: 'rgba(255,255,255,0.85)', maxWidth: '560px', marginTop: '20px', lineHeight: '1.6'}}>
-            Join a community-driven platform that makes governance transparent and participation easy. Manage members, meetings, donations, and communications — all in one place.
+      {/* Hero Section */}
+      <section style={styles.hero}>
+        <div style={styles.heroContent}>
+          <h1 style={styles.heroTitle}>
+            Welcome to Mbogo Welfare Empowerment Foundation
+          </h1>
+          <p style={styles.heroSubtitle}>
+            Empowering communities through transparency, trust, and unity. 
+            Join us in building a stronger, more connected community.
           </p>
-
-          <div style={{marginTop: '26px', display: 'flex', gap: '14px', flexWrap: 'wrap'}}>
-            <button onClick={() => { window.location.hash = '#signup'; }} style={styles.ctaButton}>Get Started</button>
-            <button onClick={() => { window.location.hash = '#about'; }} style={{padding: '12px 22px', borderRadius: '12px', background: 'transparent', color: 'white', border: '1px solid rgba(255,255,255,0.18)', cursor: 'pointer'}}>Learn More</button>
+          <div style={styles.heroButtons}>
+            <button 
+              style={styles.primaryButton}
+              onClick={onGetStarted}
+            >
+              Get Started
+            </button>
+            <button 
+              style={styles.secondaryButton}
+              onClick={onLogin}
+            >
+              Login
+            </button>
           </div>
         </div>
+        <div style={styles.heroOverlay}></div>
+      </section>
 
-        <div style={styles.heroRight}>
-          <div style={{background: 'white', padding: '22px', borderRadius: '16px', boxShadow: '0 12px 30px rgba(0,0,0,0.15)'}}>
-            <div style={styles.tabContainer}>
-              <button 
-                onClick={() => { setActiveTab('register'); setMessage(''); }} 
-                style={styles.tabButton(activeTab === 'register', 'register')}
-              >
-                Register
-              </button>
-              <button 
-                onClick={() => { setActiveTab('login'); setMessage(''); }} 
-                style={styles.tabButton(activeTab === 'login', 'login')}
-              >
-                Member Login
-              </button>
-              <button 
-                onClick={() => { setActiveTab('admin'); setMessage(''); }} 
-                style={styles.tabButton(activeTab === 'admin', 'admin')}
-              >
-                Admin
-              </button>
-            </div>
-
-            <div style={{marginTop: '18px'}}>
-              {activeTab === 'register' && (
-                <div>
-                  <h3 style={{color: '#006064', marginBottom: '12px'}}>Join as a member</h3>
-                  <p style={{color: '#666', marginBottom: '12px'}}>Create an account to participate in meetings and access member resources.</p>
-                  <button onClick={() => { window.location.hash = '#signup'; }} style={styles.ctaButton}>Register Now</button>
-                </div>
-              )}
-
-              {activeTab === 'login' && (
-                <div>
-                  <h3 style={{color: '#006064', marginBottom: '12px'}}>Member Login</h3>
-                  <p style={{color: '#666', marginBottom: '12px'}}>Access your dashboard and profile.</p>
-                  <button onClick={() => { window.location.hash = '#login'; }} style={styles.ctaButton}>Member Login</button>
-                </div>
-              )}
-
-              {activeTab === 'admin' && (
-                <div>
-                  <h3 style={{color: '#ff9800', marginBottom: '12px'}}>Administrator</h3>
-                  <p style={{color: '#666', marginBottom: '12px'}}>Admin tools for managing the platform.</p>
-                  <button onClick={() => { window.location.hash = '#admin-login'; }} style={{...styles.ctaButton, background: 'linear-gradient(45deg, #ff9800, #f57c00)'}}>Admin Login</button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div style={{marginTop: '18px'}}>
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px'}}>
-              {features.slice(0,4).map((f, i) => (
-                <div key={i} style={{padding: '12px', background: 'rgba(255,255,255,0.06)', borderRadius: '10px', color: 'white'}}>
-                  <strong style={{display: 'block', marginBottom: '6px'}}>{f.title}</strong>
-                  <small style={{opacity: 0.85}}>{f.desc}</small>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Features and other sections remain below, unchanged for now */}
-
-      <div id="features" style={{padding: '30px 20px', background: 'linear-gradient(135deg, rgba(0,188,212,0.05) 0%, rgba(0,151,167,0.02) 100%)', borderRadius: '20px', marginBottom: '30px'}}>
-        <h2 style={{color: '#006064', marginBottom: '20px', fontSize: '1.5em'}}>Platform Features</h2>
-        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '15px'}}>
-          {features.map((feature, idx) => (
-            <div key={idx} className="feature-card" style={{padding: '15px', background: 'white', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderLeft: '3px solid #00bcd4', textAlign: 'left'}}>
-              <h4 style={{color: '#006064', marginBottom: '5px', fontSize: '0.95em'}}>{feature.title}</h4>
-              <p style={{color: '#666', fontSize: '0.8em', margin: 0}}>{feature.desc}</p>
+      {/* Features Section */}
+      <section style={styles.featuresSection}>
+        <h2 style={styles.sectionTitle}>Our Features</h2>
+        <p style={styles.sectionSubtitle}>
+          Everything you need to manage your community effectively
+        </p>
+        <div style={styles.featuresGrid}>
+          {features.map((feature, index) => (
+            <div key={index} className="feature-card" style={styles.featureCard}>
+              <div style={styles.featureIcon}>
+                <IconFeature name={feature.title} />
+              </div>
+              <h3 style={styles.featureTitle}>{feature.title}</h3>
+              <p style={styles.featureDesc}>{feature.desc}</p>
             </div>
           ))}
         </div>
-      </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section style={styles.benefitsSection}>
+        <h2 style={styles.sectionTitle}>Why Join Us?</h2>
+        <p style={styles.sectionSubtitle}>
+          Discover the benefits of being part of the Mbogo Welfare community
+        </p>
+        <div style={styles.benefitsGrid}>
+          {benefits.map((benefit, index) => (
+            <div key={index} className="benefit-item" style={styles.benefitItem}>
+              <IconCheck />
+              <span style={styles.benefitText}>{benefit}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section style={styles.missionSection}>
+        <h2 style={styles.sectionTitle}>Our Mission</h2>
+        <div style={styles.missionCards}>
+          <div className="mission-card" style={styles.missionCard}>
+            <h3 style={styles.missionCardTitle}>Transparency</h3>
+            <p style={styles.missionCardText}>
+              We believe in open and honest communication with all our members. 
+              Every decision and financial transaction is shared with the community.
+            </p>
+          </div>
+          <div className="mission-card" style={styles.missionCard}>
+            <h3 style={styles.missionCardTitle}>Community</h3>
+            <p style={styles.missionCardText}>
+              Building strong bonds between community members through regular 
+              meetings, events, and collaborative initiatives.
+            </p>
+          </div>
+          <div className="mission-card" style={styles.missionCard}>
+            <h3 style={styles.missionCardTitle}>Empowerment</h3>
+            <p style={styles.missionCardText}>
+              Providing resources, education, and support to help all members 
+              achieve their full potential and improve their quality of life.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section style={styles.ctaSection}>
+        <h2 style={styles.ctaTitle}>Ready to Join Our Community?</h2>
+        <p style={styles.ctaText}>
+          Take the first step towards being part of something bigger. 
+          Register today and become a valued member of the Mbogo Welfare Foundation.
+        </p>
+        <button 
+          style={styles.primaryButton}
+          onClick={onGetStarted}
+        >
+          Register Now
+        </button>
+      </section>
+
+      {/* Admin Login Section */}
+      <section style={styles.adminSection}>
+        <div style={styles.adminCard}>
+          <h3 style={styles.adminTitle}>Admin Login</h3>
+          <form onSubmit={handleAdminLoginSubmit} style={styles.form}>
+            <div style={styles.formGroup}>
+              <input
+                type="text"
+                placeholder="Username"
+                value={formData.username}
+                onChange={(e) => setFormData({...formData, username: e.target.value})}
+                style={styles.input}
+                required
+              />
+            </div>
+            <div style={styles.formGroup}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                style={styles.input}
+                required
+              />
+            </div>
+            <div style={styles.checkboxGroup}>
+              <label style={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={showPassword}
+                  onChange={(e) => setShowPassword(e.target.checked)}
+                  style={styles.checkbox}
+                />
+                Show Password
+              </label>
+            </div>
+            <button 
+              type="submit" 
+              style={styles.loginButton}
+              disabled={loading}
+            >
+              {loading ? 'Logging in...' : 'Admin Login'}
+            </button>
+            {message && (
+              <p style={message.includes('failed') || message.includes('error') ? styles.errorMessage : styles.successMessage}>
+                {message}
+              </p>
+            )}
+          </form>
+        </div>
+      </section>
+
+      {/* Footer Info */}
+      <section style={styles.infoSection}>
+        <div style={styles.infoGrid}>
+          <div style={styles.infoItem}>
+            <h4 style={styles.infoTitle}>Contact Us</h4>
+            <p style={styles.infoText}>Email: info@mbogowelfare.org</p>
+            <p style={styles.infoText}>Phone: +254 XXX XXX XXX</p>
+          </div>
+          <div style={styles.infoItem}>
+            <h4 style={styles.infoTitle}>Quick Links</h4>
+            <p style={styles.infoLink} onClick={() => navigateTo('about')}>About Us</p>
+            <p style={styles.infoLink} onClick={() => navigateTo('faq')}>FAQ</p>
+            <p style={styles.infoLink} onClick={() => navigateTo('contact')}>Contact</p>
+          </div>
+          <div style={styles.infoItem}>
+            <h4 style={styles.infoTitle}>Legal</h4>
+            <p style={styles.infoLink} onClick={() => navigateTo('terms')}>Terms & Conditions</p>
+            <p style={styles.infoLink} onClick={() => navigateTo('privacy')}>Privacy Policy</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
 
-// Styles object
 const styles = {
   container: {
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    backgroundColor: '#f8f9fa',
     minHeight: '100vh',
-    background: 'linear-gradient(135deg, #0a1628 0%, #1a365d 50%, #0f2744 100%)',
-    position: 'relative',
-    overflow: 'hidden',
-    padding: '40px 20px'
+    margin: '0',
+    padding: '0',
   },
-  backgroundPattern: {
+  hero: {
+    position: 'relative',
+    background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%)',
+    padding: '80px 20px',
+    textAlign: 'center',
+    color: 'white',
+    overflow: 'hidden',
+  },
+  heroContent: {
+    position: 'relative',
+    zIndex: 2,
+    maxWidth: '800px',
+    margin: '0 auto',
+  },
+  heroOverlay: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundImage: `
-      radial-gradient(circle at 20% 80%, rgba(0, 200, 83, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(0, 188, 212, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, rgba(255, 152, 0, 0.05) 0%, transparent 30%)
-    `,
-    pointerEvents: 'none'
+    background: 'radial-gradient(circle at 30% 70%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(255,255,255,0.05) 0%, transparent 50%)',
+    zIndex: 1,
   },
-  logoSection: {
-    textAlign: 'center',
+  heroTitle: {
+    fontSize: 'clamp(1.8em, 5vw, 3em)',
+    marginBottom: '20px',
+    fontWeight: '700',
+    textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+    animation: 'fadeInUp 1s ease-out',
+  },
+  heroSubtitle: {
+    fontSize: 'clamp(1em, 2.5vw, 1.3em)',
     marginBottom: '40px',
-    position: 'relative',
-    zIndex: 1
+    opacity: 0.95,
+    lineHeight: '1.6',
+    animation: 'fadeInUp 1s ease-out 0.2s both',
   },
-  logoCircle: {
-    width: '100px',
-    height: '100px',
-    borderRadius: '50%',
-    background: 'linear-gradient(135deg, #00c853 0%, #0097a7 100%)',
+  heroButtons: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '20px',
+    flexWrap: 'wrap',
+    animation: 'fadeInUp 1s ease-out 0.4s both',
+  },
+  primaryButton: {
+    padding: '15px 40px',
+    fontSize: '1.1em',
+    fontWeight: '600',
+    backgroundColor: '#00c853',
+    color: 'white',
+    border: 'none',
+    borderRadius: '50px',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 4px 15px rgba(0,200,83,0.4)',
+  },
+  secondaryButton: {
+    padding: '15px 40px',
+    fontSize: '1.1em',
+    fontWeight: '600',
+    backgroundColor: 'transparent',
+    color: 'white',
+    border: '2px solid white',
+    borderRadius: '50px',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  featuresSection: {
+    padding: '80px 20px',
+    backgroundColor: 'white',
+  },
+  sectionTitle: {
+    fontSize: 'clamp(1.8em, 4vw, 2.5em)',
+    textAlign: 'center',
+    color: '#1e3c72',
+    marginBottom: '15px',
+    fontWeight: '700',
+  },
+  sectionSubtitle: {
+    fontSize: 'clamp(1em, 2vw, 1.2em)',
+    textAlign: 'center',
+    color: '#666',
+    marginBottom: '50px',
+    maxWidth: '600px',
+    margin: '0 auto 50px auto',
+  },
+  featuresGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '30px',
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '0 20px',
+  },
+  featureCard: {
+    backgroundColor: 'white',
+    borderRadius: '15px',
+    padding: '30px',
+    textAlign: 'center',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+    transition: 'all 0.3s ease',
+    border: '1px solid #e0e0e0',
+  },
+  featureIcon: {
+    fontSize: '48px',
+    marginBottom: '20px',
+  },
+  featureTitle: {
+    fontSize: '1.3em',
+    color: '#1e3c72',
+    marginBottom: '15px',
+    fontWeight: '600',
+  },
+  featureDesc: {
+    fontSize: '1em',
+    color: '#666',
+    lineHeight: '1.6',
+  },
+  benefitsSection: {
+    padding: '80px 20px',
+    background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%)',
+  },
+  benefitsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '20px',
+    maxWidth: '900px',
+    margin: '0 auto',
+    padding: '0 20px',
+  },
+  benefitItem: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-    margin: '0 auto 20px auto',
-    boxShadow: '0 10px 40px rgba(0, 200, 83, 0.4), 0 0 60px rgba(0, 200, 83, 0.2)',
-    animation: 'pulse 2s infinite'
+    backgroundColor: 'white',
+    padding: '20px 25px',
+    borderRadius: '10px',
+    boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+    transition: 'all 0.3s ease',
+    cursor: 'default',
   },
-  logoText: {
+  benefitText: {
+    fontSize: '1.1em',
+    color: '#333',
+    fontWeight: '500',
+  },
+  missionSection: {
+    padding: '80px 20px',
+    backgroundColor: 'white',
+  },
+  missionCards: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '30px',
+    maxWidth: '1100px',
+    margin: '0 auto',
+    padding: '0 20px',
+  },
+  missionCard: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: '15px',
+    padding: '35px',
+    textAlign: 'center',
+    boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
+    transition: 'all 0.3s ease',
+    borderTop: '4px solid #1e3c72',
+  },
+  missionCardTitle: {
+    fontSize: '1.4em',
+    color: '#1e3c72',
+    marginBottom: '20px',
+    fontWeight: '700',
+  },
+  missionCardText: {
+    fontSize: '1em',
+    color: '#555',
+    lineHeight: '1.7',
+  },
+  ctaSection: {
+    padding: '80px 20px',
+    background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+    textAlign: 'center',
     color: 'white',
-    fontSize: '42px',
-    fontWeight: 'bold',
-    textShadow: '0 2px 10px rgba(0,0,0,0.3)'
   },
-  title: {
-    fontSize: '2.2em',
-    background: 'linear-gradient(135deg, #ffffff 0%, #00e676 50%, #00bcd4 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    marginBottom: '10px',
-    fontWeight: '800',
-    letterSpacing: '-0.5px',
-    textShadow: 'none'
+  ctaTitle: {
+    fontSize: 'clamp(1.5em, 4vw, 2.2em)',
+    marginBottom: '20px',
+    fontWeight: '700',
   },
-  subtitle: {
-    fontSize: '1.2em',
-    color: 'rgba(255,255,255,0.8)',
-    marginBottom: '0',
-    fontWeight: '400'
+  ctaText: {
+    fontSize: 'clamp(1em, 2vw, 1.2em)',
+    marginBottom: '35px',
+    maxWidth: '600px',
+    margin: '0 auto 35px auto',
+    opacity: 0.95,
+    lineHeight: '1.6',
   },
-  tabContainer: {
+  adminSection: {
+    padding: '60px 20px',
+    backgroundColor: '#f8f9fa',
     display: 'flex',
     justifyContent: 'center',
-    gap: '12px',
-    marginBottom: '30px',
-    flexWrap: 'wrap',
-    position: 'relative',
-    zIndex: 1
   },
-  tabButton: (isActive, type) => ({
-    padding: '14px 32px',
-    background: isActive 
-      ? type === 'admin' 
-        ? 'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)'
-        : 'linear-gradient(135deg, #00c853 0%, #0097a7 100%)'
-      : 'rgba(255,255,255,0.1)',
-    color: 'white',
-    border: `2px solid ${isActive ? 'transparent' : 'rgba(255,255,255,0.3)'}`,
-    borderRadius: '30px',
-    cursor: 'pointer',
+  adminCard: {
+    backgroundColor: 'white',
+    borderRadius: '15px',
+    padding: '40px',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+    maxWidth: '400px',
+    width: '100%',
+    border: '1px solid #e0e0e0',
+  },
+  adminTitle: {
+    fontSize: '1.5em',
+    color: '#1e3c72',
+    marginBottom: '25px',
+    textAlign: 'center',
     fontWeight: '700',
-    fontSize: '14px',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '15px',
+  },
+  formGroup: {
+    marginBottom: '5px',
+  },
+  input: {
+    width: '100%',
+    padding: '14px 16px',
+    fontSize: '1em',
+    border: '2px solid #ddd',
+    borderRadius: '8px',
     transition: 'all 0.3s ease',
-    boxShadow: isActive ? '0 8px 25px rgba(0,200,83,0.4)' : 'none',
-    backdropFilter: 'blur(10px)'
-  })
+    boxSizing: 'border-box',
+    backgroundColor: '#fafafa',
+  },
+  checkboxGroup: {
+    marginBottom: '5px',
+  },
+  checkboxLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    fontSize: '0.95em',
+    color: '#555',
+    cursor: 'pointer',
+  },
+  checkbox: {
+    width: '18px',
+    height: '18px',
+    cursor: 'pointer',
+  },
+  loginButton: {
+    padding: '14px',
+    fontSize: '1.1em',
+    fontWeight: '600',
+    backgroundColor: '#1e3c72',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    marginTop: '10px',
+  },
+  successMessage: {
+    color: '#00c853',
+    textAlign: 'center',
+    marginTop: '10px',
+    fontWeight: '500',
+  },
+  errorMessage: {
+    color: '#ff1744',
+    textAlign: 'center',
+    marginTop: '10px',
+    fontWeight: '500',
+  },
+  infoSection: {
+    padding: '50px 20px',
+    backgroundColor: '#1e3c72',
+    color: 'white',
+  },
+  infoGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: '40px',
+    maxWidth: '1000px',
+    margin: '0 auto',
+    padding: '0 20px',
+  },
+  infoItem: {
+    textAlign: 'center',
+  },
+  infoTitle: {
+    fontSize: '1.2em',
+    marginBottom: '15px',
+    fontWeight: '600',
+  },
+  infoText: {
+    fontSize: '0.95em',
+    margin: '5px 0',
+    opacity: 0.9,
+  },
+  infoLink: {
+    fontSize: '0.95em',
+    margin: '8px 0',
+    opacity: 0.9,
+    cursor: 'pointer',
+    transition: 'opacity 0.3s ease',
+  },
 };
 
 export default LandingPage;
+
