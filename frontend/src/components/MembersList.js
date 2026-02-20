@@ -6,6 +6,7 @@ function MembersList({ userRole, userId }) {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const fetchMembers = (category = '') => {
     const headers = {
@@ -17,26 +18,53 @@ function MembersList({ userRole, userId }) {
     if (userRole === 'admin') {
       const url = category ? `${API_BASE}/members?category=${category}` : `${API_BASE}/members`;
       fetch(url, { headers })
-        .then(res => res.json())
-        .then(data => {
-          setMembers(data);
-          setLoading(false);
+        .then(res => {
+          if (res.status === 401) {
+            throw new Error('Unauthorized - Please login again');
+          }
+          if (!res.ok) throw new Error(`Server returned ${res.status}`);
+          return res.json();
         })
-        .catch(err => {
-          console.log('Backend offline');
-          setLoading(false);
-        });
-    } else {
-      fetch(`${API_BASE}/member-profile?member_id=${userId}`, { headers })
-        .then(res => res.json())
         .then(data => {
-          if (!data.error) {
-            setMembers([data]);
+          // Ensure data is an array before setting state
+          if (Array.isArray(data)) {
+            setMembers(data);
+          } else {
+            console.error('Unexpected response format:', data);
+            setMembers([]);
+            setErrorMessage(data.error || data.message || 'Invalid response from server');
           }
           setLoading(false);
         })
         .catch(err => {
-          console.log('Backend offline');
+          console.log('Error fetching members', err);
+          setErrorMessage(err.message || 'Failed to fetch members');
+          setMembers([]);
+          setLoading(false);
+        });
+    } else {
+      fetch(`${API_BASE}/member-profile?member_id=${userId}`, { headers })
+        .then(res => {
+          if (res.status === 401) {
+            throw new Error('Unauthorized - Please login again');
+          }
+          if (!res.ok) throw new Error(`Server returned ${res.status}`);
+          return res.json();
+        })
+        .then(data => {
+          // Ensure data is valid before setting state
+          if (!data.error && data.id) {
+            setMembers([data]);
+          } else {
+            setMembers([]);
+            setErrorMessage(data.error || 'Profile not found');
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          console.log('Error fetching profile', err);
+          setErrorMessage(err.message || 'Failed to fetch profile');
+          setMembers([]);
           setLoading(false);
         });
     }
@@ -44,10 +72,33 @@ function MembersList({ userRole, userId }) {
 
   const fetchCategories = () => {
     if (userRole === 'admin') {
-      fetch(`${API_BASE}/members/categories`)
-        .then(res => res.json())
-        .then(data => setCategories(data))
-        .catch(err => console.log('Backend offline'));
+      const headers = {
+        'Content-Type': 'application/json',
+        'User-Role': userRole || 'admin',
+        'User-ID': userId || ''
+      };
+      fetch(`${API_BASE}/members/categories`, { headers })
+        .then(res => {
+          if (res.status === 401) {
+            throw new Error('Unauthorized - Please login again');
+          }
+          if (!res.ok) throw new Error(`Server returned ${res.status}`);
+          return res.json();
+        })
+        .then(data => {
+          // Ensure data is an array before setting state
+          if (Array.isArray(data)) {
+            setCategories(data);
+          } else {
+            console.error('Unexpected categories response:', data);
+            setCategories([]);
+          }
+        })
+        .catch(err => {
+          console.log('Error fetching categories', err);
+          setErrorMessage(err.message || 'Failed to fetch categories');
+          setCategories([]);
+        });
     }
   };
 
@@ -104,11 +155,17 @@ function MembersList({ userRole, userId }) {
         </p>
       </div>
 
+      {errorMessage && (
+        <div style={{textAlign: 'center', padding: '10px', color: 'red'}}>
+          <p>{errorMessage}</p>
+        </div>
+      )}
+
       {members.length > 0 ? (
         <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px'}}>
           {members.map(member => (
             <div key={member.id} className="faq-item">
-              <h4 style={{color: '#87CEEB', margin: '0 0 10px 0'}}>
+              <h4 style={{color: '#1a237e', margin: '0 0 10px 0'}}>
                 {member.full_names || member.name}
               </h4>
               <div style={{fontSize: '14px', color: '#666', lineHeight: '1.6'}}>

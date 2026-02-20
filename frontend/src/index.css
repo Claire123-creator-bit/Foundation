@@ -162,6 +162,29 @@ body::before {
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
+/* Get Started Button - Always Visible */
+.get-started-button {
+  animation: pulse 2s infinite, fadeInUp 1s ease-out !important;
+}
+
+.get-started-button:hover {
+  transform: translateY(-3px) scale(1.05) !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35) !important;
+  background-color: #1e3c72 !important;
+  color: white !important;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+  50% { 
+    transform: scale(1.03); 
+    box-shadow: 0 10px 30px rgba(30,60,114,0.4);
+  }
+}
+
 button {
   background: linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%);
   color: white;
