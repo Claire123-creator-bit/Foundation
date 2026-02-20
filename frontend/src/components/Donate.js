@@ -31,7 +31,7 @@ function Donate() {
       <h2 className="page-title">Support Our Mission</h2>
       
       <div style={{
-        background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         padding: '40px',
         borderRadius: '25px',
         color: 'white',
@@ -49,10 +49,10 @@ function Donate() {
           background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
           padding: '35px',
           borderRadius: '25px',
-          boxShadow: '0 8px 30px rgba(30, 60, 114, 0.15)',
-          border: '1px solid rgba(30, 60, 114, 0.1)'
+          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
+          border: '1px solid rgba(135, 206, 235, 0.1)'
         }}>
-          <h3 style={{color: '#1e3c72', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Why Donate?</h3>
+          <h3 style={{color: '#87CEEB', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Why Donate?</h3>
           
           <div style={{marginBottom: '20px'}}>
             <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Community Development</h4>
@@ -74,10 +74,10 @@ function Donate() {
           background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
           padding: '35px',
           borderRadius: '25px',
-          boxShadow: '0 8px 30px rgba(30, 60, 114, 0.15)',
-          border: '1px solid rgba(30, 60, 114, 0.1)'
+          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
+          border: '1px solid rgba(135, 206, 235, 0.1)'
         }}>
-          <h3 style={{color: '#1e3c72', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Donation Details</h3>
+          <h3 style={{color: '#87CEEB', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Donation Details</h3>
           
           <label style={{display: 'block', marginBottom: '8px'}}>Your Name</label>
           <input 
@@ -115,3 +115,4 @@ function Donate() {
 }
 
 export default Donate;
+

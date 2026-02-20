@@ -10,7 +10,7 @@ function Privacy() {
       <button onClick={goBack} style={{
         marginBottom: '20px',
         padding: '10px 20px',
-        background: 'linear-gradient(45deg, #006064, #00838f)',
+        background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
         color: 'white',
         border: 'none',
         borderRadius: '15px',
@@ -67,3 +67,4 @@ function Privacy() {
 }
 
 export default Privacy;
+

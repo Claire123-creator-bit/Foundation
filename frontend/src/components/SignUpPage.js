@@ -31,7 +31,7 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
       <button type="button" onClick={() => onNavigate('landing')} style={{
         marginBottom: '20px',
         padding: '10px 20px',
-        background: 'linear-gradient(45deg, #006064, #00838f)',
+        background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
         color: 'white',
         border: 'none',
         borderRadius: '15px',
@@ -41,7 +41,7 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
       </button>
       
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <h1 style={{ color: '#006064', fontSize: '2.5em', marginBottom: '10px' }}>
+        <h1 style={{ color: '#87CEEB', fontSize: '2.5em', marginBottom: '10px' }}>
           Mbogo Welfare Empowerment Foundation
         </h1>
         <p style={{ color: '#666', fontSize: '1.1em' }}>
@@ -64,14 +64,14 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
         </div>
 
         <div className="form-group">
-          <label>National ID Number:</label>
+          <label>National Id Number:</label>
           <div style={{position: 'relative'}}>
             <input
               type={showId ? "text" : "password"}
               value={formData.national_id}
               onChange={(e) => setFormData({...formData, national_id: e.target.value})}
               required
-              placeholder="Enter your National ID"
+              placeholder="Enter your National Id"
             />
             <button
               type="button"
@@ -86,7 +86,7 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
                 cursor: 'pointer',
                 fontSize: '12px',
                 padding: '5px',
-                color: '#1e3c72',
+                color: '#87CEEB',
                 fontWeight: '600'
               }}
             >
@@ -96,14 +96,14 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
         </div>
 
         <div className="form-group">
-          <label>Confirm National ID:</label>
+          <label>Confirm National Id:</label>
           <div style={{position: 'relative'}}>
             <input
               type={showConfirmId ? "text" : "password"}
               value={formData.confirm_id}
               onChange={(e) => setFormData({...formData, confirm_id: e.target.value})}
               required
-              placeholder="Confirm your National ID"
+              placeholder="Confirm your National Id"
             />
             <button
               type="button"
@@ -118,7 +118,7 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
                 cursor: 'pointer',
                 fontSize: '12px',
                 padding: '5px',
-                color: '#1e3c72',
+                color: '#87CEEB',
                 fontWeight: '600'
               }}
             >
@@ -138,11 +138,11 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
         </div>
       )}
       
-      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: 'rgba(0,96,100,0.05)', borderRadius: '10px' }}>
+      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: 'rgba(135,206,235,0.05)', borderRadius: '10px' }}>
         <p style={{ margin: '0', color: '#666' }}>
           Already have an account?{' '}
           <span onClick={() => onNavigate('login')} style={{
-            color: '#006064',
+            color: '#87CEEB',
             fontWeight: 'bold',
             cursor: 'pointer',
             textDecoration: 'underline'
@@ -156,3 +156,4 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
 };
 
 export default SignUpPage;
+

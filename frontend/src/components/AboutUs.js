@@ -10,7 +10,7 @@ function AboutUs() {
       <button onClick={goBack} style={{
         marginBottom: '30px',
         padding: '12px 30px',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         color: 'white',
         border: 'none',
         borderRadius: '50px',
@@ -24,7 +24,7 @@ function AboutUs() {
       <h2 className="page-title">About Mbogo Welfare Empowerment Foundation</h2>
       
       <div style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         padding: '40px',
         borderRadius: '25px',
         color: 'white',
@@ -42,11 +42,11 @@ function AboutUs() {
           background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
           padding: '35px',
           borderRadius: '25px',
-          boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
-          border: '1px solid rgba(102, 126, 234, 0.1)',
+          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
+          border: '1px solid rgba(135, 206, 235, 0.1)',
           textAlign: 'center'
         }}>
-          <h3 style={{color: '#667eea', fontSize: '1.5em', marginBottom: '15px'}}>Our Mission</h3>
+          <h3 style={{color: '#87CEEB', fontSize: '1.5em', marginBottom: '15px'}}>Our Mission</h3>
           <p style={{lineHeight: '1.7'}}>
             To create transparent, accountable, and participatory governance that serves all community members with integrity and excellence.
           </p>
@@ -56,11 +56,11 @@ function AboutUs() {
           background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
           padding: '35px',
           borderRadius: '25px',
-          boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
-          border: '1px solid rgba(102, 126, 234, 0.1)',
+          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
+          border: '1px solid rgba(135, 206, 235, 0.1)',
           textAlign: 'center'
         }}>
-          <h3 style={{color: '#764ba2', fontSize: '1.5em', marginBottom: '15px'}}>Our Vision</h3>
+          <h3 style={{color: '#87CEEB', fontSize: '1.5em', marginBottom: '15px'}}>Our Vision</h3>
           <p style={{lineHeight: '1.7'}}>
             A society where every voice matters, every decision is transparent, and every community member thrives through collective progress.
           </p>
@@ -70,11 +70,11 @@ function AboutUs() {
           background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
           padding: '35px',
           borderRadius: '25px',
-          boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
-          border: '1px solid rgba(102, 126, 234, 0.1)',
+          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
+          border: '1px solid rgba(135, 206, 235, 0.1)',
           textAlign: 'center'
         }}>
-          <h3 style={{color: '#f093fb', fontSize: '1.5em', marginBottom: '15px'}}>Our Values</h3>
+          <h3 style={{color: '#87CEEB', fontSize: '1.5em', marginBottom: '15px'}}>Our Values</h3>
           <p style={{lineHeight: '1.7'}}>
             Transparency, accountability, community engagement, democratic participation, and unwavering commitment to trust.
           </p>
@@ -95,10 +95,10 @@ function AboutUs() {
             background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
             padding: '25px',
             borderRadius: '20px',
-            boxShadow: '0 5px 20px rgba(102, 126, 234, 0.1)',
-            border: '1px solid rgba(102, 126, 234, 0.1)'
+            boxShadow: '0 5px 20px rgba(135, 206, 235, 0.1)',
+            border: '1px solid rgba(135, 206, 235, 0.1)'
           }}>
-            <h4 style={{color: '#667eea', marginBottom: '10px', fontSize: '1.2em'}}>{item.title}</h4>
+            <h4 style={{color: '#87CEEB', marginBottom: '10px', fontSize: '1.2em'}}>{item.title}</h4>
             <p style={{fontSize: '14px', lineHeight: '1.6'}}>{item.desc}</p>
           </div>
         ))}
@@ -106,7 +106,7 @@ function AboutUs() {
 
       <h3 className="section-title">Join Our Journey</h3>
       <div style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         padding: '40px',
         borderRadius: '25px',
         color: 'white',
@@ -119,7 +119,7 @@ function AboutUs() {
         </p>
         <button onClick={() => window.location.hash = '#signup'} style={{
           background: 'white',
-          color: '#667eea',
+          color: '#87CEEB',
           padding: '18px 45px',
           fontSize: '16px',
           fontWeight: '700',

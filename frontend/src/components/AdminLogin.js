@@ -34,9 +34,9 @@ function AdminLogin({ onLogin }) {
         background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,249,250,0.95) 100%)',
         padding: '40px',
         borderRadius: '20px',
-        boxShadow: '0 20px 40px rgba(0,188,212,0.1)',
+        boxShadow: '0 20px 40px rgba(135,206,235,0.1)',
         backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(0,188,212,0.2)',
+        border: '1px solid rgba(135,206,235,0.2)',
         maxWidth: '400px',
         width: '100%'
       }}>
@@ -44,7 +44,7 @@ function AdminLogin({ onLogin }) {
           <div style={{
             width: '60px',
             height: '60px',
-            background: 'linear-gradient(45deg, #00bcd4, #0097a7)',
+            background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
             borderRadius: '50%',
             margin: '0 auto 20px',
             display: 'flex',
@@ -57,7 +57,7 @@ function AdminLogin({ onLogin }) {
             color: '#333',
             margin: '0',
             fontSize: '1.8em',
-            background: 'linear-gradient(45deg, #00bcd4, #0097a7)',
+            background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text'
@@ -74,8 +74,8 @@ function AdminLogin({ onLogin }) {
               required
               style={{
                 paddingLeft: '45px',
-                background: 'rgba(0,188,212,0.05)',
-                border: '2px solid rgba(0,188,212,0.2)',
+                background: 'rgba(135,206,235,0.05)',
+                border: '2px solid rgba(135,206,235,0.2)',
                 borderRadius: '12px'
               }}
             />
@@ -84,7 +84,7 @@ function AdminLogin({ onLogin }) {
               left: '15px',
               top: '50%',
               transform: 'translateY(-50%)',
-              color: '#00bcd4',
+              color: '#87CEEB',
               fontSize: '16px'
             }}>👤</span>
           </div>
@@ -98,8 +98,8 @@ function AdminLogin({ onLogin }) {
               required
               style={{
                 paddingLeft: '45px',
-                background: 'rgba(0,188,212,0.05)',
-                border: '2px solid rgba(0,188,212,0.2)',
+                background: 'rgba(135,206,235,0.05)',
+                border: '2px solid rgba(135,206,235,0.2)',
                 borderRadius: '12px'
               }}
             />
@@ -108,7 +108,7 @@ function AdminLogin({ onLogin }) {
               left: '15px',
               top: '50%',
               transform: 'translateY(-50%)',
-              color: '#00bcd4',
+              color: '#87CEEB',
               fontSize: '16px'
             }}>🔒</span>
           </div>
@@ -119,12 +119,12 @@ function AdminLogin({ onLogin }) {
             fontSize: '16px',
             fontWeight: 'bold',
             borderRadius: '12px',
-            background: 'linear-gradient(45deg, #00bcd4, #0097a7)',
+            background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
             border: 'none',
             color: 'white',
             cursor: 'pointer',
             transition: 'all 0.3s ease',
-            boxShadow: '0 4px 15px rgba(0,188,212,0.3)'
+            boxShadow: '0 4px 15px rgba(135,206,235,0.3)'
           }}>Access Dashboard</button>
         </form>
       </div>
@@ -133,3 +133,4 @@ function AdminLogin({ onLogin }) {
 }
 
 export default AdminLogin;
+

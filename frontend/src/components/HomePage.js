@@ -34,7 +34,7 @@ function HomePage() {
           color: '#333', 
           fontSize: '1.2em', 
           marginBottom: '8px',
-          background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+          background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text'
@@ -48,12 +48,12 @@ function HomePage() {
         <div style={{
           marginTop: '15px',
           padding: '15px',
-          background: 'linear-gradient(135deg, rgba(30,60,114,0.08) 0%, rgba(42,82,152,0.04) 100%)',
+          background: 'linear-gradient(135deg, rgba(135,206,235,0.08) 0%, rgba(135,206,235,0.04) 100%)',
           borderRadius: '12px',
-          border: '1px solid rgba(30,60,114,0.1)'
+          border: '1px solid rgba(135,206,235,0.1)'
         }}>
           <h3 style={{
-            color: '#1e3c72',
+            color: '#87CEEB',
             marginBottom: '10px',
             textAlign: 'center',
             fontSize: '1em',
@@ -65,16 +65,16 @@ function HomePage() {
             gap: '8px'
           }}>
             {[
-              {text: 'Browse Members', color: '#00bcd4', action: 'members'},
-              {text: 'How It Works', color: '#0097a7', action: 'how-it-works'},
-              {text: 'About Us', color: '#00acc1', action: 'about'},
-              {text: 'Support', color: '#00838f', action: 'support'},
-              {text: 'Contact Us', color: '#006064', action: 'contact'},
-              {text: 'FAQ', color: '#004d40', action: 'faq'}
+              {text: 'Browse Members', color: '#87CEEB', action: 'members'},
+              {text: 'How It Works', color: '#87CEEBdd', action: 'how-it-works'},
+              {text: 'About Us', color: '#87CEEBbb', action: 'about'},
+              {text: 'Support', color: '#87CEEB99', action: 'support'},
+              {text: 'Contact Us', color: '#87CEEB77', action: 'contact'},
+              {text: 'FAQ', color: '#87CEEB55', action: 'faq'}
             ].map((item, index) => (
               <button key={index} onClick={() => handleQuickLink(item.action)} style={{
                 padding: '18px 15px',
-                background: `linear-gradient(135deg, ${item.color} 0%, ${item.color}dd 100%)`,
+                background: `linear-gradient(135deg, ${item.color} 0%, ${item.color} 100%)`,
                 border: 'none',
                 borderRadius: '12px',
                 cursor: 'pointer',
@@ -82,15 +82,15 @@ function HomePage() {
                 fontWeight: 'bold',
                 fontSize: '14px',
                 transition: 'all 0.3s ease',
-                boxShadow: `0 4px 15px ${item.color}40`
+                boxShadow: `0 4px 15px rgba(135, 206, 235, 0.4)`
               }}
               onMouseEnter={e => {
                 e.target.style.transform = 'translateY(-3px) scale(1.05)';
-                e.target.style.boxShadow = `0 8px 25px ${item.color}60`;
+                e.target.style.boxShadow = `0 8px 25px rgba(135, 206, 235, 0.6)`;
               }}
               onMouseLeave={e => {
                 e.target.style.transform = 'translateY(0) scale(1)';
-                e.target.style.boxShadow = `0 4px 15px ${item.color}40`;
+                e.target.style.boxShadow = `0 4px 15px rgba(135, 206, 235, 0.4)`;
               }}>
                 {item.text}
               </button>
@@ -106,9 +106,9 @@ function HomePage() {
         }}>
           <div style={{
             padding: '30px', 
-            background: 'linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)', 
+            background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)', 
             borderRadius: '20px',
-            boxShadow: '0 10px 30px rgba(0, 188, 212, 0.3)',
+            boxShadow: '0 10px 30px rgba(135, 206, 235, 0.3)',
             border: '1px solid rgba(255, 255, 255, 0.2)',
             transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             cursor: 'pointer',
@@ -118,11 +118,11 @@ function HomePage() {
           }}
           onMouseEnter={e => {
             e.target.style.transform = 'translateY(-10px) scale(1.05)';
-            e.target.style.boxShadow = '0 20px 50px rgba(0, 188, 212, 0.4)';
+            e.target.style.boxShadow = '0 20px 50px rgba(135, 206, 235, 0.4)';
           }}
           onMouseLeave={e => {
             e.target.style.transform = 'translateY(0) scale(1)';
-            e.target.style.boxShadow = '0 10px 30px rgba(0, 188, 212, 0.3)';
+            e.target.style.boxShadow = '0 10px 30px rgba(135, 206, 235, 0.3)';
           }}>
             <div style={{
               position: 'absolute',
@@ -139,9 +139,9 @@ function HomePage() {
           
           <div style={{
             padding: '30px', 
-            background: 'linear-gradient(135deg, #0097a7 0%, #00838f 100%)', 
+            background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)', 
             borderRadius: '20px',
-            boxShadow: '0 10px 30px rgba(0, 151, 167, 0.3)',
+            boxShadow: '0 10px 30px rgba(135, 206, 235, 0.3)',
             border: '1px solid rgba(255, 255, 255, 0.2)',
             transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             cursor: 'pointer',
@@ -151,11 +151,11 @@ function HomePage() {
           }}
           onMouseEnter={e => {
             e.target.style.transform = 'translateY(-10px) scale(1.05)';
-            e.target.style.boxShadow = '0 20px 50px rgba(0, 151, 167, 0.4)';
+            e.target.style.boxShadow = '0 20px 50px rgba(135, 206, 235, 0.4)';
           }}
           onMouseLeave={e => {
             e.target.style.transform = 'translateY(0) scale(1)';
-            e.target.style.boxShadow = '0 10px 30px rgba(0, 151, 167, 0.3)';
+            e.target.style.boxShadow = '0 10px 30px rgba(135, 206, 235, 0.3)';
           }}>
             <div style={{
               position: 'absolute',
@@ -172,9 +172,9 @@ function HomePage() {
           
           <div style={{
             padding: '30px', 
-            background: 'linear-gradient(135deg, #00acc1 0%, #006064 100%)', 
+            background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)', 
             borderRadius: '20px',
-            boxShadow: '0 10px 30px rgba(0, 172, 193, 0.3)',
+            boxShadow: '0 10px 30px rgba(135, 206, 235, 0.3)',
             border: '1px solid rgba(255, 255, 255, 0.2)',
             transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             cursor: 'pointer',
@@ -184,11 +184,11 @@ function HomePage() {
           }}
           onMouseEnter={e => {
             e.target.style.transform = 'translateY(-10px) scale(1.05)';
-            e.target.style.boxShadow = '0 20px 50px rgba(0, 172, 193, 0.4)';
+            e.target.style.boxShadow = '0 20px 50px rgba(135, 206, 235, 0.4)';
           }}
           onMouseLeave={e => {
             e.target.style.transform = 'translateY(0) scale(1)';
-            e.target.style.boxShadow = '0 10px 30px rgba(0, 172, 193, 0.3)';
+            e.target.style.boxShadow = '0 10px 30px rgba(135, 206, 235, 0.3)';
           }}>
             <div style={{
               position: 'absolute',
@@ -209,3 +209,4 @@ function HomePage() {
 }
 
 export default HomePage;
+

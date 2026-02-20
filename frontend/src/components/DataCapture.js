@@ -118,21 +118,21 @@ function DataCapture() {
         <button 
           className={activeSection === 'meetings' ? 'nav-button' : ''}
           onClick={() => setActiveSection('meetings')}
-          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'meetings' ? '#00bcd4' : '#f0f0f0'}}
+          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'meetings' ? '#87CEEB' : '#f0f0f0'}}
         >
           📅 Meetings
         </button>
         <button 
           className={activeSection === 'attendance' ? 'nav-button' : ''}
           onClick={() => setActiveSection('attendance')}
-          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'attendance' ? '#00bcd4' : '#f0f0f0'}}
+          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'attendance' ? '#87CEEB' : '#f0f0f0'}}
         >
           ✅ Attendance
         </button>
         <button 
           className={activeSection === 'upload' ? 'nav-button' : ''}
           onClick={() => setActiveSection('upload')}
-          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'upload' ? '#00bcd4' : '#f0f0f0'}}
+          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'upload' ? '#87CEEB' : '#f0f0f0'}}
         >
           📤 Data Upload
         </button>
@@ -237,14 +237,14 @@ function DataCapture() {
             <div key={meeting.id} className="faq-item">
               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
                 <div style={{flex: 1}}>
-                  <h4 style={{color: '#00bcd4', marginBottom: '10px'}}>
+                  <h4 style={{color: '#87CEEB', marginBottom: '10px'}}>
                     {meeting.meeting_type === 'online' ? '💻' : meeting.meeting_type === 'hybrid' ? '🔄' : '🏢'} {meeting.title}
                   </h4>
                   <p><strong>📅 Date:</strong> {meeting.date} at {meeting.time}</p>
                   <p><strong>📍 {meeting.meeting_type === 'online' ? 'Meeting Link' : 'Venue'}:</strong> 
                     {meeting.meeting_type === 'online' || meeting.meeting_link ? (
                       <a href={meeting.meeting_link || meeting.venue} target="_blank" rel="noopener noreferrer" 
-                         style={{color: '#00bcd4', textDecoration: 'underline', marginLeft: '5px'}}>
+                         style={{color: '#87CEEB', textDecoration: 'underline', marginLeft: '5px'}}>
                         {meeting.meeting_type === 'online' ? 'Join Online Meeting' : meeting.venue}
                       </a>
                     ) : meeting.venue}
@@ -252,7 +252,7 @@ function DataCapture() {
                   {meeting.meeting_type === 'hybrid' && meeting.meeting_link && (
                     <p><strong>💻 Online Link:</strong> 
                       <a href={meeting.meeting_link} target="_blank" rel="noopener noreferrer" 
-                         style={{color: '#00bcd4', textDecoration: 'underline', marginLeft: '5px'}}>
+                         style={{color: '#87CEEB', textDecoration: 'underline', marginLeft: '5px'}}>
                         Join Online
                       </a>
                     </p>
@@ -330,14 +330,14 @@ function DataCapture() {
         <div>
           <h3 className="section-title">Data Upload & Management</h3>
           <div className="info-card">
-            <h4 style={{color: '#00bcd4'}}>📤 Bulk Data Upload</h4>
+            <h4 style={{color: '#87CEEB'}}>📤 Bulk Data Upload</h4>
             <p>Upload CSV files with member data, meeting records, or attendance sheets.</p>
             <input type="file" accept=".csv,.xlsx" style={{marginBottom: '15px'}} />
             <button>📤 Upload Data</button>
             
             <hr style={{margin: '20px 0'}} />
             
-            <h4 style={{color: '#00bcd4'}}>📊 Data Export</h4>
+            <h4 style={{color: '#87CEEB'}}>📊 Data Export</h4>
             <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
               <button>📋 Export Members</button>
               <button>📅 Export Meetings</button>

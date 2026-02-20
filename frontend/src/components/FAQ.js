@@ -45,7 +45,7 @@ function FAQ() {
       <button onClick={goBack} style={{
         marginBottom: '30px',
         padding: '12px 30px',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         color: 'white',
         border: 'none',
         borderRadius: '50px',
@@ -59,7 +59,7 @@ function FAQ() {
       <h2 className="page-title">Frequently Asked Questions</h2>
       
       <div style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
         padding: '40px',
         borderRadius: '25px',
         color: 'white',
@@ -78,11 +78,11 @@ function FAQ() {
             background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
             padding: '30px',
             borderRadius: '25px',
-            boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
-            border: '1px solid rgba(102, 126, 234, 0.1)',
-            borderLeft: '6px solid #667eea'
+            boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
+            border: '1px solid rgba(135, 206, 235, 0.1)',
+            borderLeft: '6px solid #87CEEB'
           }}>
-            <h4 style={{color: '#667eea', marginBottom: '15px', fontSize: '1.3em', fontWeight: '700'}}>{faq.q}</h4>
+            <h4 style={{color: '#87CEEB', marginBottom: '15px', fontSize: '1.3em', fontWeight: '700'}}>{faq.q}</h4>
             <p style={{margin: '0', color: '#4a5568', lineHeight: '1.8', fontSize: '15px'}}>{faq.a}</p>
           </div>
         ))}
@@ -92,8 +92,8 @@ function FAQ() {
         background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
         padding: '40px',
         borderRadius: '25px',
-        boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
-        border: '1px solid rgba(102, 126, 234, 0.1)',
+        boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
+        border: '1px solid rgba(135, 206, 235, 0.1)',
         textAlign: 'center',
         marginTop: '40px'
       }}>
@@ -102,7 +102,7 @@ function FAQ() {
           Can't find the answer you're looking for? Our support team is here to help.
         </p>
         <button onClick={() => window.location.hash = '#contact'} style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
           color: 'white',
           padding: '18px 45px',
           fontSize: '16px',
@@ -110,7 +110,7 @@ function FAQ() {
           border: 'none',
           borderRadius: '50px',
           cursor: 'pointer',
-          boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)'
+          boxShadow: '0 8px 25px rgba(135, 206, 235, 0.4)'
         }}>
           Contact Us
         </button>
@@ -120,3 +120,4 @@ function FAQ() {
 }
 
 export default FAQ;
+

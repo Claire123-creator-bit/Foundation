@@ -11,7 +11,7 @@ html {
 
 body {
   margin: 0;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background: linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -141,9 +141,9 @@ body::before {
   background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(30, 60, 114, 0.1);
+  box-shadow: 0 5px 20px rgba(135, 206, 235, 0.1);
   margin: 10px;
-  border: 1px solid rgba(30, 60, 114, 0.1);
+  border: 1px solid rgba(135, 206, 235, 0.1);
   max-width: 100%;
   width: calc(100% - 20px);
 }
@@ -163,7 +163,7 @@ body::before {
 }
 
 button {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background: linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%);
   color: white;
   border: none;
   padding: 18px 40px;
@@ -171,7 +171,7 @@ button {
   cursor: pointer;
   font-weight: 600;
   margin: 10px;
-  box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+  box-shadow: 0 8px 25px rgba(135, 206, 235, 0.4);
   font-size: 16px;
 }
 
@@ -191,9 +191,9 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: #1e3c72;
+  border-color: #87CEEB;
   background: white;
-  box-shadow: 0 0 0 5px rgba(30, 60, 114, 0.1), inset 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 0 0 5px rgba(135, 206, 235, 0.1), inset 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .page-title {
@@ -202,7 +202,7 @@ input:focus, select:focus, textarea:focus {
   margin-bottom: 10px;
   text-align: center;
   font-weight: 700;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background: linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -219,7 +219,7 @@ input:focus, select:focus, textarea:focus {
   font-size: 1.8em;
   margin: 35px 0 25px 0;
   font-weight: 700;
-  border-left: 6px solid #1e3c72;
+  border-left: 6px solid #87CEEB;
   padding-left: 20px;
 }
 
@@ -228,17 +228,17 @@ input:focus, select:focus, textarea:focus {
   padding: 30px;
   background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
   border-radius: 25px;
-  border-left: 6px solid #1e3c72;
-  box-shadow: 0 8px 30px rgba(30, 60, 114, 0.15);
-  border: 1px solid rgba(30, 60, 114, 0.1);
+  border-left: 6px solid #87CEEB;
+  box-shadow: 0 8px 30px rgba(135, 206, 235, 0.15);
+  border: 1px solid rgba(135, 206, 235, 0.1);
 }
 
 .info-card {
   background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
   padding: 30px;
   border-radius: 25px;
-  box-shadow: 0 8px 30px rgba(30, 60, 114, 0.15);
-  border: 1px solid rgba(30, 60, 114, 0.1);
+  box-shadow: 0 8px 30px rgba(135, 206, 235, 0.15);
+  border: 1px solid rgba(135, 206, 235, 0.1);
 }
 
 .terms-section {
@@ -246,8 +246,8 @@ input:focus, select:focus, textarea:focus {
   padding: 30px;
   background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
   border-radius: 25px;
-  border-left: 6px solid #1e3c72;
-  box-shadow: 0 8px 30px rgba(30, 60, 114, 0.15);
+  border-left: 6px solid #87CEEB;
+  box-shadow: 0 8px 30px rgba(135, 206, 235, 0.15);
 }
 
 h3, h4 {
@@ -272,11 +272,11 @@ label {
 table {
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 8px 30px rgba(30, 60, 114, 0.15);
+  box-shadow: 0 8px 30px rgba(135, 206, 235, 0.15);
 }
 
 table th {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background: linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%);
   padding: 18px;
   font-weight: 600;
   color: white;
@@ -296,6 +296,6 @@ table td {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background: linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%);
   border-radius: 10px;
 }

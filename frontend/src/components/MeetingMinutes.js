@@ -77,7 +77,7 @@ function MeetingMinutes({ userRole, userId }) {
             style={{
               padding: '10px 20px', 
               borderRadius: '8px', 
-              background: activeSection === 'create' ? '#00bcd4' : '#f0f0f0',
+              background: activeSection === 'create' ? '#87CEEB' : '#f0f0f0',
               color: activeSection === 'create' ? 'white' : '#333',
               border: 'none',
               cursor: 'pointer'
@@ -91,7 +91,7 @@ function MeetingMinutes({ userRole, userId }) {
           style={{
             padding: '10px 20px', 
             borderRadius: '8px', 
-            background: activeSection === 'view' ? '#00bcd4' : '#f0f0f0',
+            background: activeSection === 'view' ? '#87CEEB' : '#f0f0f0',
             color: activeSection === 'view' ? 'white' : '#333',
             border: 'none',
             cursor: 'pointer'
@@ -108,7 +108,7 @@ function MeetingMinutes({ userRole, userId }) {
             
             <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
               <div>
-                <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#00bcd4'}}>Select Meeting:</label>
+                <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#87CEEB'}}>Select Meeting:</label>
                 <select
                   value={minutesForm.meeting_id}
                   onChange={e => setMinutesForm({...minutesForm, meeting_id: e.target.value})}
@@ -124,7 +124,7 @@ function MeetingMinutes({ userRole, userId }) {
               </div>
               
               <div>
-                <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#00bcd4'}}>Secretary Name:</label>
+                <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#87CEEB'}}>Secretary Name:</label>
                 <input 
                   placeholder="Secretary taking minutes"
                   value={minutesForm.secretary_name}
@@ -139,10 +139,10 @@ function MeetingMinutes({ userRole, userId }) {
                 padding: '15px', 
                 background: 'rgba(0,188,212,0.1)', 
                 borderRadius: '8px', 
-                border: '1px solid #00bcd4',
+                border: '1px solid #87CEEB',
                 marginBottom: '20px'
               }}>
-                <h4 style={{color: '#00bcd4', margin: '0 0 10px 0'}}>📋 Meeting Details</h4>
+                <h4 style={{color: '#87CEEB', margin: '0 0 10px 0'}}>📋 Meeting Details</h4>
                 <p style={{margin: '5px 0'}}><strong>Title:</strong> {selectedMeeting.title}</p>
                 <p style={{margin: '5px 0'}}><strong>Date:</strong> {selectedMeeting.date} at {selectedMeeting.time}</p>
                 <p style={{margin: '5px 0'}}><strong>Venue:</strong> {selectedMeeting.venue || selectedMeeting.meeting_link}</p>
@@ -150,7 +150,7 @@ function MeetingMinutes({ userRole, userId }) {
             )}
             
             <div>
-              <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#00bcd4'}}>Meeting Content & Discussions:</label>
+              <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#87CEEB'}}>Meeting Content & Discussions:</label>
               <textarea 
                 placeholder="Write what was discussed in the meeting..."
                 value={minutesForm.content}
@@ -163,7 +163,7 @@ function MeetingMinutes({ userRole, userId }) {
             
             <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
               <div>
-                <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#00bcd4'}}>Members Present:</label>
+                <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#87CEEB'}}>Members Present:</label>
                 <textarea 
                   placeholder="List members who attended..."
                   value={minutesForm.attendees_present}
@@ -173,7 +173,7 @@ function MeetingMinutes({ userRole, userId }) {
               </div>
               
               <div>
-                <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#00bcd4'}}>Members Absent:</label>
+                <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#87CEEB'}}>Members Absent:</label>
                 <textarea 
                   placeholder="List members who were absent..."
                   value={minutesForm.attendees_absent}
@@ -184,7 +184,7 @@ function MeetingMinutes({ userRole, userId }) {
             </div>
             
             <div>
-              <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#00bcd4'}}>Action Items & Decisions:</label>
+              <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#87CEEB'}}>Action Items & Decisions:</label>
               <textarea 
                 placeholder="List decisions made and action items..."
                 value={minutesForm.action_items}
@@ -194,7 +194,7 @@ function MeetingMinutes({ userRole, userId }) {
             </div>
             
             <div>
-              <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#00bcd4'}}>Next Meeting Date (Optional):</label>
+              <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#87CEEB'}}>Next Meeting Date (Optional):</label>
               <input 
                 type="date"
                 value={minutesForm.next_meeting_date}
@@ -217,7 +217,7 @@ function MeetingMinutes({ userRole, userId }) {
               <div key={minute.id} className="faq-item" style={{marginBottom: '25px'}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '15px'}}>
                   <div>
-                    <h4 style={{color: '#00bcd4', margin: '0 0 5px 0'}}>{minute.meeting_title}</h4>
+                    <h4 style={{color: '#87CEEB', margin: '0 0 5px 0'}}>{minute.meeting_title}</h4>
                     <p style={{margin: '0', color: '#666', fontSize: '14px'}}>
                       📅 {minute.meeting_date} | ✍️ Secretary: {minute.secretary_name} | 📝 {new Date(minute.created_date).toLocaleDateString()}
                     </p>
@@ -231,7 +231,7 @@ function MeetingMinutes({ userRole, userId }) {
                 </div>
                 
                 <div style={{background: '#f9f9f9', padding: '15px', borderRadius: '8px', marginBottom: '15px'}}>
-                  <h5 style={{color: '#00bcd4', margin: '0 0 10px 0'}}>📝 Meeting Content:</h5>
+                  <h5 style={{color: '#87CEEB', margin: '0 0 10px 0'}}>📝 Meeting Content:</h5>
                   <p style={{margin: '0', lineHeight: '1.6', whiteSpace: 'pre-wrap'}}>{minute.content}</p>
                 </div>
                 
@@ -258,7 +258,7 @@ function MeetingMinutes({ userRole, userId }) {
                 
                 {minute.next_meeting_date && (
                   <div>
-                    <strong style={{color: '#00bcd4'}}>📅 Next Meeting:</strong>
+                    <strong style={{color: '#87CEEB'}}>📅 Next Meeting:</strong>
                     <span style={{marginLeft: '10px'}}>{minute.next_meeting_date}</span>
                   </div>
                 )}

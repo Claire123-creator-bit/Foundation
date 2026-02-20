@@ -16,7 +16,7 @@ function FeedbackForm({ meetingId }) {
 
   return (
     <div style={{ marginTop: '10px', padding: '15px', background: '#f9f9f9', borderRadius: '8px' }}>
-      <h4 style={{ margin: '0 0 10px 0', color: '#00bcd4', fontSize: '14px' }}>Give Feedback</h4>
+      <h4 style={{ margin: '0 0 10px 0', color: '#87CEEB', fontSize: '14px' }}>Give Feedback</h4>
       {submitted ? (
         <p style={{ color: '#4caf50', margin: 0 }}>Thank you for your feedback!</p>
       ) : (
@@ -40,7 +40,7 @@ function FeedbackForm({ meetingId }) {
             style={{
               marginTop: '8px',
               padding: '6px 12px',
-              background: '#00bcd4',
+              background: '#87CEEB',
               color: 'white',
               border: 'none',
               borderRadius: '4px',

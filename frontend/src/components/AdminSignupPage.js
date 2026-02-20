@@ -90,7 +90,7 @@ function AdminSignupPage({ onNavigate, onSignupSuccess }) {
       <button type="button" onClick={() => onNavigate('landing')} style={{
         marginBottom: '20px',
         padding: '10px 20px',
-        background: 'linear-gradient(45deg, #006064, #00838f)',
+        background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
         color: 'white',
         border: 'none',
         borderRadius: '15px',
@@ -100,7 +100,7 @@ function AdminSignupPage({ onNavigate, onSignupSuccess }) {
       </button>
 
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <h1 style={{ color: '#006064', fontSize: '2.5em', marginBottom: '10px' }}>
+        <h1 style={{ color: '#87CEEB', fontSize: '2.5em', marginBottom: '10px' }}>
           Mbogo Welfare Empowerment Foundation
         </h1>
         <p style={{ color: '#666', fontSize: '1.1em' }}>
@@ -111,13 +111,13 @@ function AdminSignupPage({ onNavigate, onSignupSuccess }) {
       <h2 className="page-title" style={{ textAlign: 'center' }}>Admin Registration</h2>
 
       <div style={{
-        background: 'rgba(0,188,212,0.1)',
+        background: 'rgba(135,206,235,0.1)',
         padding: '20px',
         borderRadius: '12px',
         marginBottom: '25px',
-        border: '1px solid rgba(0,188,212,0.3)'
+        border: '1px solid rgba(135,206,235,0.3)'
       }}>
-        <p style={{ margin: 0, color: '#006064', fontSize: '14px' }}>
+        <p style={{ margin: 0, color: '#87CEEB', fontSize: '14px' }}>
           <strong>Note:</strong> This registration is for administrators only. 
           You will need approval from the main administrator to access admin features.
         </p>
@@ -196,7 +196,7 @@ function AdminSignupPage({ onNavigate, onSignupSuccess }) {
                 cursor: 'pointer',
                 fontSize: '12px',
                 padding: '5px',
-                color: '#1e3c72',
+                color: '#87CEEB',
                 fontWeight: '600'
               }}
             >
@@ -228,7 +228,7 @@ function AdminSignupPage({ onNavigate, onSignupSuccess }) {
           padding: '15px',
           fontSize: '16px',
           fontWeight: 'bold',
-          background: loading ? '#ccc' : 'linear-gradient(45deg, #006064, #00838f)',
+          background: loading ? '#ccc' : 'linear-gradient(45deg, #87CEEB, #87CEEB)',
           color: 'white',
           border: 'none',
           borderRadius: '12px',
@@ -239,11 +239,11 @@ function AdminSignupPage({ onNavigate, onSignupSuccess }) {
         </button>
       </form>
 
-      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: 'rgba(0,96,100,0.05)', borderRadius: '10px' }}>
+      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: 'rgba(135,206,235,0.05)', borderRadius: '10px' }}>
         <p style={{ margin: '0', color: '#666' }}>
           Already have an admin account?{' '}
           <span onClick={() => onNavigate('login')} style={{
-            color: '#006064',
+            color: '#87CEEB',
             fontWeight: 'bold',
             cursor: 'pointer',
             textDecoration: 'underline'
