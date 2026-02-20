@@ -32,25 +32,32 @@ function UserDashboard() {
         'User-Role': userRole,
         'User-ID': userId
       };
-      
-fetch(`${API_BASE}/members`, { headers })
+
+      // Prefer the single-member endpoint which returns the specific profile
+      fetch(`${API_BASE}/member-profile`, { headers })
         .then(res => res.json())
         .then(data => {
-          if (data.length > 0) {
-            const memberData = data[0];
+          // If the endpoint returns an error object, fallback
+          if (data && !data.error) {
             setUser({
-              ...memberData,
-              last_login: new Date().toISOString()
+              full_names: data.full_names || userName || 'Member',
+              category: data.category || 'Member',
+              ward: data.ward || 'Not provided',
+              constituency: data.constituency || 'Not provided',
+              is_verified: typeof data.is_verified !== 'undefined' ? data.is_verified : true,
+              last_login: data.last_login || new Date().toISOString(),
+              id: data.id || userId
             });
           } else {
-            // Fallback when no data returned
+            // Fallback when no usable data returned
             setUser({
               full_names: userName || 'Member',
               category: 'Member',
-              ward: 'N/A',
-              constituency: 'N/A',
+              ward: 'Not provided',
+              constituency: 'Not provided',
               is_verified: true,
-              last_login: new Date().toISOString()
+              last_login: new Date().toISOString(),
+              id: userId
             });
           }
           setDataLoading(prev => ({ ...prev, profile: false }));
@@ -60,10 +67,11 @@ fetch(`${API_BASE}/members`, { headers })
           setUser({
             full_names: userName || 'Member',
             category: 'Member',
-            ward: 'N/A',
-            constituency: 'N/A',
+            ward: 'Not provided',
+            constituency: 'Not provided',
             is_verified: true,
-            last_login: new Date().toISOString()
+            last_login: new Date().toISOString(),
+            id: userId
           });
           setDataLoading(prev => ({ ...prev, profile: false }));
         });

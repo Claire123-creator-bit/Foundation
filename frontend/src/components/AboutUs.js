@@ -117,17 +117,23 @@ function AboutUs() {
           Together, we can build a stronger, more transparent, and more engaged community. 
           Join us today and make your voice heard.
         </p>
-        <button onClick={() => window.location.hash = '#signup'} style={{
-          background: 'white',
-          color: '#87CEEB',
-          padding: '18px 45px',
-          fontSize: '16px',
-          fontWeight: '700',
-          border: 'none',
-          borderRadius: '50px',
-          cursor: 'pointer',
-          boxShadow: '0 8px 25px rgba(0,0,0,0.2)'
-        }}>
+        <button 
+          className="get-started-button"
+          onClick={() => window.location.hash = '#signup'} 
+          style={{
+            background: '#1e3c72',
+            color: 'white',
+            padding: '18px 45px',
+            fontSize: '16px',
+            fontWeight: '700',
+            border: '3px solid #1e3c72',
+            borderRadius: '50px',
+            cursor: 'pointer',
+            boxShadow: '0 8px 25px rgba(0,0,0,0.3)',
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
+          }}
+        >
           Get Started Now
         </button>
       </div>

@@ -107,17 +107,20 @@ function LandingPage({ onGetStarted, onLogin }) {
           animation: 'fadeInUp 1s ease-out 0.4s both'
         }}>
           <button 
+            className="get-started-button"
             style={{
-              padding: '15px 40px',
-              fontSize: '1.1em',
-              fontWeight: '600',
-              backgroundColor: 'white',
-              color: '#87CEEB',
-              border: 'none',
+              padding: '18px 50px',
+              fontSize: '1.2em',
+              fontWeight: '700',
+              backgroundColor: '#ffffff',
+              color: '#1e3c72',
+              border: '3px solid #1e3c72',
               borderRadius: '50px',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
-              boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+              boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
             }}
             onClick={() => window.location.hash = '#signup'}
           >
