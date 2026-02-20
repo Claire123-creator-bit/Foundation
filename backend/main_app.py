@@ -4,6 +4,7 @@ from website_models import db, CallLog, AutoResponse, Member, Meeting, Attendanc
 from datetime import datetime
 import os
 import smtplib
+import threading
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import hashlib
@@ -294,34 +295,6 @@ def register_member_pro():
         
        
         member_email = data.get('email', '')
-        if member_email:
-            email_subject = "Welcome to Mbogo Welfare Empowerment Foundation!"
-            email_body = f"""
-            <html>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
-                <h2 style="color: #006064;">Welcome to Mbogo Welfare Empowerment Foundation!</h2>
-                <p>Dear {data['full_names']},</p>
-                <p>Thank you for registering as a member of our foundation. We are delighted to have you join our community.</p>
-                <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>Member ID:</strong> {member.id}</p>
-                    <p><strong>Name:</strong> {data['full_names']}</p>
-                    <p><strong>Phone:</strong> {data['phone_number']}</p>
-                    <p><strong>Category:</strong> {data['category']}</p>
-                    <p><strong>Location:</strong> {data['ward']}, {data['constituency']}, {data['county']}</p>
-                </div>
-                <h3>Payment Details:</h3>
-                <p><strong>Paybill:</strong> 123456</p>
-                <p><strong>Account Name:</strong> Your Name</p>
-                <p>Join our WhatsApp group: https://chat.whatsapp.com/xyz</p>
-                <hr>
-                <p style="color: #666; font-size: 12px;">
-                    This is an automated message from Mbogo Welfare Empowerment Foundation.
-                    Please do not reply to this email.
-                </p>
-            </body>
-            </html>
-            """
-            send_email(member_email, email_subject, email_body)
         
         response = jsonify({
             'message': 'Registration successful', 
@@ -338,6 +311,44 @@ def register_member_pro():
             }
         })
         response.headers.add('Access-Control-Allow-Origin', '*')
+        
+        # Send email asynchronously after response
+        if member_email:
+            try:
+                email_subject = "Welcome to Mbogo Welfare Empowerment Foundation!"
+                email_body = f"""
+                <html>
+                <body style="font-family: Arial, sans-serif; padding: 20px;">
+                    <h2 style="color: #006064;">Welcome to Mbogo Welfare Empowerment Foundation!</h2>
+                    <p>Dear {data['full_names']},</p>
+                    <p>Thank you for registering as a member of our foundation. We are delighted to have you join our community.</p>
+                    <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                        <p><strong>Member ID:</strong> {member.id}</p>
+                        <p><strong>Name:</strong> {data['full_names']}</p>
+                        <p><strong>Phone:</strong> {data['phone_number']}</p>
+                        <p><strong>Category:</strong> {data['category']}</p>
+                        <p><strong>Location:</strong> {data['ward']}, {data['constituency']}, {data['county']}</p>
+                    </div>
+                    <h3>Payment Details:</h3>
+                    <p><strong>Paybill:</strong> 123456</p>
+                    <p><strong>Account Name:</strong> Your Name</p>
+                    <p>Join our WhatsApp group: https://chat.whatsapp.com/xyz</p>
+                    <hr>
+                    <p style="color: #666; font-size: 12px;">
+                        This is an automated message from Mbogo Welfare Empowerment Foundation.
+                        Please do not reply to this email.
+                    </p>
+                </body>
+                </html>
+                """
+                # Send email in background without blocking
+                import threading
+                email_thread = threading.Thread(target=send_email, args=(member_email, email_subject, email_body))
+                email_thread.daemon = True
+                email_thread.start()
+            except Exception as e:
+                print(f"Email sending failed: {e}")
+        
         return response
         
     except Exception as e:
