@@ -64,8 +64,8 @@ const LoginPage = ({ onLogin, onNavigate }) => {
       <button type="button" onClick={() => onNavigate('landing')} style={{
         marginBottom: '20px',
         padding: '10px 20px',
-        background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
-        color: 'white',
+        background: '#0A2463',
+        color: '#FFFFFF',
         border: 'none',
         borderRadius: '15px',
         cursor: 'pointer'
@@ -80,8 +80,8 @@ const LoginPage = ({ onLogin, onNavigate }) => {
           type="button"
           onClick={() => { setLoginType('member'); setMessage(''); }}
           style={{
-            background: loginType === 'member' ? '#87CEEB' : '#ccc',
-            color: 'white',
+            background: loginType === 'member' ? '#0A2463' : '#CCCCCC',
+            color: '#FFFFFF',
             border: 'none',
             padding: '10px 20px',
             margin: '0 10px',
@@ -95,8 +95,8 @@ const LoginPage = ({ onLogin, onNavigate }) => {
           type="button"
           onClick={() => { setLoginType('admin'); setMessage(''); }}
           style={{
-            background: loginType === 'admin' ? '#87CEEB' : '#ccc',
-            color: 'white',
+            background: loginType === 'admin' ? '#0A2463' : '#CCCCCC',
+            color: '#FFFFFF',
             border: 'none',
             padding: '10px 20px',
             margin: '0 10px',
@@ -187,11 +187,11 @@ const LoginPage = ({ onLogin, onNavigate }) => {
         </div>
       )}
       
-      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: 'rgba(135,206,235,0.05)', borderRadius: '10px' }}>
-        <p style={{ margin: '0', color: '#666' }}>
+      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: '#FFFFFF', borderRadius: '10px', border: '1px solid #0A2463' }}>
+        <p style={{ margin: '0', color: '#0A2463' }}>
           Don't have an account?{' '}
           <span onClick={() => onNavigate('signup')} style={{
-            color: '#87CEEB',
+            color: '#0A2463',
             fontWeight: 'bold',
             cursor: 'pointer',
             textDecoration: 'underline'
@@ -200,7 +200,7 @@ const LoginPage = ({ onLogin, onNavigate }) => {
           </span>
         </p>
         {loginType === 'member' && (
-          <p style={{ margin: '10px 0 0 0', color: '#666', fontSize: '12px' }}>
+          <p style={{ margin: '10px 0 0 0', color: '#0A2463', fontSize: '12px' }}>
             Forgot your National Id? Please contact support or re-register.
           </p>
         )}
@@ -208,11 +208,11 @@ const LoginPage = ({ onLogin, onNavigate }) => {
       
       {/* Admin Sign Up Link */}
       {loginType === 'admin' && (
-        <div style={{ textAlign: 'center', marginTop: '15px', padding: '15px', background: 'rgba(135,206,235,0.1)', borderRadius: '10px', border: '1px solid rgba(135,206,235,0.3)' }}>
-          <p style={{ margin: '0', color: '#666', fontSize: '13px' }}>
+        <div style={{ textAlign: 'center', marginTop: '15px', padding: '15px', background: '#FFFFFF', borderRadius: '10px', border: '1px solid #0A2463' }}>
+          <p style={{ margin: '0', color: '#0A2463', fontSize: '13px' }}>
             New administrator?{' '}
             <span onClick={() => onNavigate('admin-signup')} style={{
-              color: '#87CEEB',
+              color: '#0A2463',
               fontWeight: 'bold',
               cursor: 'pointer',
               textDecoration: 'underline'

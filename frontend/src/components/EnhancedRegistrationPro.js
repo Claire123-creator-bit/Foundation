@@ -141,17 +141,17 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
 
   return (
     <div className="form-container">
-      <div style={{marginBottom: '20px', padding: '10px', background: '#f5f5f5', borderRadius: '8px'}}>
+      <div style={{marginBottom: '20px', padding: '10px', background: '#FFFFFF', borderRadius: '8px', border: '1px solid #0A2463'}}>
         <button 
           type="button"
           onClick={checkHealth}
           disabled={isCheckingHealth}
           style={{
-            background: isCheckingHealth ? '#ccc' : '#2196f3',
+            background: isCheckingHealth ? '#CCCCCC' : '#0A2463',
             padding: '8px 16px',
             borderRadius: '4px',
             border: 'none',
-            color: 'white',
+            color: '#FFFFFF',
             cursor: isCheckingHealth ? 'not-allowed' : 'pointer',
             fontSize: '12px'
           }}
@@ -160,10 +160,10 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
         </button>
         
         {healthStatus && (
-          <div style={{marginTop: '10px', fontSize: '12px', fontFamily: 'monospace'}}>
+          <div style={{marginTop: '10px', fontSize: '12px', fontFamily: 'monospace', color: '#0A2463'}}>
             Status: {healthStatus.status}
             {healthStatus.database && <div>Database: {healthStatus.database}</div>}
-            {healthStatus.error && <div style={{color: 'red'}}>Error: {healthStatus.error}</div>}
+            {healthStatus.error && <div style={{color: '#0A2463'}}>Error: {healthStatus.error}</div>}
             {healthStatus.message && <div>Message: {healthStatus.message}</div>}
           </div>
         )}
@@ -171,23 +171,23 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
 
       <div style={{textAlign: 'center', marginBottom: '30px'}}>
         <h2 className="page-title">Official User Registration</h2>
-        <p style={{color: '#666', fontSize: '14px'}}>
+        <p style={{color: '#0A2463', fontSize: '14px'}}>
           All fields are mandatory. Please provide accurate information as it appears on your National ID.
         </p>
       </div>
 
       <form onSubmit={handleSubmit}>
         <div style={{
-          background: 'rgba(135,206,235,0.1)', 
+          background: '#FFFFFF', 
           padding: '20px', 
           borderRadius: '12px', 
           marginBottom: '25px',
-          border: '1px solid rgba(135,206,235,0.3)'
+          border: '1px solid #0A2463'
         }}>
-          <h3 style={{color: '#87CEEB', margin: '0 0 20px 0'}}>Personal Information</h3>
+          <h3 style={{color: '#0A2463', margin: '0 0 20px 0'}}>Personal Information</h3>
           
           <div style={{marginBottom: '15px'}}>
-            <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
+            <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#0A2463'}}>
               Full Names (as on National ID) *
             </label>
             <input 
@@ -202,7 +202,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
 
           <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
             <div>
-              <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
+              <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#0A2463'}}>
                 National Id Number *
               </label>
               <input 
@@ -216,7 +216,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
             </div>
             
             <div>
-              <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
+              <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#0A2463'}}>
                 Phone Number *
               </label>
               <input 
@@ -230,7 +230,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
           </div>
 
           <div style={{marginTop: '15px'}}>
-            <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
+            <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#0A2463'}}>
               Email Address (Optional)
             </label>
             <input 
@@ -240,18 +240,18 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
               value={formData.email || ''} 
               onChange={handleChange} 
             />
-            <small style={{color: '#666', fontSize: '12px'}}>Enter your email to receive welcome notifications</small>
+            <small style={{color: '#0A2463', fontSize: '12px'}}>Enter your email to receive welcome notifications</small>
           </div>
         </div>
 
         <div style={{
-          background: 'rgba(76,175,80,0.1)', 
+          background: '#FFFFFF', 
           padding: '20px', 
           borderRadius: '12px', 
           marginBottom: '25px',
-          border: '1px solid rgba(76,175,80,0.3)'
+          border: '1px solid #0A2463'
         }}>
-          <h3 style={{color: '#4caf50', margin: '0 0 20px 0'}}>Location Information</h3>
+          <h3 style={{color: '#0A2463', margin: '0 0 20px 0'}}>Location Information</h3>
           
           <div style={{marginBottom: '20px'}}>
             <button 
@@ -259,11 +259,11 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
               onClick={captureGPSLocation}
               disabled={isCapturingLocation}
               style={{
-                background: isCapturingLocation ? '#ccc' : 'linear-gradient(45deg, #4caf50, #45a049)',
+                background: isCapturingLocation ? '#CCCCCC' : '#0A2463',
                 padding: '12px 20px',
                 borderRadius: '8px',
                 border: 'none',
-                color: 'white',
+                color: '#FFFFFF',
                 cursor: isCapturingLocation ? 'not-allowed' : 'pointer',
                 marginBottom: '10px'
               }}
@@ -271,13 +271,13 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
               {isCapturingLocation ? 'Capturing...' : 'Capture GPS Location'}
             </button>
             {locationStatus && (
-              <p style={{margin: '10px 0', fontSize: '14px', color: '#666'}}>{locationStatus}</p>
+              <p style={{margin: '10px 0', fontSize: '14px', color: '#0A2463'}}>{locationStatus}</p>
             )}
           </div>
 
           <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px', marginBottom: '15px'}}>
             <div>
-              <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
+              <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#0A2463'}}>
                 County *
               </label>
               <select name="county" value={formData.county} onChange={handleChange} required>
@@ -289,7 +289,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
             </div>
             
             <div>
-              <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
+              <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#0A2463'}}>
                 Constituency *
               </label>
               <input 
@@ -302,7 +302,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
             </div>
             
             <div>
-              <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
+              <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#0A2463'}}>
                 Ward *
               </label>
               <input 
@@ -316,7 +316,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
           </div>
 
           <div>
-            <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
+            <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#0A2463'}}>
               Physical Location / Place of Residence *
             </label>
             <input 
@@ -330,16 +330,16 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
         </div>
 
         <div style={{
-          background: 'rgba(255,152,0,0.1)', 
+          background: '#FFFFFF', 
           padding: '20px', 
           borderRadius: '12px', 
           marginBottom: '25px',
-          border: '1px solid rgba(255,152,0,0.3)'
+          border: '1px solid #0A2463'
         }}>
-          <h3 style={{color: '#ff9800', margin: '0 0 20px 0'}}>Role & Category</h3>
+          <h3 style={{color: '#0A2463', margin: '0 0 20px 0'}}>Role & Category</h3>
           
           <div>
-            <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333'}}>
+            <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#0A2463'}}>
               Select Your Role/Category *
             </label>
             <select name="category" value={formData.category} onChange={handleChange} required>
@@ -353,12 +353,12 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
 
         {successMessage && (
           <div style={{
-            background: '#e8f5e9',
-            color: '#2e7d32',
+            background: '#FFFFFF',
+            color: '#0A2463',
             padding: '15px',
             borderRadius: '8px',
             marginBottom: '20px',
-            border: '1px solid #a5d6a7'
+            border: '1px solid #0A2463'
           }}>
             {successMessage}
           </div>
@@ -366,22 +366,22 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
 
         {errorMessage && (
           <div style={{
-            background: '#ffebee',
-            color: '#c62828',
+            background: '#FFFFFF',
+            color: '#0A2463',
             padding: '15px',
             borderRadius: '8px',
             marginBottom: '20px',
-            border: '1px solid #ef9a9a'
+            border: '1px solid #0A2463'
           }}>
             <div style={{fontWeight: 'bold', marginBottom: errorDetails ? '8px' : 0}}>
               {errorMessage}
             </div>
             {errorDetails && (
-              <div style={{fontSize: '12px', opacity: 0.8, fontFamily: 'monospace', background: 'rgba(0,0,0,0.05)', padding: '8px', borderRadius: '4px'}}>
+              <div style={{fontSize: '12px', fontFamily: 'monospace', background: '#FFFFFF', padding: '8px', borderRadius: '4px', border: '1px solid #0A2463'}}>
                 {errorDetails}
               </div>
             )}
-            <div style={{marginTop: '10px', fontSize: '12px', opacity: 0.7}}>
+            <div style={{marginTop: '10px', fontSize: '12px'}}>
               Check browser console (F12) for more details
             </div>
           </div>
@@ -395,8 +395,8 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
             padding: '18px', 
             fontSize: '18px', 
             fontWeight: 'bold',
-            background: isSubmitting ? '#ccc' : 'linear-gradient(45deg, #87CEEB, #87CEEB)',
-            color: 'white',
+            background: isSubmitting ? '#CCCCCC' : '#0A2463',
+            color: '#FFFFFF',
             border: 'none',
             borderRadius: '12px',
             cursor: isSubmitting ? 'not-allowed' : 'pointer',

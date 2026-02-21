@@ -28,7 +28,7 @@ function FAQ() {
     },
     {
       q: "Can I update my membership information?",
-      a: "Yes, you can update your information by logging into your account and accessing your profile settings, or by contacting our support team."
+      a: "Yes, you can update your information by Logging into your account and accessing your profile settings, or by contacting our support team."
     },
     {
       q: "How are meetings scheduled and announced?",
@@ -45,8 +45,8 @@ function FAQ() {
       <button onClick={goBack} style={{
         marginBottom: '30px',
         padding: '12px 30px',
-        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-        color: 'white',
+        background: '#0A2463',
+        color: '#FFFFFF',
         border: 'none',
         borderRadius: '50px',
         cursor: 'pointer',
@@ -59,15 +59,15 @@ function FAQ() {
       <h2 className="page-title">Frequently Asked Questions</h2>
       
       <div style={{
-        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
+        background: '#0A2463',
         padding: '40px',
         borderRadius: '25px',
-        color: 'white',
+        color: '#FFFFFF',
         marginBottom: '40px',
         textAlign: 'center'
       }}>
-        <h3 style={{fontSize: '2em', marginBottom: '15px', fontWeight: '700'}}>Have Questions?</h3>
-        <p style={{fontSize: '1.2em', lineHeight: '1.8', color: 'rgba(255,255,255,0.95)'}}>
+        <h3 style={{fontSize: '2em', marginBottom: '15px', fontWeight: '700', color: '#FFFFFF'}}>Have Questions?</h3>
+        <p style={{fontSize: '1.2em', lineHeight: '1.8', color: '#FFFFFF'}}>
           Find answers to the most commonly asked questions about Mbogo Welfare Empowerment Foundation
         </p>
       </div>
@@ -75,42 +75,39 @@ function FAQ() {
       <div style={{display: 'grid', gap: '25px'}}>
         {faqs.map((faq, index) => (
           <div key={index} style={{
-            background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
+            background: '#FFFFFF',
             padding: '30px',
             borderRadius: '25px',
-            boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
-            border: '1px solid rgba(135, 206, 235, 0.1)',
-            borderLeft: '6px solid #87CEEB'
+            border: '1px solid #0A2463',
+            borderLeft: '6px solid #0A2463'
           }}>
-            <h4 style={{color: '#87CEEB', marginBottom: '15px', fontSize: '1.3em', fontWeight: '700'}}>{faq.q}</h4>
-            <p style={{margin: '0', color: '#4a5568', lineHeight: '1.8', fontSize: '15px'}}>{faq.a}</p>
+            <h4 style={{color: '#0A2463', marginBottom: '15px', fontSize: '1.3em', fontWeight: '700'}}>{faq.q}</h4>
+            <p style={{margin: '0', color: '#0A2463', lineHeight: '1.8', fontSize: '15px'}}>{faq.a}</p>
           </div>
         ))}
       </div>
 
       <div style={{
-        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
+        background: '#FFFFFF',
         padding: '40px',
         borderRadius: '25px',
-        boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
-        border: '1px solid rgba(135, 206, 235, 0.1)',
+        border: '1px solid #0A2463',
         textAlign: 'center',
         marginTop: '40px'
       }}>
-        <h3 style={{color: '#2d3748', fontSize: '1.8em', marginBottom: '15px', fontWeight: '700'}}>Still Have Questions?</h3>
-        <p style={{color: '#4a5568', fontSize: '1.1em', lineHeight: '1.8', marginBottom: '25px'}}>
+        <h3 style={{color: '#0A2463', fontSize: '1.8em', marginBottom: '15px', fontWeight: '700'}}>Still Have Questions?</h3>
+        <p style={{color: '#0A2463', fontSize: '1.1em', lineHeight: '1.8', marginBottom: '25px'}}>
           Can't find the answer you're looking for? Our support team is here to help.
         </p>
         <button onClick={() => window.location.hash = '#contact'} style={{
-          background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-          color: 'white',
+          background: '#0A2463',
+          color: '#FFFFFF',
           padding: '18px 45px',
           fontSize: '16px',
           fontWeight: '700',
           border: 'none',
           borderRadius: '50px',
-          cursor: 'pointer',
-          boxShadow: '0 8px 25px rgba(135, 206, 235, 0.4)'
+          cursor: 'pointer'
         }}>
           Contact Us
         </button>

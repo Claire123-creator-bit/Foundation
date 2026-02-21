@@ -118,21 +118,21 @@ function DataCapture() {
         <button 
           className={activeSection === 'meetings' ? 'nav-button' : ''}
           onClick={() => setActiveSection('meetings')}
-          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'meetings' ? '#87CEEB' : '#f0f0f0'}}
+          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'meetings' ? '#0A2463' : '#CCCCCC'}}
         >
           Meetings
         </button>
         <button 
           className={activeSection === 'attendance' ? 'nav-button' : ''}
           onClick={() => setActiveSection('attendance')}
-          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'attendance' ? '#87CEEB' : '#f0f0f0'}}
+          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'attendance' ? '#0A2463' : '#CCCCCC'}}
         >
           Attendance
         </button>
         <button 
           className={activeSection === 'upload' ? 'nav-button' : ''}
           onClick={() => setActiveSection('upload')}
-          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'upload' ? '#87CEEB' : '#f0f0f0'}}
+          style={{padding: '10px 20px', borderRadius: '8px', background: activeSection === 'upload' ? '#0A2463' : '#CCCCCC'}}
         >
           Data Upload
         </button>
@@ -190,7 +190,7 @@ function DataCapture() {
               </select>
               
               <input 
-                placeholder={meetingForm.meeting_type === 'online' ? 'Google Meet Link or Zoom Link' : 'Venue/Location'}
+                placeholder={meetingForm.meeting_type === 'online' ? 'Google Meet Link or zoom Link' : 'Venue/Location'}
                 value={meetingForm.meeting_type === 'online' ? meetingForm.meeting_link : meetingForm.venue}
                 onChange={e => {
                   if (meetingForm.meeting_type === 'online') {
@@ -219,9 +219,9 @@ function DataCapture() {
             />
             
             {meetingForm.meeting_type === 'online' && (
-              <div style={{padding: '15px', background: 'rgba(66, 133, 244, 0.1)', borderRadius: '8px', border: '1px solid #4285f4'}}>
-                <h4 style={{color: '#4285f4', margin: '0 0 10px 0'}}>Online Meeting Setup</h4>
-                <p style={{margin: '0', fontSize: '14px', color: '#666'}}>
+              <div style={{padding: '15px', background: '#FFFFFF', borderRadius: '8px', border: '1px solid #0A2463'}}>
+                <h4 style={{color: '#0A2463', margin: '0 0 10px 0'}}>Online Meeting Setup</h4>
+                <p style={{margin: '0', fontSize: '14px', color: '#0A2463'}}>
                   • Create a Google Meet link or use Zoom<br/>
                   • Paste the meeting link above<br/>
                   • Members will receive the link via SMS
@@ -237,29 +237,29 @@ function DataCapture() {
             <div key={meeting.id} className="faq-item">
               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
                 <div style={{flex: 1}}>
-                  <h4 style={{color: '#87CEEB', marginBottom: '10px'}}>
+                  <h4 style={{color: '#0A2463', marginBottom: '10px'}}>
                     {meeting.meeting_type === 'online' ? 'Online' : meeting.meeting_type === 'hybrid' ? 'Hybrid' : 'Physical'} {meeting.title}
                   </h4>
-                  <p><strong>Agenda:</strong> {meeting.agenda}</p>
-                  <p><strong>Date:</strong> {meeting.date} at {meeting.time}</p>
-                  <p><strong>{meeting.meeting_type === 'online' ? 'Meeting Link' : 'Venue'}:</strong> 
+                  <p style={{color: '#0A2463'}}><strong>Agenda:</strong> {meeting.agenda}</p>
+                  <p style={{color: '#0A2463'}}><strong>Date:</strong> {meeting.date} at {meeting.time}</p>
+                  <p style={{color: '#0A2463'}}><strong>{meeting.meeting_type === 'online' ? 'Meeting Link' : 'Venue'}:</strong> 
                     {meeting.meeting_type === 'online' || meeting.meeting_link ? (
                       <a href={meeting.meeting_link || meeting.venue} target="_blank" rel="noopener noreferrer" 
-                         style={{color: '#87CEEB', textDecoration: 'underline', marginLeft: '5px'}}>
+                         style={{color: '#0A2463', textDecoration: 'underline', marginLeft: '5px'}}>
                         {meeting.meeting_type === 'online' ? 'Join Online Meeting' : meeting.venue}
                       </a>
                     ) : meeting.venue}
                   </p>
                   {meeting.meeting_type === 'hybrid' && meeting.meeting_link && (
-                    <p><strong>Online Link:</strong> 
+                    <p style={{color: '#0A2463'}}><strong>Online Link:</strong> 
                       <a href={meeting.meeting_link} target="_blank" rel="noopener noreferrer" 
-                         style={{color: '#87CEEB', textDecoration: 'underline', marginLeft: '5px'}}>
+                         style={{color: '#0A2463', textDecoration: 'underline', marginLeft: '5px'}}>
                         Join Online
                       </a>
                     </p>
                   )}
-                  <p><strong>Target:</strong> {meeting.category || 'All Members'}</p>
-                  {meeting.agenda && <p><strong>📋 Agenda:</strong> {meeting.agenda}</p>}
+                  <p style={{color: '#0A2463'}}><strong>Target:</strong> {meeting.category || 'All Members'}</p>
+                  {meeting.agenda && <p style={{color: '#0A2463'}}><strong>Agenda:</strong> {meeting.agenda}</p>}
                 </div>
                 <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
                   <button 
@@ -271,7 +271,7 @@ function DataCapture() {
                   {(meeting.meeting_type === 'online' || meeting.meeting_link) && (
                     <button 
                       onClick={() => generateGoogleMeetLink(meeting)}
-                      style={{fontSize: '12px', padding: '8px 16px', whiteSpace: 'nowrap', background: '#4285f4'}}
+                      style={{fontSize: '12px', padding: '8px 16px', whiteSpace: 'nowrap', background: '#0A2463'}}
                     >
                       Google Meet
                     </button>
@@ -317,12 +317,12 @@ function DataCapture() {
               value={attendanceForm.status}
               onChange={e => setAttendanceForm({...attendanceForm, status: e.target.value})}
             >
-              <option value="Present">✅ Present</option>
-              <option value="Absent">❌ Absent</option>
-              <option value="Late">⏰ Late</option>
+              <option value="Present">Present</option>
+              <option value="Absent">Absent</option>
+              <option value="Late">Late</option>
             </select>
             
-            <button type="submit">✅ Record Attendance</button>
+            <button type="submit">Record Attendance</button>
           </form>
         </div>
       )}
@@ -331,19 +331,19 @@ function DataCapture() {
         <div>
           <h3 className="section-title">Data Upload & Management</h3>
           <div className="info-card">
-            <h4 style={{color: '#87CEEB'}}>📤 Bulk Data Upload</h4>
-            <p>Upload CSV files with member data, meeting records, or attendance sheets.</p>
+            <h4 style={{color: '#0A2463'}}>Bulk Data Upload</h4>
+            <p style={{color: '#0A2463'}}>Upload CSV files with member data, meeting records, or attendance sheets.</p>
             <input type="file" accept=".csv,.xlsx" style={{marginBottom: '15px'}} />
-            <button>📤 Upload Data</button>
+            <button>Upload Data</button>
             
-            <hr style={{margin: '20px 0'}} />
+            <hr style={{margin: '20px 0', borderColor: '#0A2463'}} />
             
-            <h4 style={{color: '#87CEEB'}}>📊 Data Export</h4>
+            <h4 style={{color: '#0A2463'}}>Data Export</h4>
             <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
-              <button>📋 Export Members</button>
-              <button>📅 Export Meetings</button>
-              <button>✅ Export Attendance</button>
-              <button>📈 Generate Reports</button>
+              <button>Export Members</button>
+              <button>Export Meetings</button>
+              <button>Export Attendance</button>
+              <button>Generate Reports</button>
             </div>
           </div>
         </div>
@@ -353,3 +353,4 @@ function DataCapture() {
 }
 
 export default DataCapture;
+

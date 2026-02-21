@@ -42,8 +42,8 @@ function ContactUs() {
       <button onClick={goBack} style={{
         marginBottom: '30px',
         padding: '12px 30px',
-        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-        color: 'white',
+        background: '#0A2463',
+        color: '#FFFFFF',
         border: 'none',
         borderRadius: '50px',
         cursor: 'pointer',
@@ -56,60 +56,58 @@ function ContactUs() {
       <h2 className="page-title">Contact Us</h2>
       
       <div style={{
-        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
+        background: '#0A2463',
         padding: '40px',
         borderRadius: '25px',
-        color: 'white',
+        color: '#FFFFFF',
         marginBottom: '40px',
         textAlign: 'center'
       }}>
-        <h3 style={{fontSize: '2em', marginBottom: '15px', fontWeight: '700'}}>Get In Touch</h3>
-        <p style={{fontSize: '1.2em', lineHeight: '1.8', color: 'rgba(255,255,255,0.95)'}}>
+        <h3 style={{fontSize: '2em', marginBottom: '15px', fontWeight: '700', color: '#FFFFFF'}}>Get In Touch</h3>
+        <p style={{fontSize: '1.2em', lineHeight: '1.8', color: '#FFFFFF'}}>
           We'd love to hear from you. Send us a message and we'll respond as soon as possible.
         </p>
       </div>
 
       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', marginBottom: '40px'}}>
         <div style={{
-          background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
+          background: '#FFFFFF',
           padding: '35px',
           borderRadius: '25px',
-          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
-          border: '1px solid rgba(135, 206, 235, 0.1)'
+          border: '1px solid #0A2463'
         }}>
-          <h3 style={{color: '#87CEEB', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Contact Information</h3>
+          <h3 style={{color: '#0A2463', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Contact Information</h3>
           
           <div style={{marginBottom: '20px'}}>
-            <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Address</h4>
-            <p style={{color: '#4a5568', lineHeight: '1.6'}}>Mbogo Welfare Empowerment Foundation Office<br/>Nairobi, Kenya</p>
+            <h4 style={{color: '#0A2463', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Address</h4>
+            <p style={{color: '#0A2463', lineHeight: '1.6'}}>Mbogo Welfare Empowerment Foundation Office<br/>Nairobi, Kenya</p>
           </div>
 
           <div style={{marginBottom: '20px'}}>
-            <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Phone</h4>
-            <p style={{color: '#4a5568'}}>+254 707 820 453</p>
+            <h4 style={{color: '#0A2463', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Phone</h4>
+            <p style={{color: '#0A2463'}}>+254 707 820 453</p>
           </div>
 
           <div style={{marginBottom: '20px'}}>
-            <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Email</h4>
-            <p style={{color: '#4a5568'}}>info@mbogofoundation.org</p>
+            <h4 style={{color: '#0A2463', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Email</h4>
+            <p style={{color: '#0A2463'}}>info@mbogofoundation.org</p>
           </div>
 
           <div>
-            <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Office Hours</h4>
-            <p style={{color: '#4a5568'}}>Monday - Friday<br/>8:00 AM - 5:00 PM<br/><br/>Saturday<br/>8:00 AM - 12:00 PM</p>
+            <h4 style={{color: '#0A2463', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Office Hours</h4>
+            <p style={{color: '#0A2463'}}>Monday - Friday<br/>8:00 AM - 5:00 PM<br/><br/>Saturday<br/>8:00 AM - 12:00 PM</p>
           </div>
         </div>
         
         <form onSubmit={handleSubmit} style={{
-          background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
+          background: '#FFFFFF',
           padding: '35px',
           borderRadius: '25px',
-          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
-          border: '1px solid rgba(135, 206, 235, 0.1)'
+          border: '1px solid #0A2463'
         }}>
-          <h3 style={{color: '#87CEEB', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Send Us a Message</h3>
+          <h3 style={{color: '#0A2463', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Send Us a Message</h3>
           
-          <label style={{display: 'block', marginBottom: '8px'}}>Your Name</label>
+          <label style={{display: 'block', marginBottom: '8px', color: '#0A2463'}}>Your Name</label>
           <input 
             placeholder="Enter your full name" 
             value={formData.name}
@@ -117,7 +115,7 @@ function ContactUs() {
             required 
           />
           
-          <label style={{display: 'block', marginBottom: '8px'}}>Your Email</label>
+          <label style={{display: 'block', marginBottom: '8px', color: '#0A2463'}}>Your Email</label>
           <input 
             type="email"
             placeholder="Enter your email address" 
@@ -126,7 +124,7 @@ function ContactUs() {
             required 
           />
           
-          <label style={{display: 'block', marginBottom: '8px'}}>Your Message</label>
+          <label style={{display: 'block', marginBottom: '8px', color: '#0A2463'}}>Your Message</label>
           <textarea 
             placeholder="Type your message here..."
             value={formData.message}
@@ -142,15 +140,14 @@ function ContactUs() {
       </div>
 
       <div style={{
-        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
+        background: '#FFFFFF',
         padding: '40px',
         borderRadius: '25px',
-        boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
-        border: '1px solid rgba(135, 206, 235, 0.1)',
+        border: '1px solid #0A2463',
         textAlign: 'center'
       }}>
-        <h3 style={{color: '#2d3748', fontSize: '1.8em', marginBottom: '15px', fontWeight: '700'}}>Visit Our Office</h3>
-        <p style={{color: '#4a5568', fontSize: '1.1em', lineHeight: '1.8', marginBottom: '20px'}}>
+        <h3 style={{color: '#0A2463', fontSize: '1.8em', marginBottom: '15px', fontWeight: '700'}}>Visit Our Office</h3>
+        <p style={{color: '#0A2463', fontSize: '1.1em', lineHeight: '1.8', marginBottom: '20px'}}>
           We welcome visitors during office hours. Feel free to drop by for a chat or to learn more about our work.
         </p>
       </div>
