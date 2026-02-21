@@ -442,6 +442,50 @@ def get_meetings():
     
     return jsonify([meeting.to_dict() for meeting in meetings])
 
+@app.route('/meetings', methods=['POST'])
+def create_meeting():
+    """Create a new meeting - admin only"""
+    if not is_admin():
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': 'No data received'}), 400
+        
+        required_fields = ['title', 'date', 'time']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        if missing_fields:
+            return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
+        
+        meeting = Meeting(
+            title=data['title'],
+            date=data['date'],
+            time=data['time'],
+            agenda=data.get('description', ''),
+            venue=data.get('venue', ''),
+            meeting_link=data.get('meeting_link', ''),
+            meeting_type=data.get('meeting_type', 'physical'),
+            category=data.get('category', '')
+        )
+        db.session.add(meeting)
+        db.session.commit()
+        
+        print(f"Meeting created: {meeting.title} on {meeting.date}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Meeting created successfully',
+            'meeting': meeting.to_dict()
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Meeting creation error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': 'Failed to create meeting'}), 500
+
 @app.route('/attendance-records', methods=['GET'])
 def get_attendance_records():
     user_role, user_id = get_user_role()
