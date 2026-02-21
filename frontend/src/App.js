@@ -149,7 +149,7 @@ function App() {
               <button onClick={handleLogout} style={{marginLeft: '8px', padding: '4px 12px', background: 'transparent', color: '#FFFFFF', border: '1px solid #FFFFFF', cursor: 'pointer', fontSize: '12px', width: 'auto', height: 'auto'}}>Logout</button>
             </div>
             <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px'}}>
-              <button className="nav-button" onClick={() => setActiveTab('dashboard')}>Dashboard</button>
+              <button className="nav-button" onClick={() => setActiveTab(userRole === 'admin' ? 'admin' : 'dashboard')}>Dashboard</button>
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('members')}>Members</button>}
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('datacapture')}>Data Capture</button>}
               <button className="nav-button" onClick={() => setActiveTab('minutes')}>Minutes</button>
