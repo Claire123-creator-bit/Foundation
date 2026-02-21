@@ -99,7 +99,12 @@ function App() {
     if (phoneNumber) {
       localStorage.setItem('userPhone', phoneNumber);
     }
-    setActiveTab('dashboard');
+    // Redirect admin to admin dashboard, members to user dashboard
+    if (role === 'admin') {
+      setActiveTab('admin');
+    } else {
+      setActiveTab('dashboard');
+    }
   };
 
   const handleLogout = () => {
