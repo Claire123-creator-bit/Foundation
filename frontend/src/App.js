@@ -48,10 +48,8 @@ function App() {
   }, []);
 
   const handleSignUpSuccess = (fullName, nationalId) => {
-    // Store the signup data in localStorage for the registration form
     localStorage.setItem('signupName', fullName);
     localStorage.setItem('signupId', nationalId);
-    // Don't set signupPhone with fullName - it should be empty for phone
     setSignupPhone(''); 
     setActiveTab('registration');
   };
@@ -130,28 +128,22 @@ function App() {
   }, []);
 
   return (
-    <div className="app-container" style={{ padding: '0' }}>
+    <div className="app-container">
       <nav style={{
-        background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
-        padding: '8px',
-        borderRadius: '0',
-        marginBottom: '5px',
-        boxShadow: 'none',
+        background: '#D4735E',
+        padding: '16px 24px',
         position: 'sticky',
         top: '0',
-        zIndex: '1000',
-        width: '100%',
-        maxWidth: '100vw',
-        boxSizing: 'border-box'
+        zIndex: '1000'
       }}>
-        <h1 style={{textAlign: 'center', color: 'white', margin: '0 0 8px 0', fontSize: 'clamp(0.85em, 3vw, 1.2em)', fontWeight: '700', lineHeight: '1.2', padding: '0 5px'}}>Mbogo Welfare Empowerment Foundation</h1>
+        <h1 style={{textAlign: 'center', color: '#FAF7F5', margin: '0 0 16px 0', fontSize: '20px', fontWeight: '700'}}>Mbogo Welfare Empowerment Foundation</h1>
         {userRole && (
           <>
-            <div style={{textAlign: 'center', color: 'white', marginBottom: '5px', fontSize: 'clamp(10px, 2.5vw, 12px)', padding: '0 5px', wordBreak: 'break-word'}}>
+            <div style={{textAlign: 'center', color: '#FAF7F5', marginBottom: '12px', fontSize: '14px'}}>
               Welcome, {userName} ({userRole})
-              <button onClick={handleLogout} style={{marginLeft: '5px', padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid white', borderRadius: '3px', cursor: 'pointer', fontSize: 'clamp(10px, 2.5vw, 12px)'}}>Logout</button>
+              <button onClick={handleLogout} style={{marginLeft: '8px', padding: '4px 12px', background: 'transparent', color: '#FAF7F5', border: '1px solid #FAF7F5', cursor: 'pointer', fontSize: '12px', width: 'auto', height: 'auto'}}>Logout</button>
             </div>
-<div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '4px', padding: '0 5px'}}>
+            <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px'}}>
               <button className="nav-button" onClick={() => setActiveTab('dashboard')}>Dashboard</button>
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('members')}>Members</button>}
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('datacapture')}>Data Capture</button>}
@@ -177,15 +169,15 @@ function App() {
       {!userRole && activeTab === 'confirmation' && <MembershipConfirmation memberData={memberData} onContinue={handleConfirmationContinue} />}
       {!userRole && activeTab === 'login' && <LoginPage onLogin={handleLogin} onNavigate={setActiveTab} />}
       {!userRole && activeTab === 'admin-signup' && <AdminSignupPage onNavigate={setActiveTab} />}
-{userRole && activeTab === 'dashboard' && <UserDashboard />}
+      {userRole && activeTab === 'dashboard' && <UserDashboard />}
       {userRole && activeTab === 'home' && <HomePage />}
       {userRole && activeTab === 'registration' && <EnhancedRegistrationPro onRegistered={() => setRefresh(!refresh)} />}
       {userRole && activeTab === 'members' && <MembersList key={refresh} userRole={userRole} userId={userId} />}
       {userRole && activeTab === 'datacapture' && <DataCapture />}
-{userRole && activeTab === 'minutes' && <MeetingMinutes userRole={userRole} userId={userId} />}
+      {userRole && activeTab === 'minutes' && <MeetingMinutes userRole={userRole} userId={userId} />}
       {userRole && activeTab === 'meetings' && <MeetingList />}
-{userRole && activeTab === 'database' && userRole === 'admin' && <DatabaseViewer userRole={userRole} userId={userId} />}
-{userRole && activeTab === 'messaging' && userRole === 'admin' && <BulkMessaging userRole={userRole} userId={userId} />}
+      {userRole && activeTab === 'database' && userRole === 'admin' && <DatabaseViewer userRole={userRole} userId={userId} />}
+      {userRole && activeTab === 'messaging' && userRole === 'admin' && <BulkMessaging userRole={userRole} userId={userId} />}
       {userRole === 'admin' && activeTab === 'admin' && <AdminDashboard />}
       {userRole && activeTab === 'about' && <AboutUs />}
       {userRole && activeTab === 'contact' && <ContactUs />}
@@ -195,25 +187,18 @@ function App() {
       
       {userRole && (
         <footer style={{
-          marginTop: '15px',
-          padding: '12px 8px',
+          marginTop: '48px',
+          padding: '24px',
           textAlign: 'center',
-          background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
-          color: 'white',
-          borderRadius: '0',
-          boxShadow: 'none',
-          width: '100%',
-          maxWidth: '100vw',
-          boxSizing: 'border-box'
+          background: '#D4735E',
+          color: '#FAF7F5'
         }}>
           <div style={{
             display: 'flex', 
             justifyContent: 'center', 
-            gap: '8px', 
+            gap: '16px', 
             flexWrap: 'wrap', 
-            marginBottom: '10px',
-            borderBottom: '1px solid rgba(255,255,255,0.3)',
-            paddingBottom: '10px'
+            marginBottom: '16px'
           }}>
             {[
               {label: 'About Us', page: 'about'},
@@ -226,18 +211,16 @@ function App() {
                 onClick={() => handleFooterClick(link.page)}
                 style={{
                   cursor: 'pointer',
-                  padding: '5px 10px',
-                  borderRadius: '5px',
-                  transition: 'all 0.3s ease',
-                  fontSize: 'clamp(10px, 2.5vw, 12px)'
+                  fontSize: '14px',
+                  transition: 'opacity 0.2s'
                 }} 
-                onMouseOver={e => e.target.style.background = 'rgba(255,255,255,0.2)'}
-                onMouseOut={e => e.target.style.background = 'transparent'}>
+                onMouseOver={e => e.target.style.opacity = '0.7'}
+                onMouseOut={e => e.target.style.opacity = '1'}>
                 {link.label}
               </span>
             ))}
           </div>
-          <p style={{margin: '0', fontSize: 'clamp(9px, 2vw, 11px)', opacity: '0.95', fontWeight: '500'}}>
+          <p style={{margin: '0', fontSize: '12px', fontWeight: '300'}}>
             &copy; 2025 Mbogo Welfare Empowerment Foundation. Empowering communities through transparency and trust.
           </p>
         </footer>
@@ -248,4 +231,3 @@ function App() {
 }
 
 export default App;
-

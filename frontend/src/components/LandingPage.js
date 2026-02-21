@@ -5,445 +5,181 @@ function LandingPage({ onGetStarted, onLogin }) {
     window.location.hash = `#${page}`;
   };
 
-  const features = [
-    { title: 'Member Registration', desc: 'Easy and secure registration process for all community members' },
-    { title: 'Meeting Management', desc: 'Schedule and track all community meetings efficiently' },
-    { title: 'Bulk Messaging', desc: 'Send SMS notifications to all members instantly' },
-    { title: 'Data Capture', desc: 'Collect and manage member data securely' },
-    { title: 'Database Viewer', desc: 'Access and view all community records' },
-    { title: 'Admin Dashboard', desc: 'Complete control over all platform features' }
-  ];
-
-  const benefits = [
-    'Community Support',
-    'Transparent Governance',
-    'Member Benefits',
-    'Regular Updates',
-    'Networking',
-    'Empowerment'
-  ];
-
   return (
     <div className="form-container">
-      <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
-        input:focus {
-          outline: none;
-          border-color: #87CEEB !important;
-          background: white !important;
-          box-shadow: 0 0 0 4px rgba(135,206,235,0.15) !important;
-        }
-        button:hover {
-          transform: translateY(-2px);
-        }
-        .feature-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 15px 40px rgba(135,206,235,0.25) !important;
-        }
-        .benefit-item:hover {
-          transform: scale(1.03);
-          background: white !important;
-        }
-        .mission-card:hover {
-          transform: translateY(-5px);
-        }
-      `}</style>
-
       <div style={{
-        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-        padding: '60px 30px',
-        borderRadius: '25px',
-        color: 'white',
-        marginBottom: '60px',
-        textAlign: 'center',
-        position: 'relative',
-        overflow: 'hidden'
+        background: '#D4735E',
+        padding: '48px 32px',
+        color: '#FAF7F5',
+        marginBottom: '48px',
+        textAlign: 'center'
       }}>
+        <h1 style={{
+          fontSize: '32px',
+          marginBottom: '16px',
+          fontWeight: '700',
+          color: '#FAF7F5'
+        }}>
+          Welcome to Mbogo Welfare Empowerment Foundation
+        </h1>
+        <p style={{
+          fontSize: '16px',
+          marginBottom: '32px',
+          fontWeight: '300',
+          color: '#FAF7F5'
+        }}>
+          Empowering communities through transparency, trust, and unity
+        </p>
         <div style={{
-          position: 'absolute',
-          top: '0',
-          left: '0',
-          right: '0',
-          bottom: '0',
-          background: 'radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)',
-          pointerEvents: 'none'
-        }}></div>
-        <div style={{position: 'relative', zIndex: 1}}>
-          <h1 style={{
-            fontSize: 'clamp(2em, 5vw, 3em)',
-            marginBottom: '25px',
-            fontWeight: '800',
-            animation: 'fadeInUp 1s ease-out',
-            textShadow: '0 2px 10px rgba(0,0,0,0.1)',
-            lineHeight: '1.2'
-          }}>
-            Welcome to Mbogo Welfare Empowerment Foundation
-          </h1>
-          <p style={{
-            fontSize: 'clamp(1.1em, 2.5vw, 1.4em)',
-            marginBottom: '40px',
-            opacity: 0.95,
-            lineHeight: '1.7',
-            animation: 'fadeInUp 1s ease-out 0.2s both',
-            maxWidth: '800px',
-            margin: '0 auto 40px auto',
-            fontWeight: '400'
-          }}>
-            Empowering communities through transparency, trust, and unity. 
-            Join us in building a stronger, more connected community.
-          </p>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '25px',
-            flexWrap: 'wrap',
-            animation: 'fadeInUp 1s ease-out 0.4s both'
-          }}>
-            <button 
-              className="get-started-button"
-              style={{
-                padding: '20px 55px',
-                fontSize: '1.2em',
-                fontWeight: '700',
-                backgroundColor: '#ffffff',
-                color: '#1e3c72',
-                border: '3px solid #1e3c72',
-                borderRadius: '50px',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 8px 25px rgba(0,0,0,0.3)',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-              onClick={() => window.location.hash = '#signup'}
-            >
-              Get Started
-            </button>
-            <button 
-              style={{
-                padding: '18px 45px',
-                fontSize: '1.1em',
-                fontWeight: '600',
-                backgroundColor: 'transparent',
-                color: 'white',
-                border: '2px solid white',
-                borderRadius: '50px',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                backdropFilter: 'blur(10px)'
-              }}
-              onClick={() => window.location.hash = '#login'}
-            >
-              Login
-            </button>
-          </div>
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '16px',
+          flexWrap: 'wrap'
+        }}>
+          <button 
+            style={{
+              background: '#FAF7F5',
+              color: '#D4735E',
+              fontWeight: '700'
+            }}
+            onClick={() => window.location.hash = '#signup'}
+          >
+            Get Started
+          </button>
+          <button 
+            style={{
+              background: 'transparent',
+              color: '#FAF7F5',
+              border: '1px solid #FAF7F5'
+            }}
+            onClick={() => window.location.hash = '#login'}
+          >
+            Login
+          </button>
         </div>
       </div>
 
       <div style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,249,250,0.98) 100%)',
-        padding: '30px 40px',
-        borderRadius: '25px',
-        boxShadow: '0 20px 60px rgba(135,206,235,0.25)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(135,206,235,0.2)',
-        maxWidth: '420px',
-        width: '100%',
-        margin: '-20px auto 50px auto',
-        position: 'relative',
-        zIndex: 10,
-        textAlign: 'center'
+        background: '#FFFFFF',
+        padding: '32px',
+        marginBottom: '48px',
+        textAlign: 'center',
+        border: '1px solid #D4735E'
       }}>
-        <div style={{marginBottom: '20px'}}>
-          <div style={{
-            width: '60px',
-            height: '60px',
-            background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-            borderRadius: '50%',
-            margin: '0 auto 15px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '28px',
-            boxShadow: '0 8px 25px rgba(135,206,235,0.4)'
-          }}></div>
-          <h3 style={{
-            color: '#333',
-            margin: '0 0 8px 0',
-            fontSize: '1.5em',
-            fontWeight: '700',
-            background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
-          }}>Admin?</h3>
-          <p style={{color: '#666', margin: '0', fontSize: '14px'}}>Register as an admin to manage the platform</p>
-        </div>
-        
-        <button 
-          onClick={() => window.location.hash = '#admin-signup'}
-          style={{
-            width: '100%',
-            padding: '14px',
-            fontSize: '15px',
-            fontWeight: '700',
-            borderRadius: '14px',
-            background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-            border: 'none',
-            color: 'white',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 6px 20px rgba(135,206,235,0.4)'
-          }}
-        >
+        <h3 style={{marginBottom: '16px'}}>Admin?</h3>
+        <p style={{marginBottom: '24px'}}>Register as an admin to manage the platform</p>
+        <button onClick={() => window.location.hash = '#admin-signup'}>
           Admin Sign Up
         </button>
       </div>
 
-      <div style={{marginBottom: '60px'}}>
-        <h2 className="section-title" style={{fontSize: 'clamp(1.8em, 4vw, 2.5em)', marginBottom: '15px'}}>Our Features</h2>
-        <p style={{textAlign: 'center', color: '#666', marginBottom: '50px', maxWidth: '600px', margin: '0 auto 50px auto', fontSize: '1.1em', lineHeight: '1.6'}}>
-          Everything you need to manage your community effectively
-        </p>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '30px',
-          marginBottom: '40px'
-        }}>
-          {features.map((feature, index) => (
-            <div key={index} className="feature-card" style={{
-              background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
-              padding: '40px 30px',
-              borderRadius: '25px',
-              textAlign: 'center',
-              boxShadow: '0 10px 40px rgba(135, 206, 235, 0.15)',
-              transition: 'all 0.3s ease',
-              border: '1px solid rgba(135, 206, 235, 0.1)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: '0',
-                left: '0',
-                right: '0',
-                height: '4px',
-                background: 'linear-gradient(90deg, #87CEEB 0%, #87CEEB 100%)'
-              }}></div>
-              <div style={{fontSize: '56px', marginBottom: '25px'}}></div>
-              <h3 style={{color: '#87CEEB', marginBottom: '18px', fontWeight: '700', fontSize: '1.4em'}}>{feature.title}</h3>
-              <p style={{color: '#666', lineHeight: '1.7', margin: 0, fontSize: '1.05em'}}>{feature.desc}</p>
-            </div>
-          ))}
-        </div>
+      <h2 className="section-title">Our Features</h2>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 250px))',
+        gap: '16px',
+        justifyContent: 'center',
+        marginBottom: '48px'
+      }}>
+        {[
+          { title: 'Member Registration', desc: 'Easy and secure registration process' },
+          { title: 'Meeting Management', desc: 'Schedule and track all meetings' },
+          { title: 'Bulk Messaging', desc: 'Send SMS notifications instantly' },
+          { title: 'Data Capture', desc: 'Collect and manage member data' }
+        ].map((feature, index) => (
+          <div key={index} style={{
+            width: '250px',
+            height: '250px',
+            background: '#FFFFFF',
+            border: '1px solid #D4735E',
+            padding: '32px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            textAlign: 'center',
+            transition: 'opacity 0.2s'
+          }}
+          onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
+          onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+            <h3 style={{marginBottom: '16px'}}>{feature.title}</h3>
+            <p>{feature.desc}</p>
+          </div>
+        ))}
       </div>
 
-      <div style={{marginBottom: '60px'}}>
-        <h2 className="section-title" style={{fontSize: 'clamp(1.8em, 4vw, 2.5em)', marginBottom: '15px'}}>Why Join Us?</h2>
-        <p style={{textAlign: 'center', color: '#666', marginBottom: '50px', maxWidth: '600px', margin: '0 auto 50px auto', fontSize: '1.1em', lineHeight: '1.6'}}>
-          Discover the benefits of being part of the Mbogo Welfare community
-        </p>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '25px',
-          marginBottom: '40px'
-        }}>
-          {benefits.map((benefit, index) => (
-            <div key={index} className="benefit-item" style={{
-              display: 'flex',
-              alignItems: 'center',
-              background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
-              padding: '25px 30px',
-              borderRadius: '20px',
-              boxShadow: '0 8px 25px rgba(135, 206, 235, 0.12)',
-              transition: 'all 0.3s ease',
-              cursor: 'default',
-              border: '1px solid rgba(135, 206, 235, 0.1)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: '0',
-                left: '0',
-                width: '4px',
-                height: '100%',
-                background: 'linear-gradient(180deg, #87CEEB 0%, #87CEEB 100%)'
-              }}></div>
-              <span style={{color: '#87CEEB', marginRight: '8px', fontSize: '18px'}}>✓</span>
-              <span style={{color: '#333', fontWeight: '600', fontSize: '1.15em', marginLeft: '10px'}}>{benefit}</span>
-            </div>
-          ))}
-        </div>
+      <h2 className="section-title">Why Join Us?</h2>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '16px',
+        marginBottom: '48px'
+      }}>
+        {['Community Support', 'Transparent Governance', 'Member Benefits', 'Regular Updates', 'Networking', 'Empowerment'].map((benefit, index) => (
+          <div key={index} className="info-card" style={{
+            padding: '16px',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <span style={{color: '#D4735E', marginRight: '8px', fontSize: '18px'}}>✓</span>
+            <span style={{fontWeight: '600'}}>{benefit}</span>
+          </div>
+        ))}
       </div>
 
-      <div style={{marginBottom: '60px'}}>
-        <h2 className="section-title" style={{fontSize: 'clamp(1.8em, 4vw, 2.5em)', marginBottom: '15px'}}>Our Mission</h2>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '30px',
-          marginBottom: '40px'
-        }}>
-          <div className="mission-card" style={{
-            background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
-            padding: '45px 35px',
-            borderRadius: '25px',
+      <h2 className="section-title">Our Mission</h2>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 300px))',
+        gap: '16px',
+        justifyContent: 'center',
+        marginBottom: '48px'
+      }}>
+        {[
+          { title: 'Transparency', desc: 'Open and honest communication with all members. Every decision is shared with the community.' },
+          { title: 'Community', desc: 'Building strong bonds through regular meetings, events, and collaborative initiatives.' },
+          { title: 'Empowerment', desc: 'Providing resources and support to help members achieve their full potential.' }
+        ].map((mission, index) => (
+          <div key={index} style={{
+            width: '300px',
+            height: '300px',
+            background: '#FFFFFF',
+            border: '1px solid #D4735E',
+            padding: '32px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
             textAlign: 'center',
-            boxShadow: '0 12px 45px rgba(135, 206, 235, 0.15)',
-            transition: 'all 0.3s ease',
-            borderTop: '5px solid #87CEEB',
-            border: '1px solid rgba(135, 206, 235, 0.1)',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: '0',
-              left: '0',
-              right: '0',
-              height: '5px',
-              background: 'linear-gradient(90deg, #87CEEB 0%, #87CEEB 100%)'
-            }}></div>
-            <div style={{
-              width: '70px',
-              height: '70px',
-              background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-              borderRadius: '50%',
-              margin: '0 auto 25px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '32px',
-              boxShadow: '0 10px 30px rgba(135,206,235,0.4)'
-            }}></div>
-            <h3 style={{color: '#87CEEB', marginBottom: '25px', fontWeight: '700', fontSize: '1.5em'}}>Transparency</h3>
-            <p style={{lineHeight: '1.8', margin: 0, fontSize: '1.05em', color: '#555'}}>
-              We believe in open and honest communication with all our members. 
-              Every decision and financial transaction is shared with the community.
-            </p>
+            transition: 'opacity 0.2s'
+          }}
+          onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
+          onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+            <h3 style={{marginBottom: '16px'}}>{mission.title}</h3>
+            <p>{mission.desc}</p>
           </div>
-          <div className="mission-card" style={{
-            background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
-            padding: '45px 35px',
-            borderRadius: '25px',
-            textAlign: 'center',
-            boxShadow: '0 12px 45px rgba(135, 206, 235, 0.15)',
-            transition: 'all 0.3s ease',
-            borderTop: '5px solid #87CEEB',
-            border: '1px solid rgba(135, 206, 235, 0.1)',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: '0',
-              left: '0',
-              right: '0',
-              height: '5px',
-              background: 'linear-gradient(90deg, #87CEEB 0%, #87CEEB 100%)'
-            }}></div>
-            <div style={{
-              width: '70px',
-              height: '70px',
-              background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-              borderRadius: '50%',
-              margin: '0 auto 25px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '32px',
-              boxShadow: '0 10px 30px rgba(135,206,235,0.4)'
-            }}></div>
-            <h3 style={{color: '#87CEEB', marginBottom: '25px', fontWeight: '700', fontSize: '1.5em'}}>Community</h3>
-            <p style={{lineHeight: '1.8', margin: 0, fontSize: '1.05em', color: '#555'}}>
-              Building strong bonds between community members through regular 
-              meetings, events, and collaborative initiatives.
-            </p>
-          </div>
-          <div className="mission-card" style={{
-            background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
-            padding: '45px 35px',
-            borderRadius: '25px',
-            textAlign: 'center',
-            boxShadow: '0 12px 45px rgba(135, 206, 235, 0.15)',
-            transition: 'all 0.3s ease',
-            borderTop: '5px solid #87CEEB',
-            border: '1px solid rgba(135, 206, 235, 0.1)',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: '0',
-              left: '0',
-              right: '0',
-              height: '5px',
-              background: 'linear-gradient(90deg, #87CEEB 0%, #87CEEB 100%)'
-            }}></div>
-            <div style={{
-              width: '70px',
-              height: '70px',
-              background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-              borderRadius: '50%',
-              margin: '0 auto 25px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '32px',
-              boxShadow: '0 10px 30px rgba(135,206,235,0.4)'
-            }}></div>
-            <h3 style={{color: '#87CEEB', marginBottom: '25px', fontWeight: '700', fontSize: '1.5em'}}>Empowerment</h3>
-            <p style={{lineHeight: '1.8', margin: 0, fontSize: '1.05em', color: '#555'}}>
-              Providing resources, education, and support to help all members 
-              achieve their full potential and improve their quality of life.
-            </p>
-          </div>
-        </div>
+        ))}
       </div>
 
       <div style={{
-        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-        padding: '50px 30px',
-        borderRadius: '25px',
+        background: '#D4735E',
+        padding: '48px 32px',
         textAlign: 'center',
-        color: 'white',
-        marginBottom: '40px'
+        color: '#FAF7F5',
+        marginBottom: '48px'
       }}>
-        <h2 style={{fontSize: 'clamp(1.5em, 4vw, 2.2em)', marginBottom: '20px', fontWeight: '700'}}>Ready to Join Our Community?</h2>
+        <h2 style={{fontSize: '28px', marginBottom: '16px', fontWeight: '700', color: '#FAF7F5'}}>Ready to Join Our Community?</h2>
         <p style={{
-          fontSize: 'clamp(1em, 2vw, 1.2em)',
-          marginBottom: '35px',
-          maxWidth: '600px',
-          margin: '0 auto 35px auto',
-          opacity: 0.95,
-          lineHeight: '1.6',
+          fontSize: '16px',
+          marginBottom: '32px',
+          fontWeight: '300',
+          color: '#FAF7F5'
         }}>
-          Take the first step towards being part of something bigger. 
-          Register today and become a valued member of the Mbogo Welfare Foundation.
+          Register today and become a valued member
         </p>
         <button 
           style={{
-            background: 'white',
-            color: '#87CEEB',
-            padding: '18px 45px',
-            fontSize: '16px',
-            fontWeight: '700',
-            border: 'none',
-            borderRadius: '50px',
-            cursor: 'pointer',
-            boxShadow: '0 8px 25px rgba(0,0,0,0.2)'
+            background: '#FAF7F5',
+            color: '#D4735E',
+            fontWeight: '700'
           }}
           onClick={() => window.location.hash = '#signup'}
         >
@@ -451,35 +187,27 @@ function LandingPage({ onGetStarted, onLogin }) {
         </button>
       </div>
 
-      <div style={{
-        background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
-        padding: '40px',
-        borderRadius: '25px',
-        boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
-        border: '1px solid rgba(135, 206, 235, 0.1)',
+      <div className="info-card" style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '24px',
+        textAlign: 'center'
       }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '30px',
-          textAlign: 'center'
-        }}>
-          <div>
-            <h4 style={{color: '#87CEEB', marginBottom: '15px', fontWeight: '700', fontSize: '1.2em'}}>Contact Us</h4>
-            <p style={{margin: '5px 0', color: '#666'}}>Email: info@mbogowelfare.org</p>
-            <p style={{margin: '5px 0', color: '#666'}}>Phone: +254 XXX XXX XXX</p>
-          </div>
-          <div>
-            <h4 style={{color: '#87CEEB', marginBottom: '15px', fontWeight: '700', fontSize: '1.2em'}}>Quick Links</h4>
-            <p style={{margin: '8px 0', color: '#87CEEB', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('about')}>About Us</p>
-            <p style={{margin: '8px 0', color: '#87CEEB', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('faq')}>FAQ</p>
-            <p style={{margin: '8px 0', color: '#87CEEB', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('contact')}>Contact</p>
-          </div>
-          <div>
-            <h4 style={{color: '#87CEEB', marginBottom: '15px', fontWeight: '700', fontSize: '1.2em'}}>Legal</h4>
-            <p style={{margin: '8px 0', color: '#87CEEB', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('terms')}>Terms & Conditions</p>
-            <p style={{margin: '8px 0', color: '#87CEEB', cursor: 'pointer', fontWeight: '500'}} onClick={() => navigateTo('privacy')}>Privacy Policy</p>
-          </div>
+        <div>
+          <h4 style={{marginBottom: '12px'}}>Contact Us</h4>
+          <p>Email: info@mbogowelfare.org</p>
+          <p>Phone: +254 XXX XXX XXX</p>
+        </div>
+        <div>
+          <h4 style={{marginBottom: '12px'}}>Quick Links</h4>
+          <p style={{cursor: 'pointer', color: '#D4735E'}} onClick={() => navigateTo('about')}>About Us</p>
+          <p style={{cursor: 'pointer', color: '#D4735E'}} onClick={() => navigateTo('faq')}>FAQ</p>
+          <p style={{cursor: 'pointer', color: '#D4735E'}} onClick={() => navigateTo('contact')}>Contact</p>
+        </div>
+        <div>
+          <h4 style={{marginBottom: '12px'}}>Legal</h4>
+          <p style={{cursor: 'pointer', color: '#D4735E'}} onClick={() => navigateTo('terms')}>Terms & Conditions</p>
+          <p style={{cursor: 'pointer', color: '#D4735E'}} onClick={() => navigateTo('privacy')}>Privacy Policy</p>
         </div>
       </div>
     </div>
@@ -487,4 +215,3 @@ function LandingPage({ onGetStarted, onLogin }) {
 }
 
 export default LandingPage;
-

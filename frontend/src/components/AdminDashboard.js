@@ -4,31 +4,22 @@ import API_BASE from '../utils/apiConfig';
 
 function AdminDashboard() {
   const [assignments, setAssignments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [newAssignment, setNewAssignment] = useState({
     title: '', description: '', assigned_to: '', priority: 'Medium', due_date: ''
   });
-  const [trainingProgress, setTrainingProgress] = useState(0);
-  const [trainingMessage, setTrainingMessage] = useState('Not started');
-  const [metrics, setMetrics] = useState({ rf: null, lstm: null });
-  const [isTraining, setIsTraining] = useState(false);
   const [memberStats, setMemberStats] = useState({ total: 0, categories: [] });
   const [userRole] = useState(localStorage.getItem('userRole') || 'admin');
   const [userId] = useState(localStorage.getItem('userId') || '');
 
   const fetchMemberStats = () => {
-    const headers = {
-      'Content-Type': 'application/json',
-      'User-Role': userRole,
-      'User-ID': userId
-    };
-    
-    fetch(`${API_BASE}/members`, { headers })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch members');
-        return res.json();
-      })
+    fetch(`${API_BASE}/members`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Role': userRole,
+        'User-ID': userId
+      }
+    })
+      .then(res => res.json())
       .then(data => {
         const categories = {};
         data.forEach(member => {
@@ -40,170 +31,113 @@ function AdminDashboard() {
           categories: Object.entries(categories).map(([name, count]) => ({ name, count }))
         });
       })
-      .catch(err => {
-        console.log('Error fetching member stats:', err);
-        setMemberStats({ total: 0, categories: [] });
-      });
+      .catch(() => {});
   };
 
   const fetchAssignments = () => {
-    const headers = {
-      'Content-Type': 'application/json',
-      'User-Role': 'admin'
-    };
-    
-    fetch(`${API_BASE}/assignments`, { headers })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch assignments');
-        return res.json();
-      })
+    fetch(`${API_BASE}/assignments`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Role': 'admin'
+      }
+    })
+      .then(res => res.json())
       .then(data => setAssignments(data))
-      .catch(err => {
-        console.log('Error fetching assignments:', err);
-        setAssignments([]);
-      });
+      .catch(() => {});
   };
-
-  const fetchMetrics = () => {
-    fetch(`${API_BASE}/api/metrics`)
-      .then(res => res.json())
-      .then(data => setMetrics(data))
-      .catch(err => console.log('Error fetching metrics'));
-  };
-
-  const fetchProgress = useCallback(() => {
-    fetch(`${API_BASE}/api/progress`)
-      .then(res => res.json())
-      .then(data => {
-        setTrainingProgress(data.progress);
-        setTrainingMessage(data.message);
-        if (data.progress === 100) {
-          setIsTraining(false);
-          fetchMetrics();
-        }
-      })
-      .catch(err => console.log('Error fetching progress'));
-  }, []);
 
   useEffect(() => {
     fetchAssignments();
-    fetchMetrics();
     fetchMemberStats();
   }, []);
 
-  useEffect(() => {
-    let interval;
-    if (isTraining) {
-      interval = setInterval(fetchProgress, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isTraining, fetchProgress]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    const headers = {
-      'Content-Type': 'application/json',
-      'User-Role': 'admin'
-    };
-    
     fetch(`${API_BASE}/assignments`, {
       method: 'POST',
-      headers: headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Role': 'admin'
+      },
       body: JSON.stringify(newAssignment)
     })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to create assignment');
-        return res.json();
-      })
+      .then(res => res.json())
       .then(() => {
         fetchAssignments();
         setNewAssignment({title: '', description: '', assigned_to: '', priority: 'Medium', due_date: ''});
       })
-      .catch(err => console.log('Error creating assignment:', err));
+      .catch(() => {});
   };
 
   const updateStatus = (id, status) => {
-    const headers = {
-      'Content-Type': 'application/json',
-      'User-Role': 'admin'
-    };
-    
     fetch(`${API_BASE}/assignments/${id}`, {
       method: 'PUT',
-      headers: headers,
-      body: JSON.stringify({status})
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to update assignment');
-        fetchAssignments();
-      })
-      .catch(err => console.log('Error updating assignment:', err));
-  };
-
-  const startTraining = () => {
-    const token = getAuthToken();
-    fetch(`${API_BASE}/api/train`, {
-      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
+        'User-Role': 'admin'
+      },
+      body: JSON.stringify({status})
     })
-      .then(res => res.json())
-      .then(() => {
-        setIsTraining(true);
-        setTrainingProgress(0);
-        setTrainingMessage('Starting training...');
-      })
-      .catch(err => console.log('Error starting training'));
+      .then(() => fetchAssignments())
+      .catch(() => {});
   };
 
   return (
     <div className="form-container">
       <h2 className="page-title">Office Administration</h2>
       
-      {/* Member Statistics Section */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '20px',
-        marginBottom: '30px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 200px))',
+        gap: '16px',
+        justifyContent: 'center',
+        marginBottom: '32px'
       }}>
-        <div className="info-card" style={{
-          background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
-          color: 'white',
+        <div style={{
+          width: '200px',
+          height: '200px',
+          background: '#D4735E',
+          color: '#FAF7F5',
+          padding: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
           textAlign: 'center'
         }}>
-          <h3 style={{margin: '0 0 10px 0', fontSize: '16px', opacity: 0.9}}>Total Members</h3>
-          <p style={{margin: 0, fontSize: '48px', fontWeight: 'bold'}}>{memberStats.total}</p>
+          <h3 style={{fontSize: '14px', marginBottom: '8px', fontWeight: '600', color: '#FAF7F5'}}>Total Members</h3>
+          <p style={{fontSize: '48px', fontWeight: '700', margin: '0', color: '#FAF7F5'}}>{memberStats.total}</p>
         </div>
         
         {memberStats.categories.slice(0, 3).map((cat, index) => (
-          <div key={index} className="info-card" style={{
-            background: index === 0 ? 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)' :
-                       index === 1 ? 'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)' :
-                       'linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%)',
-            color: 'white',
+          <div key={index} style={{
+            width: '200px',
+            height: '200px',
+            background: '#FFFFFF',
+            border: '1px solid #D4735E',
+            padding: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
             textAlign: 'center'
           }}>
-            <h3 style={{margin: '0 0 10px 0', fontSize: '14px', opacity: 0.9}}>{cat.name}</h3>
-            <p style={{margin: 0, fontSize: '36px', fontWeight: 'bold'}}>{cat.count}</p>
+            <h3 style={{fontSize: '14px', marginBottom: '8px', fontWeight: '600'}}>{cat.name}</h3>
+            <p style={{fontSize: '36px', fontWeight: '700', margin: '0', color: '#D4735E'}}>{cat.count}</p>
           </div>
         ))}
       </div>
       
       {memberStats.categories.length > 0 && (
-        <div style={{marginBottom: '30px', padding: '15px', background: '#f5f5f5', borderRadius: '10px'}}>
-          <h4 style={{margin: '0 0 10px 0', color: '#333'}}>Member Categories Breakdown:</h4>
-          <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+        <div className="info-card" style={{marginBottom: '32px'}}>
+          <h4 style={{marginBottom: '16px'}}>Member Categories Breakdown:</h4>
+          <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
             {memberStats.categories.map((cat, index) => (
               <span key={index} style={{
-                background: 'white',
-                padding: '8px 15px',
-                borderRadius: '20px',
-                fontSize: '13px',
-                color: '#333',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                background: '#FAF7F5',
+                padding: '8px 16px',
+                fontSize: '14px',
+                border: '1px solid #D4735E'
               }}>
                 {cat.name}: <strong>{cat.count}</strong>
               </span>
@@ -212,9 +146,9 @@ function AdminDashboard() {
         </div>
       )}
       
-      <form onSubmit={handleSubmit} className="info-card" style={{marginBottom: '30px'}}>
+      <form onSubmit={handleSubmit} className="info-card" style={{marginBottom: '32px'}}>
         <h3 className="section-title">Create Assignment</h3>
-        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px'}}>
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px'}}>
           <input 
             placeholder="Assignment Title" 
             value={newAssignment.title}
@@ -231,9 +165,9 @@ function AdminDashboard() {
           placeholder="Description"
           value={newAssignment.description}
           onChange={e => setNewAssignment({...newAssignment, description: e.target.value})}
-          style={{marginBottom: '15px'}}
+          style={{marginBottom: '16px'}}
         />
-        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px'}}>
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px'}}>
           <select 
             value={newAssignment.priority}
             onChange={e => setNewAssignment({...newAssignment, priority: e.target.value})}
@@ -251,60 +185,24 @@ function AdminDashboard() {
         <button type="submit">Create Assignment</button>
       </form>
 
-      <div>
-        <h3 className="section-title">Assignments</h3>
-        {assignments.map(assignment => (
-          <div key={assignment.id} className="faq-item" style={{marginBottom: '20px'}}>
-            <h4 style={{color: '#87CEEB', marginBottom: '10px'}}>{assignment.title}</h4>
-            <p style={{marginBottom: '10px'}}>{assignment.description}</p>
-            <div style={{display: 'flex', gap: '20px', marginBottom: '10px', fontSize: '14px', color: '#666'}}>
-              <span><strong>Assigned to:</strong> {assignment.assigned_to}</span>
-              <span><strong>Priority:</strong> {assignment.priority}</span>
-              <span><strong>Status:</strong> {assignment.status}</span>
-            </div>
-            <div style={{display: 'flex', gap: '10px'}}>
-              <button onClick={() => updateStatus(assignment.id, 'In Progress')} style={{fontSize: '12px', padding: '8px 16px'}}>Start</button>
-              <button onClick={() => updateStatus(assignment.id, 'Completed')} style={{fontSize: '12px', padding: '8px 16px'}}>Complete</button>
-            </div>
+      <h3 className="section-title">Assignments</h3>
+      {assignments.map(assignment => (
+        <div key={assignment.id} className="faq-item">
+          <h4>{assignment.title}</h4>
+          <p>{assignment.description}</p>
+          <div style={{display: 'flex', gap: '16px', marginBottom: '16px', fontSize: '14px'}}>
+            <span><strong>Assigned to:</strong> {assignment.assigned_to}</span>
+            <span><strong>Priority:</strong> {assignment.priority}</span>
+            <span><strong>Status:</strong> {assignment.status}</span>
           </div>
-        ))}
-      </div>
-
-      <div className="info-card" style={{marginTop: '30px'}}>
-        <h3 className="section-title">Model Training</h3>
-        <button onClick={startTraining} disabled={isTraining} style={{marginBottom: '20px'}}>Train Models</button>
-        {isTraining && (
-          <div style={{marginBottom: '20px'}}>
-            <div style={{width: '100%', backgroundColor: '#f3f3f3', borderRadius: '5px', height: '20px'}}>
-              <div style={{width: `${trainingProgress}%`, backgroundColor: '#87CEEB', height: '20px', borderRadius: '5px'}}></div>
-            </div>
-            <p style={{marginTop: '10px'}}>{trainingMessage}</p>
+          <div style={{display: 'flex', gap: '8px'}}>
+            <button onClick={() => updateStatus(assignment.id, 'In Progress')}>Start</button>
+            <button onClick={() => updateStatus(assignment.id, 'Completed')} style={{background: '#2C2C2C'}}>Complete</button>
           </div>
-        )}
-        <div>
-          <h4>Random Forest Metrics</h4>
-          {metrics.rf ? (
-            <ul>
-              <li>Accuracy: {metrics.rf.accuracy?.toFixed(2)}</li>
-              <li>Precision: {metrics.rf.precision?.toFixed(2)}</li>
-              <li>Recall: {metrics.rf.recall?.toFixed(2)}</li>
-              <li>F1 Score: {metrics.rf.f1_score?.toFixed(2)}</li>
-            </ul>
-          ) : <p>No data</p>}
         </div>
-        <div>
-          <h4>LSTM Metrics</h4>
-          {metrics.lstm ? (
-            <ul>
-              <li>MSE: {metrics.lstm.mse?.toFixed(2)}</li>
-              <li>MAE: {metrics.lstm.mae?.toFixed(2)}</li>
-            </ul>
-          ) : <p>No data</p>}
-        </div>
-      </div>
+      ))}
     </div>
   );
 }
 
 export default AdminDashboard;
-
