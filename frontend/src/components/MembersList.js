@@ -9,6 +9,7 @@ function MembersList({ userRole, userId }) {
   const [errorMessage, setErrorMessage] = useState('');
 
   const fetchMembers = (category = '') => {
+    setErrorMessage('');
     const headers = {
       'Content-Type': 'application/json',
       'User-Role': userRole || 'member',
@@ -28,7 +29,6 @@ function MembersList({ userRole, userId }) {
         return res.json();
       })
       .then(data => {
-        // Ensure data is an array before setting state
         if (Array.isArray(data)) {
           setMembers(data);
         } else {
@@ -55,24 +55,19 @@ function MembersList({ userRole, userId }) {
       };
       fetch(`${API_BASE}/members/categories`, { headers })
         .then(res => {
-          if (res.status === 401) {
-            throw new Error('Unauthorized - Please login again');
+          if (!res.ok) {
+            // Endpoint doesn't exist, just ignore
+            setCategories([]);
+            return [];
           }
-          if (!res.ok) throw new Error(`Server returned ${res.status}`);
           return res.json();
         })
         .then(data => {
-          // Ensure data is an array before setting state
           if (Array.isArray(data)) {
             setCategories(data);
-          } else {
-            console.error('Unexpected categories response:', data);
-            setCategories([]);
           }
         })
-        .catch(err => {
-          console.log('Error fetching categories', err);
-          setErrorMessage(err.message || 'Failed to fetch categories');
+        .catch(() => {
           setCategories([]);
         });
     }
