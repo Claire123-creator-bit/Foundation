@@ -21,14 +21,7 @@ body {
 .app-container {
   background: #FFFFFF;
   min-height: 100vh;
-  background-image: url('/mbogo-background.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
 }
-
-
 
 .form-container {
   background: #FFFFFF;
