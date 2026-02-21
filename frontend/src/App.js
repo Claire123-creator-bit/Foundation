@@ -152,12 +152,12 @@ function App() {
               <button className="nav-button" onClick={() => setActiveTab(userRole === 'admin' ? 'admin' : 'dashboard')}>Dashboard</button>
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('members')}>Members</button>}
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('datacapture')}>Data Capture</button>}
-              {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('minutes')}>Minutes</button>}
+              <button className="nav-button" onClick={() => setActiveTab('minutes')}>Minutes</button>
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('database')}>Database</button>}
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('messaging')}>SMS</button>}
-              {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('meetings')}>Meetings</button>}
+              <button className="nav-button" onClick={() => setActiveTab('meetings')}>Meetings</button>
               {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('admin')}>Admin</button>}
-              {userRole === 'admin' && <button className="nav-button" onClick={() => setActiveTab('donate')}>Donate</button>}
+              <button className="nav-button" onClick={() => setActiveTab('donate')}>Donate</button>
             </div>
           </>
         )}
