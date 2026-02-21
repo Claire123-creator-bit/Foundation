@@ -15,59 +15,35 @@ function MembersList({ userRole, userId }) {
       'User-ID': userId || ''
     };
     
-    if (userRole === 'admin') {
-      const url = category ? `${API_BASE}/members?category=${category}` : `${API_BASE}/members`;
-      fetch(url, { headers })
-        .then(res => {
-          if (res.status === 401) {
-            throw new Error('Unauthorized - Please login again');
-          }
-          if (!res.ok) throw new Error(`Server returned ${res.status}`);
-          return res.json();
-        })
-        .then(data => {
-          // Ensure data is an array before setting state
-          if (Array.isArray(data)) {
-            setMembers(data);
-          } else {
-            console.error('Unexpected response format:', data);
-            setMembers([]);
-            setErrorMessage(data.error || data.message || 'Invalid response from server');
-          }
-          setLoading(false);
-        })
-        .catch(err => {
-          console.log('Error fetching members', err);
-          setErrorMessage(err.message || 'Failed to fetch members');
+    const url = category && userRole === 'admin' 
+      ? `${API_BASE}/members?category=${category}` 
+      : `${API_BASE}/members`;
+    
+    fetch(url, { headers })
+      .then(res => {
+        if (res.status === 401) {
+          throw new Error('Unauthorized - Please login again');
+        }
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        // Ensure data is an array before setting state
+        if (Array.isArray(data)) {
+          setMembers(data);
+        } else {
+          console.error('Unexpected response format:', data);
           setMembers([]);
-          setLoading(false);
-        });
-    } else {
-      fetch(`${API_BASE}/member-profile?member_id=${userId}`, { headers })
-        .then(res => {
-          if (res.status === 401) {
-            throw new Error('Unauthorized - Please login again');
-          }
-          if (!res.ok) throw new Error(`Server returned ${res.status}`);
-          return res.json();
-        })
-        .then(data => {
-          // Ensure data is valid before setting state
-          if (!data.error && data.id) {
-            setMembers([data]);
-          } else {
-            setMembers([]);
-            setErrorMessage(data.error || 'Profile not found');
-          }
-          setLoading(false);
-        })
-        .catch(err => {
-          console.log('Error fetching profile', err);
-          setErrorMessage(err.message || 'Failed to fetch profile');
-          setMembers([]);
-          setLoading(false);
-        });
-    }
+          setErrorMessage(data.error || data.message || 'Invalid response from server');
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log('Error fetching members', err);
+        setErrorMessage(err.message || 'Failed to fetch members');
+        setMembers([]);
+        setLoading(false);
+      });
   };
 
   const fetchCategories = () => {
