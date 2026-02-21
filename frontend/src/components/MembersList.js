@@ -126,7 +126,7 @@ function MembersList({ userRole, userId }) {
         </p>
       </div>
 
-      {errorMessage && (
+      {errorMessage && members.length === 0 && (
         <div style={{textAlign: 'center', padding: '10px', color: 'red'}}>
           <p>{errorMessage}</p>
         </div>
