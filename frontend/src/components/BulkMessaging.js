@@ -5,9 +5,9 @@ function BulkMessaging({ userRole, userId }) {
   if (userRole !== 'admin') {
     return (
       <div className="form-container" style={{textAlign: 'center', padding: '50px'}}>
-        <h2 style={{color: '#f44336'}}>Access Denied</h2>
-        <p style={{color: '#666'}}>You do not have permission to view this page.</p>
-        <p style={{color: '#666', fontSize: '14px'}}>Only administrators can send bulk SMS.</p>
+        <h2 style={{color: '#0A2463'}}>Access Denied</h2>
+        <p style={{color: '#0A2463'}}>You do not have permission to view this page.</p>
+        <p style={{color: '#0A2463', fontSize: '14px'}}>Only administrators can send bulk SMS.</p>
       </div>
     );
   }
@@ -55,10 +55,10 @@ function BulkMessaging({ userRole, userId }) {
   return (
     <div className="form-container">
       <h2 className="page-title">SMS Broadcast System</h2>
-      <p style={{textAlign: 'center', color: '#666', marginBottom: '30px'}}>Send instant SMS updates to all registered members</p>
+      <p style={{textAlign: 'center', color: '#0A2463', marginBottom: '30px'}}>Send instant SMS updates to all registered members</p>
       <form onSubmit={handleSend}>
         <div style={{marginBottom: '20px'}}>
-          <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#87CEEB'}}>Target Audience:</label>
+          <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#0A2463'}}>Target Audience:</label>
           <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} style={{width: '100%'}}>
             <option value="">All Members (Broadcast to Everyone)</option>
             {categories.map(cat => <option key={cat} value={cat}>{cat} Members Only</option>)}
@@ -66,7 +66,7 @@ function BulkMessaging({ userRole, userId }) {
         </div>
         
         <div style={{marginBottom: '20px'}}>
-          <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#87CEEB'}}>Message Content:</label>
+          <label style={{display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#0A2463'}}>Message Content:</label>
           <textarea 
             placeholder="Type your message here... (e.g., Meeting tomorrow at 2PM, venue: Community Hall)" 
             value={message} 
@@ -74,14 +74,14 @@ function BulkMessaging({ userRole, userId }) {
             required
             style={{width: '100%', height: '120px', resize: 'vertical'}}
           />
-          <small style={{color: '#666'}}>Characters: {message.length}/160</small>
+          <small style={{color: '#0A2463'}}>Characters: {message.length}/160</small>
         </div>
         <button type="submit" style={{
-          background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
+          background: '#0A2463',
           padding: '15px 30px',
           fontSize: '16px',
           fontWeight: 'bold',
-          color: 'white',
+          color: '#FFFFFF',
           border: 'none',
           borderRadius: '8px'
         }}>Send SMS to All Members</button>

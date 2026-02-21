@@ -31,55 +31,53 @@ function Donate() {
       <h2 className="page-title">Support Our Mission</h2>
       
       <div style={{
-        background: 'linear-gradient(135deg, #87CEEB 0%, #87CEEB 100%)',
+        background: '#0A2463',
         padding: '40px',
         borderRadius: '25px',
-        color: 'white',
+        color: '#FFFFFF',
         marginBottom: '40px',
         textAlign: 'center'
       }}>
-        <h3 style={{fontSize: '2em', marginBottom: '15px', fontWeight: '700'}}>Make a Difference Today</h3>
-        <p style={{fontSize: '1.2em', lineHeight: '1.8', color: 'rgba(255,255,255,0.95)'}}>
+        <h3 style={{fontSize: '2em', marginBottom: '15px', fontWeight: '700', color: '#FFFFFF'}}>Make a Difference Today</h3>
+        <p style={{fontSize: '1.2em', lineHeight: '1.8', color: '#FFFFFF'}}>
           Your donation helps us empower communities and create positive change
         </p>
       </div>
 
       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', marginBottom: '40px'}}>
         <div style={{
-          background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
+          background: '#FFFFFF',
           padding: '35px',
           borderRadius: '25px',
-          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
-          border: '1px solid rgba(135, 206, 235, 0.1)'
+          border: '1px solid #0A2463'
         }}>
-          <h3 style={{color: '#87CEEB', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Why Donate?</h3>
+          <h3 style={{color: '#0A2463', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Why Donate?</h3>
           
           <div style={{marginBottom: '20px'}}>
-            <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Community Development</h4>
-            <p style={{color: '#4a5568', lineHeight: '1.6'}}>Support programs that strengthen our communities</p>
+            <h4 style={{color: '#0A2463', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Community Development</h4>
+            <p style={{color: '#0A2463', lineHeight: '1.6'}}>Support programs that strengthen our communities</p>
           </div>
 
           <div style={{marginBottom: '20px'}}>
-            <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Transparency</h4>
-            <p style={{color: '#4a5568', lineHeight: '1.6'}}>100% accountability on how funds are used</p>
+            <h4 style={{color: '#0A2463', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Transparency</h4>
+            <p style={{color: '#0A2463', lineHeight: '1.6'}}>100% accountability on how funds are used</p>
           </div>
 
           <div>
-            <h4 style={{color: '#2d3748', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Impact</h4>
-            <p style={{color: '#4a5568', lineHeight: '1.6'}}>Every contribution makes a real difference</p>
+            <h4 style={{color: '#0A2463', fontSize: '1.1em', marginBottom: '8px', fontWeight: '600'}}>Impact</h4>
+            <p style={{color: '#0A2463', lineHeight: '1.6'}}>Every contribution makes a real difference</p>
           </div>
         </div>
         
         <form onSubmit={handleSubmit} style={{
-          background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)',
+          background: '#FFFFFF',
           padding: '35px',
           borderRadius: '25px',
-          boxShadow: '0 8px 30px rgba(135, 206, 235, 0.15)',
-          border: '1px solid rgba(135, 206, 235, 0.1)'
+          border: '1px solid #0A2463'
         }}>
-          <h3 style={{color: '#87CEEB', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Donation Details</h3>
+          <h3 style={{color: '#0A2463', fontSize: '1.5em', marginBottom: '25px', fontWeight: '700'}}>Donation Details</h3>
           
-          <label style={{display: 'block', marginBottom: '8px'}}>Your Name</label>
+          <label style={{display: 'block', marginBottom: '8px', color: '#0A2463'}}>Your Name</label>
           <input 
             placeholder="Enter your full name" 
             value={name}
@@ -87,7 +85,7 @@ function Donate() {
             required 
           />
           
-          <label style={{display: 'block', marginBottom: '8px'}}>Phone Number</label>
+          <label style={{display: 'block', marginBottom: '8px', color: '#0A2463'}}>Phone Number</label>
           <input 
             placeholder="+254XXXXXXXXX" 
             value={phone}
@@ -95,7 +93,7 @@ function Donate() {
             required 
           />
           
-          <label style={{display: 'block', marginBottom: '8px'}}>Donation Amount (KES)</label>
+          <label style={{display: 'block', marginBottom: '8px', color: '#0A2463'}}>Donation Amount (KES)</label>
           <input 
             type="number"
             placeholder="Enter amount" 

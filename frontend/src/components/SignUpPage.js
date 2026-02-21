@@ -31,8 +31,8 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
       <button type="button" onClick={() => onNavigate('landing')} style={{
         marginBottom: '20px',
         padding: '10px 20px',
-        background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
-        color: 'white',
+        background: '#0A2463',
+        color: '#FFFFFF',
         border: 'none',
         borderRadius: '15px',
         cursor: 'pointer'
@@ -41,10 +41,10 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
       </button>
       
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <h1 style={{ color: '#87CEEB', fontSize: '2.5em', marginBottom: '10px' }}>
+        <h1 style={{ color: '#0A2463', fontSize: '2.5em', marginBottom: '10px' }}>
           Mbogo Welfare Empowerment Foundation
         </h1>
-        <p style={{ color: '#666', fontSize: '1.1em' }}>
+        <p style={{ color: '#0A2463', fontSize: '1.1em' }}>
           Empowering Communities Through Unity
         </p>
       </div>
@@ -86,7 +86,7 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
                 cursor: 'pointer',
                 fontSize: '12px',
                 padding: '5px',
-                color: '#87CEEB',
+                color: '#0A2463',
                 fontWeight: '600'
               }}
             >
@@ -118,7 +118,7 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
                 cursor: 'pointer',
                 fontSize: '12px',
                 padding: '5px',
-                color: '#87CEEB',
+                color: '#0A2463',
                 fontWeight: '600'
               }}
             >
@@ -138,11 +138,11 @@ const SignUpPage = ({ onSignUpSuccess, onNavigate }) => {
         </div>
       )}
       
-      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: 'rgba(135,206,235,0.05)', borderRadius: '10px' }}>
-        <p style={{ margin: '0', color: '#666' }}>
+      <div style={{ textAlign: 'center', marginTop: '20px', padding: '15px', background: '#FFFFFF', borderRadius: '10px', border: '1px solid #0A2463' }}>
+        <p style={{ margin: '0', color: '#0A2463' }}>
           Already have an account?{' '}
           <span onClick={() => onNavigate('login')} style={{
-            color: '#87CEEB',
+            color: '#0A2463',
             fontWeight: 'bold',
             cursor: 'pointer',
             textDecoration: 'underline'

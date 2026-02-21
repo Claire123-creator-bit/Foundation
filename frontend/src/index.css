@@ -13,20 +13,20 @@ html {
 
 body {
   margin: 0;
-  background: #FAF7F5;
+  background: #FFFFFF;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
 .app-container {
-  background: #FAF7F5;
+  background: #FFFFFF;
   min-height: 100vh;
 }
 
 
 
 .form-container {
-  background: #FAF7F5;
+  background: #FFFFFF;
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
@@ -34,8 +34,8 @@ body {
 
 .nav-button {
   background: transparent;
-  color: #FAF7F5;
-  border: none;
+  color: #FFFFFF;
+  border: 1px solid #FFFFFF;
   padding: 8px 16px;
   margin: 4px;
   cursor: pointer;
@@ -49,8 +49,8 @@ body {
 }
 
 button {
-  background: #D4735E;
-  color: #FAF7F5;
+  background: #0A2463;
+  color: #FFFFFF;
   border: none;
   padding: 16px;
   width: 160px;
@@ -70,19 +70,19 @@ input, select, textarea {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
-  border: 1px solid #D4735E;
-  background: #FAF7F5;
+  border: 1px solid #0A2463;
+  background: #FFFFFF;
   font-size: 14px;
   font-weight: 400;
 }
 
 input:focus, select:focus, textarea:focus {
-  outline: 2px solid #D4735E;
+  outline: 2px solid #0A2463;
   outline-offset: 2px;
 }
 
 .page-title {
-  color: #2C2C2C;
+  color: #0A2463;
   font-size: 32px;
   margin-bottom: 24px;
   font-weight: 700;
@@ -90,7 +90,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .section-title {
-  color: #2C2C2C;
+  color: #0A2463;
   font-size: 24px;
   margin: 32px 0 16px 0;
   font-weight: 700;
@@ -100,7 +100,7 @@ input:focus, select:focus, textarea:focus {
   background: #FFFFFF;
   padding: 24px;
   margin-bottom: 16px;
-  border: 1px solid #D4735E;
+  border: 1px solid #0A2463;
   transition: opacity 0.2s;
 }
 
@@ -109,28 +109,28 @@ input:focus, select:focus, textarea:focus {
 }
 
 h3 {
-  color: #2C2C2C;
+  color: #0A2463;
   font-weight: 700;
   font-size: 20px;
   margin-bottom: 8px;
 }
 
 h4 {
-  color: #2C2C2C;
+  color: #0A2463;
   font-weight: 600;
   font-size: 16px;
   margin-bottom: 8px;
 }
 
 p {
-  color: #5C5C5C;
+  color: #0A2463;
   line-height: 1.6;
   font-weight: 300;
   font-size: 14px;
 }
 
 label {
-  color: #2C2C2C;
+  color: #0A2463;
   font-weight: 600;
   font-size: 14px;
   display: block;
@@ -140,18 +140,18 @@ label {
 table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #D4735E;
+  border: 1px solid #0A2463;
 }
 
 table th {
-  background: #D4735E;
+  background: #0A2463;
   padding: 12px;
   font-weight: 600;
-  color: #FAF7F5;
+  color: #FFFFFF;
   text-align: left;
 }
 
 table td {
   padding: 12px;
-  border-bottom: 1px solid #E8E8E8;
+  border-bottom: 1px solid #0A2463;
 }

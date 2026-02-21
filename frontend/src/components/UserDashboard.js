@@ -109,15 +109,8 @@ function UserDashboard() {
 
   if (loading || !user) {
     return (
-      <div style={{
-        display: 'flex', 
-        flexDirection: 'column',
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        padding: '48px',
-        minHeight: '400px'
-      }}>
-        <p>Loading your dashboard...</p>
+      <div className="form-container">
+        <p style={{color: '#0A2463'}}>Loading your dashboard...</p>
       </div>
     );
   }
@@ -125,20 +118,20 @@ function UserDashboard() {
   return (
     <div className="form-container">
       <div style={{
-        background: '#D4735E',
-        color: '#FAF7F5',
+        background: '#0A2463',
+        color: '#FFFFFF',
         padding: '24px',
         marginBottom: '32px',
         textAlign: 'center'
       }}>
-        <h2 style={{margin: '0 0 8px 0', fontSize: '24px', color: '#FAF7F5'}}>
+        <h2 style={{margin: '0 0 8px 0', fontSize: '24px', color: '#FFFFFF'}}>
           Welcome back, {user.full_names.split(' ')[0]}!
         </h2>
-        <p style={{margin: '0', fontSize: '14px', fontWeight: '300', color: '#FAF7F5'}}>
+        <p style={{margin: '0', fontSize: '14px', fontWeight: '300', color: '#FFFFFF'}}>
           {user.category} | {user.ward} Ward, {user.constituency} | 
           {user.is_verified ? ' Verified' : ' Pending Verification'}
         </p>
-        <p style={{margin: '8px 0 0 0', fontSize: '12px', fontWeight: '300', color: '#FAF7F5'}}>
+        <p style={{margin: '8px 0 0 0', fontSize: '12px', fontWeight: '300', color: '#FFFFFF'}}>
           Last login: {new Date(user.last_login).toLocaleDateString()}
         </p>
       </div>
@@ -154,7 +147,7 @@ function UserDashboard() {
           width: '200px',
           height: '200px',
           background: '#FFFFFF',
-          border: '1px solid #D4735E',
+          border: '1px solid #0A2463',
           padding: '24px',
           display: 'flex',
           flexDirection: 'column',
@@ -162,18 +155,18 @@ function UserDashboard() {
           alignItems: 'center',
           textAlign: 'center'
         }}>
-          <h4 style={{marginBottom: '8px'}}>Messages</h4>
-          <p style={{fontSize: '32px', fontWeight: '700', color: '#D4735E', margin: '8px 0'}}>
+          <h4 style={{marginBottom: '8px', color: '#0A2463'}}>Messages</h4>
+          <p style={{fontSize: '32px', fontWeight: '700', color: '#0A2463', margin: '8px 0'}}>
             {announcements.length}
           </p>
-          <p style={{fontSize: '12px'}}>new announcements</p>
+          <p style={{fontSize: '12px', color: '#0A2463'}}>new announcements</p>
         </div>
         
         <div style={{
           width: '200px',
           height: '200px',
           background: '#FFFFFF',
-          border: '1px solid #D4735E',
+          border: '1px solid #0A2463',
           padding: '24px',
           display: 'flex',
           flexDirection: 'column',
@@ -181,18 +174,18 @@ function UserDashboard() {
           alignItems: 'center',
           textAlign: 'center'
         }}>
-          <h4 style={{marginBottom: '8px'}}>Meetings</h4>
-          <p style={{fontSize: '32px', fontWeight: '700', color: '#D4735E', margin: '8px 0'}}>
+          <h4 style={{marginBottom: '8px', color: '#0A2463'}}>Meetings</h4>
+          <p style={{fontSize: '32px', fontWeight: '700', color: '#0A2463', margin: '8px 0'}}>
             {upcomingMeetings.length}
           </p>
-          <p style={{fontSize: '12px'}}>upcoming meetings</p>
+          <p style={{fontSize: '12px', color: '#0A2463'}}>upcoming meetings</p>
         </div>
         
         <div style={{
           width: '200px',
           height: '200px',
           background: '#FFFFFF',
-          border: '1px solid #D4735E',
+          border: '1px solid #0A2463',
           padding: '24px',
           display: 'flex',
           flexDirection: 'column',
@@ -200,11 +193,11 @@ function UserDashboard() {
           alignItems: 'center',
           textAlign: 'center'
         }}>
-          <h4 style={{marginBottom: '8px'}}>Attendance</h4>
-          <p style={{fontSize: '32px', fontWeight: '700', color: '#D4735E', margin: '8px 0'}}>
+          <h4 style={{marginBottom: '8px', color: '#0A2463'}}>Attendance</h4>
+          <p style={{fontSize: '32px', fontWeight: '700', color: '#0A2463', margin: '8px 0'}}>
             {attendanceHistory.length}
           </p>
-          <p style={{fontSize: '12px'}}>meetings attended</p>
+          <p style={{fontSize: '12px', color: '#0A2463'}}>meetings attended</p>
         </div>
       </div>
 
@@ -212,14 +205,14 @@ function UserDashboard() {
       {announcements.length > 0 ? (
         announcements.slice(0, 3).map((announcement, index) => (
           <div key={index} className="faq-item">
-            <h4>{announcement.title}</h4>
-            <p>{announcement.content}</p>
+            <h4 style={{color: '#0A2463'}}>{announcement.title}</h4>
+            <p style={{color: '#0A2463'}}>{announcement.content}</p>
             <span style={{
-              background: announcement.priority === 'high' ? '#D4735E' : '#FAF7F5',
-              color: announcement.priority === 'high' ? '#FAF7F5' : '#2C2C2C',
+              background: announcement.priority === 'high' ? '#0A2463' : '#FFFFFF',
+              color: announcement.priority === 'high' ? '#FFFFFF' : '#0A2463',
               padding: '4px 8px',
               fontSize: '12px',
-              border: '1px solid #D4735E'
+              border: '1px solid #0A2463'
             }}>
               {announcement.priority || 'normal'}
             </span>
@@ -227,7 +220,7 @@ function UserDashboard() {
         ))
       ) : (
         <div style={{textAlign: 'center', padding: '32px'}}>
-          <p>No new announcements at this time.</p>
+          <p style={{color: '#0A2463'}}>No new announcements at this time.</p>
         </div>
       )}
 
@@ -235,16 +228,16 @@ function UserDashboard() {
       {upcomingMeetings.length > 0 ? (
         upcomingMeetings.map(meeting => (
           <div key={meeting.id} className="faq-item">
-            <h4>{meeting.title}</h4>
-            <p>{meeting.date} at {meeting.time}</p>
-            <p>{meeting.meeting_type === 'online' ? 'Online Meeting' : meeting.venue}</p>
+            <h4 style={{color: '#0A2463'}}>{meeting.title}</h4>
+            <p style={{color: '#0A2463'}}>{meeting.date} at {meeting.time}</p>
+            <p style={{color: '#0A2463'}}>{meeting.meeting_type === 'online' ? 'Online Meeting' : meeting.venue}</p>
             <div style={{display: 'flex', gap: '8px', marginTop: '16px'}}>
               {meeting.meeting_link && (
                 <button onClick={() => window.open(meeting.meeting_link, '_blank')}>
                   Join Meeting
                 </button>
               )}
-              <button style={{background: '#2C2C2C'}}>
+              <button style={{background: '#0A2463'}}>
                 Sign In
               </button>
             </div>
@@ -252,7 +245,7 @@ function UserDashboard() {
         ))
       ) : (
         <div style={{textAlign: 'center', padding: '32px'}}>
-          <p>No upcoming meetings scheduled.</p>
+          <p style={{color: '#0A2463'}}>No upcoming meetings scheduled.</p>
         </div>
       )}
 
@@ -270,12 +263,12 @@ function UserDashboard() {
             <tbody>
               {attendanceHistory.map((record, index) => (
                 <tr key={index}>
-                  <td>{record.meeting_title}</td>
-                  <td>{record.meeting_date}</td>
+                  <td style={{color: '#0A2463'}}>{record.meeting_title}</td>
+                  <td style={{color: '#0A2463'}}>{record.meeting_date}</td>
                   <td>
                     <span style={{
-                      background: record.status === 'Present' ? '#2C2C2C' : '#D4735E',
-                      color: '#FAF7F5',
+                      background: '#0A2463',
+                      color: '#FFFFFF',
                       padding: '4px 8px',
                       fontSize: '12px'
                     }}>
@@ -289,7 +282,7 @@ function UserDashboard() {
         </div>
       ) : (
         <div style={{textAlign: 'center', padding: '32px'}}>
-          <p>No attendance records yet.</p>
+          <p style={{color: '#0A2463'}}>No attendance records yet.</p>
         </div>
       )}
     </div>
@@ -297,3 +290,4 @@ function UserDashboard() {
 }
 
 export default UserDashboard;
+

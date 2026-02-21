@@ -5,9 +5,9 @@ function DatabaseViewer({ userRole, userId }) {
   if (userRole !== 'admin') {
     return (
       <div className="form-container" style={{textAlign: 'center', padding: '50px'}}>
-        <h2 style={{color: '#f44336'}}>Access Denied</h2>
-        <p style={{color: '#666'}}>You do not have permission to view this page.</p>
-        <p style={{color: '#666', fontSize: '14px'}}>Only administrators can access the database viewer.</p>
+        <h2 style={{color: '#0A2463'}}>Access Denied</h2>
+        <p style={{color: '#0A2463'}}>You do not have permission to view this page.</p>
+        <p style={{color: '#0A2463', fontSize: '14px'}}>Only administrators can access the database viewer.</p>
       </div>
     );
   }
@@ -48,15 +48,15 @@ function DatabaseViewer({ userRole, userId }) {
     width: '100%',
     borderCollapse: 'collapse',
     marginTop: '20px',
-    background: 'white',
+    background: '#FFFFFF',
     borderRadius: '8px',
     overflow: 'hidden',
-    boxShadow: '0 4px 15px rgba(0,188,212,0.1)'
+    border: '1px solid #0A2463'
   };
 
   const thStyle = {
-    background: 'linear-gradient(45deg, #87CEEB, #87CEEB)',
-    color: 'white',
+    background: '#0A2463',
+    color: '#FFFFFF',
     padding: '12px 8px',
     textAlign: 'left',
     fontWeight: 'bold',
@@ -65,13 +65,14 @@ function DatabaseViewer({ userRole, userId }) {
 
   const tdStyle = {
     padding: '10px 8px',
-    borderBottom: '1px solid #eee',
-    fontSize: '13px'
+    borderBottom: '1px solid #0A2463',
+    fontSize: '13px',
+    color: '#0A2463'
   };
 
   return (
     <div className="form-container">
-      <h2 className="page-title">🗄️ Database Tables</h2>
+      <h2 className="page-title">Database Tables</h2>
       
       <nav style={{display: 'flex', gap: '10px', marginBottom: '20px', justifyContent: 'center'}}>
         <button 
@@ -79,45 +80,45 @@ function DatabaseViewer({ userRole, userId }) {
           style={{
             padding: '10px 20px', 
             borderRadius: '8px', 
-            background: activeTable === 'members' ? '#87CEEB' : '#f0f0f0',
-            color: activeTable === 'members' ? 'white' : '#333',
+            background: activeTable === 'members' ? '#0A2463' : '#CCCCCC',
+            color: activeTable === 'members' ? '#FFFFFF' : '#0A2463',
             border: 'none',
             cursor: 'pointer'
           }}
         >
-          👥 Members ({members.length})
+          Members ({members.length})
         </button>
         <button 
           onClick={() => setActiveTable('meetings')}
           style={{
             padding: '10px 20px', 
             borderRadius: '8px', 
-            background: activeTable === 'meetings' ? '#87CEEB' : '#f0f0f0',
-            color: activeTable === 'meetings' ? 'white' : '#333',
+            background: activeTable === 'meetings' ? '#0A2463' : '#CCCCCC',
+            color: activeTable === 'meetings' ? '#FFFFFF' : '#0A2463',
             border: 'none',
             cursor: 'pointer'
           }}
         >
-          📅 Meetings ({meetings.length})
+          Meetings ({meetings.length})
         </button>
         <button 
           onClick={() => setActiveTable('attendance')}
           style={{
             padding: '10px 20px', 
             borderRadius: '8px', 
-            background: activeTable === 'attendance' ? '#87CEEB' : '#f0f0f0',
-            color: activeTable === 'attendance' ? 'white' : '#333',
+            background: activeTable === 'attendance' ? '#0A2463' : '#CCCCCC',
+            color: activeTable === 'attendance' ? '#FFFFFF' : '#0A2463',
             border: 'none',
             cursor: 'pointer'
           }}
         >
-          ✅ Attendance ({attendance.length})
+          Attendance ({attendance.length})
         </button>
       </nav>
 
       {activeTable === 'members' && (
         <div>
-          <h3 style={{color: '#87CEEB'}}>👥 Members Table</h3>
+          <h3 style={{color: '#0A2463'}}>Members Table</h3>
           {members.length > 0 ? (
             <table style={tableStyle}>
               <thead>
@@ -136,7 +137,7 @@ function DatabaseViewer({ userRole, userId }) {
               </thead>
               <tbody>
                 {members.map(member => (
-                  <tr key={member.id} style={{background: member.id % 2 === 0 ? '#f9f9f9' : 'white'}}>
+                  <tr key={member.id} style={{background: member.id % 2 === 0 ? '#FFFFFF' : '#F5F5F5'}}>
                     <td style={tdStyle}>{member.id}</td>
                     <td style={tdStyle}><strong>{member.name}</strong></td>
                     <td style={tdStyle}>{member.id_no}</td>
@@ -145,14 +146,14 @@ function DatabaseViewer({ userRole, userId }) {
                     <td style={tdStyle}>{member.constituency}</td>
                     <td style={tdStyle}>{member.ward}</td>
                     <td style={tdStyle}>{member.polling_centre}</td>
-                    <td style={tdStyle}><span style={{background: '#87CEEB', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '11px'}}>{member.category}</span></td>
+                    <td style={tdStyle}><span style={{background: '#0A2463', color: '#FFFFFF', padding: '2px 8px', borderRadius: '12px', fontSize: '11px'}}>{member.category}</span></td>
                     <td style={tdStyle}>{new Date(member.registration_date).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
-            <div style={{textAlign: 'center', padding: '40px', color: '#666'}}>
+            <div style={{textAlign: 'center', padding: '40px', color: '#0A2463'}}>
               <p>No members registered yet. Go to "Join Us" to add members.</p>
             </div>
           )}
@@ -161,7 +162,7 @@ function DatabaseViewer({ userRole, userId }) {
 
       {activeTable === 'meetings' && (
         <div>
-          <h3 style={{color: '#87CEEB'}}>📅 Meetings Table</h3>
+          <h3 style={{color: '#0A2463'}}>Meetings Table</h3>
           {meetings.length > 0 ? (
             <table style={tableStyle}>
               <thead>
@@ -178,13 +179,13 @@ function DatabaseViewer({ userRole, userId }) {
               </thead>
               <tbody>
                 {meetings.map(meeting => (
-                  <tr key={meeting.id} style={{background: meeting.id % 2 === 0 ? '#f9f9f9' : 'white'}}>
+                  <tr key={meeting.id} style={{background: meeting.id % 2 === 0 ? '#FFFFFF' : '#F5F5F5'}}>
                     <td style={tdStyle}>{meeting.id}</td>
                     <td style={tdStyle}><strong>{meeting.title}</strong></td>
                     <td style={tdStyle}>{meeting.date}</td>
                     <td style={tdStyle}>{meeting.time}</td>
                     <td style={tdStyle}>
-                      <span style={{background: meeting.meeting_type === 'online' ? '#4285f4' : '#87CEEB', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '11px'}}>
+                      <span style={{background: '#0A2463', color: '#FFFFFF', padding: '2px 8px', borderRadius: '12px', fontSize: '11px'}}>
                         {meeting.meeting_type || 'physical'}
                       </span>
                     </td>
@@ -196,7 +197,7 @@ function DatabaseViewer({ userRole, userId }) {
               </tbody>
             </table>
           ) : (
-            <div style={{textAlign: 'center', padding: '40px', color: '#666'}}>
+            <div style={{textAlign: 'center', padding: '40px', color: '#0A2463'}}>
               <p>No meetings created yet. Go to "Data Capture" to add meetings.</p>
             </div>
           )}
@@ -205,7 +206,7 @@ function DatabaseViewer({ userRole, userId }) {
 
       {activeTable === 'attendance' && (
         <div>
-          <h3 style={{color: '#87CEEB'}}>✅ Attendance Table</h3>
+          <h3 style={{color: '#0A2463'}}>Attendance Table</h3>
           {attendance.length > 0 ? (
             <table style={tableStyle}>
               <thead>
@@ -219,14 +220,14 @@ function DatabaseViewer({ userRole, userId }) {
               </thead>
               <tbody>
                 {attendance.map(record => (
-                  <tr key={record.id} style={{background: record.id % 2 === 0 ? '#f9f9f9' : 'white'}}>
+                  <tr key={record.id} style={{background: record.id % 2 === 0 ? '#FFFFFF' : '#F5F5F5'}}>
                     <td style={tdStyle}>{record.id}</td>
                     <td style={tdStyle}>{record.meeting_title}</td>
                     <td style={tdStyle}>{record.member_name}</td>
                     <td style={tdStyle}>
                       <span style={{
-                        background: record.status === 'Present' ? '#4caf50' : record.status === 'Late' ? '#ff9800' : '#f44336',
-                        color: 'white',
+                        background: '#0A2463',
+                        color: '#FFFFFF',
                         padding: '2px 8px',
                         borderRadius: '12px',
                         fontSize: '11px'
@@ -240,8 +241,8 @@ function DatabaseViewer({ userRole, userId }) {
               </tbody>
             </table>
           ) : (
-            <div style={{textAlign: 'center', padding: '40px', color: '#666'}}>
-              <p>No attendance records yet. Go to "Data Capture" → "Attendance" to record attendance.</p>
+            <div style={{textAlign: 'center', padding: '40px', color: '#0A2463'}}>
+              <p>No attendance records yet. Go to "Data Capture" - "Attendance" to record attendance.</p>
             </div>
           )}
         </div>

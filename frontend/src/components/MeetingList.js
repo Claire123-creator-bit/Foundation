@@ -28,30 +28,25 @@ function MeetingList() {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Upcoming Meetings</h2>
+    <div className="form-container">
+      <h2 className="page-title">Upcoming Meetings</h2>
       {meetings.length === 0 ? (
-        <p>No meetings scheduled.</p>
+        <p style={{color: '#0A2463'}}>No meetings scheduled.</p>
       ) : (
         meetings.map(meeting => (
-          <div key={meeting.id} style={{
-            border: '1px solid #ddd',
-            padding: '15px',
-            marginBottom: '10px',
-            borderRadius: '8px'
-          }}>
-            <h3>{meeting.title}</h3>
-            <p><strong>Date:</strong> {new Date(meeting.date).toLocaleDateString()}</p>
-            <p><strong>Time:</strong> {meeting.time}</p>
-            <p><strong>Location:</strong> {meeting.location}</p>
-            <p>{meeting.description}</p>
+          <div key={meeting.id} className="info-card">
+            <h3 style={{color: '#0A2463'}}>{meeting.title}</h3>
+            <p style={{color: '#0A2463'}}><strong>Date:</strong> {new Date(meeting.date).toLocaleDateString()}</p>
+            <p style={{color: '#0A2463'}}><strong>Time:</strong> {meeting.time}</p>
+            <p style={{color: '#0A2463'}}><strong>Location:</strong> {meeting.location}</p>
+            <p style={{color: '#0A2463'}}>{meeting.description}</p>
             {meeting.meeting_link && (
-              <p><a href={meeting.meeting_link} target="_blank" rel="noopener noreferrer">Join Meeting</a></p>
+              <p><a href={meeting.meeting_link} target="_blank" rel="noopener noreferrer" style={{color: '#0A2463', textDecoration: 'underline'}}>Join Meeting</a></p>
             )}
             <button onClick={() => handleRSVP(meeting.id)} style={{
               padding: '10px 15px',
-              background: '#87CEEB',
-              color: 'white',
+              background: '#0A2463',
+              color: '#FFFFFF',
               border: 'none',
               borderRadius: '5px',
               cursor: 'pointer',
@@ -67,3 +62,4 @@ function MeetingList() {
 }
 
 export default MeetingList;
+

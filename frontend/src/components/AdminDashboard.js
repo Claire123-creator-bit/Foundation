@@ -96,8 +96,8 @@ function AdminDashboard() {
         <div style={{
           width: '200px',
           height: '200px',
-          background: '#D4735E',
-          color: '#FAF7F5',
+          background: '#0A2463',
+          color: '#FFFFFF',
           padding: '24px',
           display: 'flex',
           flexDirection: 'column',
@@ -105,8 +105,8 @@ function AdminDashboard() {
           alignItems: 'center',
           textAlign: 'center'
         }}>
-          <h3 style={{fontSize: '14px', marginBottom: '8px', fontWeight: '600', color: '#FAF7F5'}}>Total Members</h3>
-          <p style={{fontSize: '48px', fontWeight: '700', margin: '0', color: '#FAF7F5'}}>{memberStats.total}</p>
+          <h3 style={{fontSize: '14px', marginBottom: '8px', fontWeight: '600', color: '#FFFFFF'}}>Total Members</h3>
+          <p style={{fontSize: '48px', fontWeight: '700', margin: '0', color: '#FFFFFF'}}>{memberStats.total}</p>
         </div>
         
         {memberStats.categories.slice(0, 3).map((cat, index) => (
@@ -114,7 +114,7 @@ function AdminDashboard() {
             width: '200px',
             height: '200px',
             background: '#FFFFFF',
-            border: '1px solid #D4735E',
+            border: '1px solid #0A2463',
             padding: '24px',
             display: 'flex',
             flexDirection: 'column',
@@ -122,22 +122,23 @@ function AdminDashboard() {
             alignItems: 'center',
             textAlign: 'center'
           }}>
-            <h3 style={{fontSize: '14px', marginBottom: '8px', fontWeight: '600'}}>{cat.name}</h3>
-            <p style={{fontSize: '36px', fontWeight: '700', margin: '0', color: '#D4735E'}}>{cat.count}</p>
+            <h3 style={{fontSize: '14px', marginBottom: '8px', fontWeight: '600', color: '#0A2463'}}>{cat.name}</h3>
+            <p style={{fontSize: '36px', fontWeight: '700', margin: '0', color: '#0A2463'}}>{cat.count}</p>
           </div>
         ))}
       </div>
       
       {memberStats.categories.length > 0 && (
         <div className="info-card" style={{marginBottom: '32px'}}>
-          <h4 style={{marginBottom: '16px'}}>Member Categories Breakdown:</h4>
+          <h4 style={{marginBottom: '16px', color: '#0A2463'}}>Member Categories Breakdown:</h4>
           <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
             {memberStats.categories.map((cat, index) => (
               <span key={index} style={{
-                background: '#FAF7F5',
+                background: '#FFFFFF',
                 padding: '8px 16px',
                 fontSize: '14px',
-                border: '1px solid #D4735E'
+                border: '1px solid #0A2463',
+                color: '#0A2463'
               }}>
                 {cat.name}: <strong>{cat.count}</strong>
               </span>
@@ -197,7 +198,7 @@ function AdminDashboard() {
           </div>
           <div style={{display: 'flex', gap: '8px'}}>
             <button onClick={() => updateStatus(assignment.id, 'In Progress')}>Start</button>
-            <button onClick={() => updateStatus(assignment.id, 'Completed')} style={{background: '#2C2C2C'}}>Complete</button>
+            <button onClick={() => updateStatus(assignment.id, 'Completed')} style={{background: '#0A2463'}}>Complete</button>
           </div>
         </div>
       ))}
@@ -206,3 +207,4 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
+

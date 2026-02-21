@@ -23,7 +23,7 @@ function HomePage() {
   return (
     <div className="form-container">
       <h2 className="page-title">Mbogo Welfare Empowerment Foundation</h2>
-      <p style={{textAlign: 'center', marginBottom: '32px'}}>Empowering communities through transparency and trust</p>
+      <p style={{textAlign: 'center', marginBottom: '32px', color: '#0A2463'}}>Empowering communities through transparency and trust</p>
       
       <div style={{
         display: 'grid', 
@@ -45,7 +45,10 @@ function HomePage() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            textAlign: 'center'
+            textAlign: 'center',
+            background: '#0A2463',
+            color: '#FFFFFF',
+            border: '1px solid #0A2463'
           }}>
             {item.text}
           </button>
@@ -62,7 +65,7 @@ function HomePage() {
           width: '300px',
           height: '300px',
           background: '#FFFFFF',
-          border: '1px solid #D4735E',
+          border: '1px solid #0A2463',
           padding: '32px',
           display: 'flex',
           flexDirection: 'column',
@@ -72,15 +75,15 @@ function HomePage() {
         }}
         onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
         onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-          <h3>Our Mission</h3>
-          <p>Building stronger communities through transparent governance and community engagement.</p>
+          <h3 style={{color: '#0A2463'}}>Our Mission</h3>
+          <p style={{color: '#0A2463'}}>Building stronger communities through transparent governance and community engagement.</p>
         </div>
         
         <div style={{
           width: '300px',
           height: '300px',
           background: '#FFFFFF',
-          border: '1px solid #D4735E',
+          border: '1px solid #0A2463',
           padding: '32px',
           display: 'flex',
           flexDirection: 'column',
@@ -90,15 +93,15 @@ function HomePage() {
         }}
         onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
         onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-          <h3>Get Involved</h3>
-          <p>Join our programs, register as a member, and make a difference in your community.</p>
+          <h3 style={{color: '#0A2463'}}>Get Involved</h3>
+          <p style={{color: '#0A2463'}}>Join our programs, register as a member, and make a difference in your community.</p>
         </div>
         
         <div style={{
           width: '300px',
           height: '300px',
           background: '#FFFFFF',
-          border: '1px solid #D4735E',
+          border: '1px solid #0A2463',
           padding: '32px',
           display: 'flex',
           flexDirection: 'column',
@@ -108,8 +111,8 @@ function HomePage() {
         }}
         onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
         onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-          <h3>Support Us</h3>
-          <p>Contribute to our cause through donations and volunteer work.</p>
+          <h3 style={{color: '#0A2463'}}>Support Us</h3>
+          <p style={{color: '#0A2463'}}>Contribute to our cause through donations and volunteer work.</p>
         </div>
       </div>
     </div>
@@ -117,3 +120,4 @@ function HomePage() {
 }
 
 export default HomePage;
+

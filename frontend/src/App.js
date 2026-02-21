@@ -130,18 +130,18 @@ function App() {
   return (
     <div className="app-container">
       <nav style={{
-        background: '#D4735E',
+        background: '#0A2463',
         padding: '16px 24px',
         position: 'sticky',
         top: '0',
         zIndex: '1000'
       }}>
-        <h1 style={{textAlign: 'center', color: '#FAF7F5', margin: '0 0 16px 0', fontSize: '20px', fontWeight: '700'}}>Mbogo Welfare Empowerment Foundation</h1>
+        <h1 style={{textAlign: 'center', color: '#FFFFFF', margin: '0 0 16px 0', fontSize: '20px', fontWeight: '700'}}>Mbogo Welfare Empowerment Foundation</h1>
         {userRole && (
           <>
-            <div style={{textAlign: 'center', color: '#FAF7F5', marginBottom: '12px', fontSize: '14px'}}>
+            <div style={{textAlign: 'center', color: '#FFFFFF', marginBottom: '12px', fontSize: '14px'}}>
               Welcome, {userName} ({userRole})
-              <button onClick={handleLogout} style={{marginLeft: '8px', padding: '4px 12px', background: 'transparent', color: '#FAF7F5', border: '1px solid #FAF7F5', cursor: 'pointer', fontSize: '12px', width: 'auto', height: 'auto'}}>Logout</button>
+              <button onClick={handleLogout} style={{marginLeft: '8px', padding: '4px 12px', background: 'transparent', color: '#FFFFFF', border: '1px solid #FFFFFF', cursor: 'pointer', fontSize: '12px', width: 'auto', height: 'auto'}}>Logout</button>
             </div>
             <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px'}}>
               <button className="nav-button" onClick={() => setActiveTab('dashboard')}>Dashboard</button>
@@ -190,8 +190,8 @@ function App() {
           marginTop: '48px',
           padding: '24px',
           textAlign: 'center',
-          background: '#D4735E',
-          color: '#FAF7F5'
+          background: '#0A2463',
+          color: '#FFFFFF'
         }}>
           <div style={{
             display: 'flex', 
