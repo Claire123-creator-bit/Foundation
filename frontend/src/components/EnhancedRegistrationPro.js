@@ -10,7 +10,7 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
     full_names: storedName,
     national_id: storedId,
     phone_number: signupPhone || '',
-    email: '',  // Added email field
+    email: '',
     county: '',
     constituency: '',
     ward: '',
@@ -19,9 +19,6 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
     gps_longitude: '',
     category: ''
   });
-
-  const [locationStatus, setLocationStatus] = useState('');
-  const [isCapturingLocation, setIsCapturingLocation] = useState(false);
 
   const categories = [
     'Church Leader', 'Pastor', 'Village Elder', 'Agent', 
@@ -38,34 +35,6 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
     'Narok', 'Kajiado', 'Kericho', 'Bomet', 'Kakamega', 'Vihiga', 'Bungoma',
     'Busia', 'Siaya', 'Kisumu', 'Homa Bay', 'Migori', 'Kisii', 'Nyamira'
   ];
-
-  const captureGPSLocation = () => {
-    setIsCapturingLocation(true);
-    setLocationStatus('Capturing your location...');
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setFormData(prev => ({
-            ...prev,
-            gps_latitude: latitude.toString(),
-            gps_longitude: longitude.toString()
-          }));
-          setLocationStatus(`Location captured: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
-          setIsCapturingLocation(false);
-        },
-        (error) => {
-          setLocationStatus('Location access denied. Please enter manually.');
-          setIsCapturingLocation(false);
-        },
-        { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
-      );
-    } else {
-      setLocationStatus('GPS not supported. Please enter location manually.');
-      setIsCapturingLocation(false);
-    }
-  };
 
   const [errorMessage, setErrorMessage] = useState('');
   const [errorDetails, setErrorDetails] = useState('');
@@ -253,28 +222,6 @@ function EnhancedRegistrationPro({ signupPhone, onRegistrationSuccess }) {
         }}>
           <h3 style={{color: '#0A2463', margin: '0 0 20px 0'}}>Location Information</h3>
           
-          <div style={{marginBottom: '20px'}}>
-            <button 
-              type="button"
-              onClick={captureGPSLocation}
-              disabled={isCapturingLocation}
-              style={{
-                background: isCapturingLocation ? '#CCCCCC' : '#0A2463',
-                padding: '12px 20px',
-                borderRadius: '8px',
-                border: 'none',
-                color: '#FFFFFF',
-                cursor: isCapturingLocation ? 'not-allowed' : 'pointer',
-                marginBottom: '10px'
-              }}
-            >
-              {isCapturingLocation ? 'Capturing...' : 'Capture GPS Location'}
-            </button>
-            {locationStatus && (
-              <p style={{margin: '10px 0', fontSize: '14px', color: '#0A2463'}}>{locationStatus}</p>
-            )}
-          </div>
-
           <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px', marginBottom: '15px'}}>
             <div>
               <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#0A2463'}}>
