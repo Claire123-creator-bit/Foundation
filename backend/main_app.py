@@ -26,7 +26,7 @@ app.config['FOUNDATION_EMAIL'] = os.environ.get('FOUNDATION_EMAIL', 'info@mbogof
 
 db.init_app(app)
 
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, origins=['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'])
 
 def send_email(to_email, subject, body):
     """Send email to recipient"""
@@ -89,69 +89,6 @@ def init_db():
         print("Database tables created successfully")
         
         
-        if not Admin.query.first():
-            default_admin = Admin(
-                username='admin',
-                password=hash_password('admin123'),  
-                full_name='System Administrator',
-                email='admin@mbogofoundation.org',
-                phone='+254700000000',
-                role='admin',
-                is_active=True
-            )
-            db.session.add(default_admin)
-            db.session.commit()
-            print("Default admin account created: username='admin', password='admin123'")
-        
-        if not AutoResponse.query.first():
-            responses = [
-                AutoResponse(trigger_type='new_member', 
-                           message_template='Welcome! Paybill: 123456. WhatsApp: https://chat.whatsapp.com/xyz',
-                           paybill_no='123456',
-                           whatsapp_group='https://chat.whatsapp.com/xyz'),
-                AutoResponse(trigger_type='inquiry',
-                           message_template='Thank you for your inquiry. We will get back to you soon.'),
-                AutoResponse(trigger_type='complaint',
-                           message_template='We have received your complaint and will address it promptly.')
-            ]
-            for resp in responses:
-                db.session.add(resp)
-            db.session.commit()
-            print("Default auto-responses added")
-        
-       
-        peter = Member.query.filter(Member.full_names.ilike('%peter%')).first()
-        if not peter:
-            peter = Member(
-                full_names='Peter Maina',
-                national_id='12345678',
-                phone_number='0712345678',
-                county='Nairobi',
-                constituency='Kasarani',
-                ward='Ruaraka',
-                physical_location='Kariobangi',
-                category='Youth Leader',
-                is_verified=True
-            )
-            db.session.add(peter)
-            print("Added Peter Maina")
-        
-        roselyne = Member.query.filter(Member.full_names.ilike('%roselyne%')).first()
-        if not roselyne:
-            roselyne = Member(
-                full_names='Roselyne Akinyi',
-                national_id='87654321',
-                phone_number='0723456789',
-                county='Kisumu',
-                constituency='Kisumu Central',
-                ward='Nyalenda',
-                physical_location='Nyalenda',
-                category='Community Member',
-                is_verified=True
-            )
-            db.session.add(roselyne)
-            print("Added Roselyne Akinyi")
-        
         db.session.commit()
 
 init_db()
@@ -164,28 +101,7 @@ def health_check():
     except Exception as e:
         return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
 
-@app.route('/signup', methods=['POST'])
-def signup():
-    data = request.json
-    existing_user = Member.query.filter_by(phone_number=data['phone_number']).first()
-    if existing_user:
-        return jsonify({'error': 'Phone number already registered'}), 400
-    
-    return jsonify({'message': 'Account created successfully', 'phone_number': data['phone_number']})
 
-@app.route('/send-welcome-sms', methods=['POST'])
-def send_welcome_sms():
-    data = request.json
-    phone_number = data['phone_number']
-    member_name = data['member_name']
-    sms_message = f"Welcome to Mbogo Welfare Empowerment Foundation, {member_name}. You have been successfully registered as a member. Thank you for joining us."
-    print(f"SMS sent to {phone_number}: {sms_message}")
-    
-    return jsonify({
-        'status': 'sent',
-        'message': 'Welcome SMS sent successfully',
-        'phone_number': phone_number
-    })
 
 @app.route('/')
 def home():
@@ -577,59 +493,35 @@ def admin_get_meeting_minutes():
 
 
 
-@app.route('/member-login', methods=['POST'])
-def member_login():
-    """Authenticate a member using full_name and national_id"""
+
+@app.route('/send-bulk-sms', methods=['POST'])
+def send_bulk_sms():
     try:
         data = request.json
-        if not data:
-            return jsonify({'success': False, 'message': 'No data received'}), 400
-        
-        full_name = data.get('full_name', '').strip()
-        national_id = data.get('national_id', '').strip()
-        
-        if not full_name or not national_id:
-            return jsonify({'success': False, 'message': 'Full name and National ID are required'}), 400
-        
-        
-        member = Member.query.filter(
-            db.func.lower(Member.full_names) == db.func.lower(full_name),
-            Member.national_id == national_id
-        ).first()
-        
-        if not member:
-           
-            member = Member.query.filter(
-                db.func.lower(Member.full_names).contains(db.func.lower(full_name)),
-                Member.national_id == national_id
-            ).first()
-        
-        if not member:
-            return jsonify({'success': False, 'message': 'Invalid credentials. Please check your name and National ID.'}), 401
-        
-        
-        member.last_login = datetime.utcnow()
-        db.session.commit()
-        
+        message = data.get('message', '').strip()
+        category = data.get('category', '')
+
+        if not message:
+            return jsonify({'error': 'Message is required'}), 400
+
+        if category:
+            members = Member.query.filter_by(category=category).all()
+        else:
+            members = Member.query.all()
+
+        recipients = len(members)
+        for member in members:
+            print(f"SMS to {member.phone_number}: {message}")
+
         return jsonify({
             'success': True,
-            'message': 'Login successful',
-            'user_id': member.id,
-            'role': 'member',
-            'name': member.full_names,
-            'phone_number': member.phone_number,
-            'national_id': member.national_id,
-            'category': member.category
+            'message': f'SMS sent to {recipients} members',
+            'recipients': recipients
         })
-        
     except Exception as e:
-        print(f"Member login error: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'success': False, 'message': 'Login failed. Please try again.'}), 500
+        return jsonify({'error': str(e)}), 500
 
 
-@app.route('/admin-login', methods=['POST'])
 def admin_login():
     """Authenticate an admin using username and password"""
     try:
@@ -678,7 +570,64 @@ def admin_login():
         return jsonify({'success': False, 'message': 'Login failed. Please try again.'}), 500
 
 
-@app.route('/admin-register', methods=['POST'])
+@app.route('/mpesa-stk-push', methods=['POST'])
+def mpesa_stk_push():
+    try:
+        data = request.json
+        phone = data.get('phone', '').strip()
+        amount = data.get('amount', '')
+        name = data.get('name', '')
+        payment_type = data.get('type', 'Donation')
+
+        if not phone or not amount or not name:
+            return jsonify({'success': False, 'error': 'All fields are required'}), 400
+
+        # Normalize phone number to 2547XXXXXXXX format
+        if phone.startswith('0'):
+            phone = '254' + phone[1:]
+        elif phone.startswith('+'):
+            phone = phone[1:]
+
+        # TODO: Replace with real Daraja API credentials when available
+        # consumer_key = os.environ.get('MPESA_CONSUMER_KEY')
+        # consumer_secret = os.environ.get('MPESA_CONSUMER_SECRET')
+        # shortcode = os.environ.get('MPESA_SHORTCODE')
+        # passkey = os.environ.get('MPESA_PASSKEY')
+
+        print(f"STK Push: {name} | {phone} | KES {amount} | {payment_type}")
+
+        return jsonify({
+            'success': True,
+            'message': f'STK Push sent to {phone}',
+            'phone': phone,
+            'amount': amount
+        })
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+def admin_login():
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'success': False, 'message': 'No data received'}), 400
+        username = data.get('username', '').strip()
+        password = data.get('password', '').strip()
+        if not username or not password:
+            return jsonify({'success': False, 'message': 'Username and password are required'}), 400
+        admin = Admin.query.filter_by(username=username).first()
+        if not admin or not check_password(password, admin.password):
+            return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
+        if not admin.is_active:
+            return jsonify({'success': False, 'message': 'Your account has been deactivated'}), 401
+        admin.last_login = datetime.utcnow()
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Login successful', 'user_id': admin.id, 'role': 'admin', 'name': admin.full_name, 'username': admin.username, 'email': admin.email})
+    except Exception as e:
+        return jsonify({'success': False, 'message': 'Login failed. Please try again.'}), 500
+
+
 def admin_register():
     """Register a new admin user"""
     try:

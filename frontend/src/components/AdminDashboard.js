@@ -1,210 +1,129 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { getAuthToken } from '../utils/auth';
+import React, { useState, useEffect } from 'react';
+import MembersList from './MembersList';
+import RegisterMember from './EnhancedRegistrationPro';
+import BulkMessaging from './BulkMessaging';
+import MeetingList from './MeetingList';
+import Donate from './Donate';
 import API_BASE from '../utils/apiConfig';
 
-function AdminDashboard() {
-  const [assignments, setAssignments] = useState([]);
-  const [newAssignment, setNewAssignment] = useState({
-    title: '', description: '', assigned_to: '', priority: 'Medium', due_date: ''
-  });
-  const [memberStats, setMemberStats] = useState({ total: 0, categories: [] });
-  const [userRole] = useState(localStorage.getItem('userRole') || 'admin');
-  const [userId] = useState(localStorage.getItem('userId') || '');
-
-  const fetchMemberStats = () => {
-    fetch(`${API_BASE}/members`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Role': userRole,
-        'User-ID': userId
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        const categories = {};
-        data.forEach(member => {
-          const cat = member.category || 'Unknown';
-          categories[cat] = (categories[cat] || 0) + 1;
-        });
-        setMemberStats({
-          total: data.length,
-          categories: Object.entries(categories).map(([name, count]) => ({ name, count }))
-        });
-      })
-      .catch(() => {});
-  };
-
-  const fetchAssignments = () => {
-    fetch(`${API_BASE}/assignments`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Role': 'admin'
-      }
-    })
-      .then(res => res.json())
-      .then(data => setAssignments(data))
-      .catch(() => {});
-  };
+function AdminDashboard({ adminName, onLogout }) {
+  const [tab, setTab] = useState('members');
+  const [stats, setStats] = useState({ total: 0, meetings: 0 });
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    fetchAssignments();
-    fetchMemberStats();
-  }, []);
+    fetch(`${API_BASE}/members`, { headers: { 'User-Role': 'admin' } })
+      .then(r => r.json()).then(d => setStats(s => ({ ...s, total: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
+    fetch(`${API_BASE}/meetings`)
+      .then(r => r.json()).then(d => setStats(s => ({ ...s, meetings: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
+  }, [tab]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    fetch(`${API_BASE}/assignments`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Role': 'admin'
-      },
-      body: JSON.stringify(newAssignment)
-    })
-      .then(res => res.json())
-      .then(() => {
-        fetchAssignments();
-        setNewAssignment({title: '', description: '', assigned_to: '', priority: 'Medium', due_date: ''});
-      })
-      .catch(() => {});
-  };
-
-  const updateStatus = (id, status) => {
-    fetch(`${API_BASE}/assignments/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Role': 'admin'
-      },
-      body: JSON.stringify({status})
-    })
-      .then(() => fetchAssignments())
-      .catch(() => {});
-  };
+  const tabs = [
+    { id: 'members',  label: '👥 Members' },
+    { id: 'register', label: '➕ Register' },
+    { id: 'sms',      label: '📩 SMS' },
+    { id: 'meetings', label: '📅 Meetings' },
+    { id: 'donate',   label: '💳 Donate' },
+  ];
 
   return (
-    <div className="form-container">
-      <h2 className="page-title">Office Administration</h2>
-      
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 200px))',
-        gap: '16px',
-        justifyContent: 'center',
-        marginBottom: '32px'
-      }}>
-        <div style={{
-          width: '200px',
-          height: '200px',
-          background: '#0A2463',
-          color: '#FFFFFF',
-          padding: '24px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center'
-        }}>
-          <h3 style={{fontSize: '14px', marginBottom: '8px', fontWeight: '600', color: '#FFFFFF'}}>Total Members</h3>
-          <p style={{fontSize: '48px', fontWeight: '700', margin: '0', color: '#FFFFFF'}}>{memberStats.total}</p>
+    <div className="layout">
+
+      {/* ── Navbar ── */}
+      <nav className="navbar">
+        {/* Logo */}
+        <div className="navbar-logo">
+          <img src="/mbogo-background.jpeg" alt="logo" style={{ width: 40, height: 40, objectFit: 'cover', border: '2px solid #fff', flexShrink: 0 }} />
+          <div>
+            <div className="logo-name">Mbogo Foundation</div>
+            <div className="logo-tagline">Empowering Communities</div>
+          </div>
         </div>
-        
-        {memberStats.categories.slice(0, 3).map((cat, index) => (
-          <div key={index} style={{
-            width: '200px',
-            height: '200px',
-            background: '#FFFFFF',
-            border: '1px solid #0A2463',
-            padding: '24px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center'
-          }}>
-            <h3 style={{fontSize: '14px', marginBottom: '8px', fontWeight: '600', color: '#0A2463'}}>{cat.name}</h3>
-            <p style={{fontSize: '36px', fontWeight: '700', margin: '0', color: '#0A2463'}}>{cat.count}</p>
+
+        {/* Desktop nav links */}
+        <div className="navbar-links">
+          {tabs.map(t => (
+            <button key={t.id} className={`nav-link ${tab === t.id ? 'nav-link-active' : ''}`} onClick={() => setTab(t.id)}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Admin info + logout */}
+        <div className="navbar-right">
+          <div className="navbar-admin">
+            <div className="admin-avatar">{adminName.charAt(0).toUpperCase()}</div>
+            <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14 }}>{adminName}</span>
           </div>
-        ))}
-      </div>
-      
-      {memberStats.categories.length > 0 && (
-        <div className="info-card" style={{marginBottom: '32px'}}>
-          <h4 style={{marginBottom: '16px', color: '#0A2463'}}>Member Categories Breakdown:</h4>
-          <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
-            {memberStats.categories.map((cat, index) => (
-              <span key={index} style={{
-                background: '#FFFFFF',
-                padding: '8px 16px',
-                fontSize: '14px',
-                border: '1px solid #0A2463',
-                color: '#0A2463'
-              }}>
-                {cat.name}: <strong>{cat.count}</strong>
-              </span>
-            ))}
-          </div>
+          <button className="btn-logout" onClick={onLogout}>Logout</button>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? '✕' : '☰'}
+        </button>
+      </nav>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="mobile-menu">
+          {tabs.map(t => (
+            <button key={t.id} className={`mobile-link ${tab === t.id ? 'mobile-link-active' : ''}`}
+              onClick={() => { setTab(t.id); setMenuOpen(false); }}>
+              {t.label}
+            </button>
+          ))}
+          <button className="mobile-link" onClick={onLogout}>🚪 Logout</button>
         </div>
       )}
-      
-      <form onSubmit={handleSubmit} className="info-card" style={{marginBottom: '32px'}}>
-        <h3 className="section-title">Create Assignment</h3>
-        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px'}}>
-          <input 
-            placeholder="Assignment Title" 
-            value={newAssignment.title}
-            onChange={e => setNewAssignment({...newAssignment, title: e.target.value})}
-            required 
-          />
-          <input 
-            placeholder="Assigned To"
-            value={newAssignment.assigned_to}
-            onChange={e => setNewAssignment({...newAssignment, assigned_to: e.target.value})}
-          />
-        </div>
-        <textarea 
-          placeholder="Description"
-          value={newAssignment.description}
-          onChange={e => setNewAssignment({...newAssignment, description: e.target.value})}
-          style={{marginBottom: '16px'}}
-        />
-        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px'}}>
-          <select 
-            value={newAssignment.priority}
-            onChange={e => setNewAssignment({...newAssignment, priority: e.target.value})}
-          >
-            <option value="Low">Low Priority</option>
-            <option value="Medium">Medium Priority</option>
-            <option value="High">High Priority</option>
-          </select>
-          <input 
-            type="date"
-            value={newAssignment.due_date}
-            onChange={e => setNewAssignment({...newAssignment, due_date: e.target.value})}
-          />
-        </div>
-        <button type="submit">Create Assignment</button>
-      </form>
 
-      <h3 className="section-title">Assignments</h3>
-      {assignments.map(assignment => (
-        <div key={assignment.id} className="faq-item">
-          <h4>{assignment.title}</h4>
-          <p>{assignment.description}</p>
-          <div style={{display: 'flex', gap: '16px', marginBottom: '16px', fontSize: '14px'}}>
-            <span><strong>Assigned to:</strong> {assignment.assigned_to}</span>
-            <span><strong>Priority:</strong> {assignment.priority}</span>
-            <span><strong>Status:</strong> {assignment.status}</span>
+      {/* ── Stats Banner ── */}
+      <div className="stats-banner">
+        <div className="stat-card">
+          <span className="stat-number">{stats.total}</span>
+          <span className="stat-label">Members</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-number">{stats.meetings}</span>
+          <span className="stat-label">Meetings</span>
+        </div>
+      </div>
+
+      {/* ── Main Content ── */}
+      <main className="main-content">
+        {tab === 'members'  && <MembersList />}
+        {tab === 'register' && <RegisterMember onRegistrationSuccess={() => setTab('members')} />}
+        {tab === 'sms'      && <BulkMessaging />}
+        {tab === 'meetings' && <MeetingList />}
+        {tab === 'donate'   && <Donate />}
+      </main>
+
+      {/* ── Footer ── */}
+      <footer className="footer">
+        <div className="footer-inner">
+          <div className="footer-top">
+            <div className="footer-brand">
+              <img src="/mbogo-background.jpeg" alt="logo" style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: '50%', border: '3px solid rgba(255,255,255,0.4)', flexShrink: 0 }} />
+              <div>
+                <div className="footer-name">Mbogo Welfare Empowerment Foundation</div>
+                <div className="footer-tagline">Empowering Communities Through Unity</div>
+              </div>
+            </div>
+            <div className="footer-links">
+              <p className="footer-links-title">Quick Links</p>
+              {tabs.map(t => (
+                <button key={t.id} className="footer-link" onClick={() => setTab(t.id)}>{t.label}</button>
+              ))}
+            </div>
           </div>
-          <div style={{display: 'flex', gap: '8px'}}>
-            <button onClick={() => updateStatus(assignment.id, 'In Progress')}>Start</button>
-            <button onClick={() => updateStatus(assignment.id, 'Completed')} style={{background: '#0A2463'}}>Complete</button>
+          <div className="footer-bottom">
+            <p className="footer-copy">© {new Date().getFullYear()} Mbogo Welfare Empowerment Foundation. All rights reserved.</p>
           </div>
         </div>
-      ))}
+      </footer>
+
     </div>
   );
 }
 
 export default AdminDashboard;
-
