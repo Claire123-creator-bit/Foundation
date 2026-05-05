@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
 
-function LoginPage({ onLogin, onSwitch }) {
-  const [form, setForm] = useState({ username: '', password: '' });
+function SignupPage({ onLogin, onSwitch }) {
+  const [form, setForm] = useState({ full_name: '', username: '', email: '', phone: '', password: '', confirm: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
@@ -11,14 +11,25 @@ function LoginPage({ onLogin, onSwitch }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (form.password !== form.confirm) { setError('Passwords do not match'); return; }
+    if (form.password.length < 6) { setError('Password must be at least 6 characters'); return; }
     setLoading(true); setError('');
-    fetch(`${API_BASE}/admin-login`, {
+    fetch(`${API_BASE}/admin-register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
+      body: JSON.stringify({ full_name: form.full_name, username: form.username, email: form.email, phone: form.phone, password: form.password })
     })
       .then(r => r.json())
-      .then(d => { setLoading(false); if (d.success) onLogin(d.name); else setError(d.message); })
+      .then(d => {
+        setLoading(false);
+        if (d.success) {
+          fetch(`${API_BASE}/admin-login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: form.username, password: form.password })
+          }).then(r => r.json()).then(d2 => { if (d2.success) onLogin(d2.name); });
+        } else setError(d.message);
+      })
       .catch(() => { setLoading(false); setError('Cannot connect to server'); });
   };
 
@@ -35,37 +46,53 @@ function LoginPage({ onLogin, onSwitch }) {
       <div style={s.right}>
         <div style={s.card}>
           <div style={s.cardHeader}>
-            <h2 style={s.title}>Welcome back</h2>
-            <p style={s.sub}>Sign in to your admin account</p>
+            <h2 style={s.title}>Create account</h2>
+            <p style={s.sub}>Set up your admin account</p>
           </div>
 
           <form onSubmit={handleSubmit} style={s.form}>
-            <label style={s.label}>Username</label>
-            <input style={s.input} value={form.username} onChange={set('username')} placeholder="Enter username" required />
-
-            <label style={s.label}>Password</label>
-            <div style={{ position: 'relative' }}>
-              <input style={s.input} value={form.password} onChange={set('password')} type={show ? 'text' : 'password'} placeholder="Enter password" required />
-              <button type="button" onClick={() => setShow(!show)} style={s.eye}>{show ? '🙈' : '👁️'}</button>
+            <div style={s.row}>
+              <Field label="Full Name"  value={form.full_name} onChange={set('full_name')} placeholder="Your full name" />
+              <Field label="Username"   value={form.username}  onChange={set('username')}  placeholder="Choose a username" />
+            </div>
+            <div style={s.row}>
+              <Field label="Email" value={form.email} onChange={set('email')} type="email" placeholder="your@email.com" />
+              <Field label="Phone" value={form.phone} onChange={set('phone')} placeholder="07XXXXXXXX" required={false} />
+            </div>
+            <div style={s.row}>
+              <div style={{ flex: 1, position: 'relative' }}>
+                <Field label="Password" value={form.password} onChange={set('password')} type={show ? 'text' : 'password'} placeholder="Min 6 characters" />
+                <button type="button" onClick={() => setShow(!show)} style={s.eye}>{show ? '🙈' : '👁️'}</button>
+              </div>
+              <Field label="Confirm Password" value={form.confirm} onChange={set('confirm')} type={show ? 'text' : 'password'} placeholder="Repeat password" />
             </div>
 
             {error && <p style={s.error}>{error}</p>}
 
             <button type="submit" style={s.btn} disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Creating account...' : 'Create Account'}
             </button>
 
             <div style={s.divider}><div style={s.line2}/><span style={s.or}>or</span><div style={s.line2}/></div>
 
-            <GoogleBtn label="Continue with Google" />
+            <GoogleBtn label="Sign up with Google" />
 
             <p style={s.switch}>
-              Don't have an account?{' '}
-              <span style={s.link} onClick={onSwitch}>Sign up</span>
+              Already have an account?{' '}
+              <span style={s.link} onClick={onSwitch}>Sign in</span>
             </p>
           </form>
         </div>
       </div>
+    </div>
+  );
+}
+
+function Field({ label, value, onChange, type = 'text', placeholder, required = true }) {
+  return (
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <label style={s.label}>{label}</label>
+      <input style={s.input} value={value} onChange={onChange} type={type} placeholder={placeholder} required={required} />
     </div>
   );
 }
@@ -95,11 +122,12 @@ const s = {
   line:      { width: 40, height: 2, background: 'rgba(255,255,255,0.3)', marginBottom: 20 },
   quote:     { color: 'rgba(255,255,255,0.45)', fontSize: 13, textAlign: 'center', fontStyle: 'italic', fontWeight: 300 },
   right:     { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 },
-  card:      { background: '#fff', border: '2px solid #0A2463', width: '100%', maxWidth: 420 },
+  card:      { background: '#fff', border: '2px solid #0A2463', width: '100%', maxWidth: 580 },
   cardHeader:{ background: '#0A2463', padding: '24px 32px' },
   title:     { color: '#fff', fontSize: 20, fontWeight: 700, marginBottom: 4 },
   sub:       { color: 'rgba(255,255,255,0.7)', fontSize: 13, fontWeight: 300 },
   form:      { padding: 32 },
+  row:       { display: 'flex', gap: 16 },
   label:     { display: 'block', fontSize: 13, fontWeight: 600, color: '#0A2463', marginBottom: 6 },
   input:     { width: '100%', padding: '12px 14px', fontSize: 14, border: '2px solid #0A2463', background: '#fff', color: '#0A2463', outline: 'none', marginBottom: 16, boxSizing: 'border-box' },
   eye:       { position: 'absolute', right: 12, top: 10, width: 28, height: 28, border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 16, padding: 0 },
@@ -113,4 +141,4 @@ const s = {
   link:      { color: '#0A2463', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' },
 };
 
-export default LoginPage;
+export default SignupPage;
