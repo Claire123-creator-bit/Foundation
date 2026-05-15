@@ -4,26 +4,34 @@ import RegisterMember from './EnhancedRegistrationPro';
 import BulkMessaging from './BulkMessaging';
 import MeetingList from './MeetingList';
 import Donate from './Donate';
+import PendingMembers from './PendingMembers';
+import AdminManagement from './AdminManagement';
 import API_BASE from '../utils/apiConfig';
 
 function AdminDashboard({ adminName, onLogout }) {
   const [tab, setTab] = useState('members');
-  const [stats, setStats] = useState({ total: 0, meetings: 0 });
+  const [stats, setStats] = useState({ total: 0, meetings: 0, pending: 0 });
   const [menuOpen, setMenuOpen] = useState(false);
+  const adminRole = localStorage.getItem('adminRole');
+  const isSuperAdmin = adminRole === 'superadmin';
 
   useEffect(() => {
     fetch(`${API_BASE}/members`, { headers: { 'User-Role': 'admin' } })
       .then(r => r.json()).then(d => setStats(s => ({ ...s, total: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
     fetch(`${API_BASE}/meetings`)
       .then(r => r.json()).then(d => setStats(s => ({ ...s, meetings: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
+    fetch(`${API_BASE}/admin/pending-members`, { headers: { 'User-Role': 'admin' } })
+      .then(r => r.json()).then(d => setStats(s => ({ ...s, pending: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
   }, [tab]);
 
   const tabs = [
     { id: 'members',  label: '👥 Members' },
     { id: 'register', label: '➕ Register' },
+    { id: 'pending',  label: '⏳ Pending' },
     { id: 'sms',      label: '📩 SMS' },
     { id: 'meetings', label: '📅 Meetings' },
     { id: 'donate',   label: '💳 Donate' },
+    ...(isSuperAdmin ? [{ id: 'settings', label: '⚙️ Settings' }] : []),
   ];
 
   return (
@@ -87,15 +95,21 @@ function AdminDashboard({ adminName, onLogout }) {
           <span className="stat-number">{stats.meetings}</span>
           <span className="stat-label">Meetings</span>
         </div>
+        <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => setTab('pending')}>
+          <span className="stat-number">{stats.pending}</span>
+          <span className="stat-label">Pending</span>
+        </div>
       </div>
 
       {/* ── Main Content ── */}
       <main className="main-content">
         {tab === 'members'  && <MembersList />}
         {tab === 'register' && <RegisterMember onRegistrationSuccess={() => setTab('members')} />}
+        {tab === 'pending'  && <PendingMembers />}
         {tab === 'sms'      && <BulkMessaging />}
         {tab === 'meetings' && <MeetingList />}
         {tab === 'donate'   && <Donate />}
+        {tab === 'settings' && isSuperAdmin && <AdminManagement />}
       </main>
 
       {/* ── Footer ── */}

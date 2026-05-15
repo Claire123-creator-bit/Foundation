@@ -1,98 +1,32 @@
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify
 from flask_cors import CORS
-from website_models import db, CallLog, AutoResponse, Member, Meeting, Attendance, MeetingMinutes, Admin, Resource, Payment
+from website_models import db, Member, Meeting, Admin
 from datetime import datetime
 import os
-import smtplib
-import threading
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import hashlib
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-
 
 db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance', 'foundation_complete.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-
-app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
-app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True').lower() == 'true'
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'your-email@gmail.com')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'your-app-password')
-app.config['FOUNDATION_EMAIL'] = os.environ.get('FOUNDATION_EMAIL', 'info@mbogofoundation.org')
-
 db.init_app(app)
-
 CORS(app, supports_credentials=True, origins=['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'])
 
-def send_email(to_email, subject, body):
-    """Send email to recipient"""
-    try:
-        
-        print(f"=" * 60)
-        print(f"EMAIL WOULD BE SENT TO: {to_email}")
-        print(f"SUBJECT: {subject}")
-        print(f"BODY: {body}")
-        print(f"=" * 60)
-        
-        # Uncomment below for production with real SMTP:
-        # msg = MIMEMultipart()
-        # msg['From'] = app.config['FOUNDATION_EMAIL']
-        # msg['To'] = to_email
-        # msg['Subject'] = subject
-        # msg.attach(MIMEText(body, 'html'))
-        # 
-        # with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as server:
-        #     server.starttls()
-        #     server.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-        #     server.send_message(msg)
-        
-        return True
-    except Exception as e:
-        print(f"Email error: {e}")
-        return False
-
-def hash_password(password):
-    """Hash password using SHA256"""
-    return hashlib.sha256(password.encode()).hexdigest()
-
-def check_password(password, hashed):
-    """Verify password against hash"""
-    return hashlib.sha256(password.encode()).hexdigest() == hashed
-
-def get_user_role():
-    user_role = request.headers.get('User-Role', 'guest')
-    user_id = request.headers.get('User-ID')
-    return user_role, user_id
-
 def is_admin():
-    user_role, _ = get_user_role()
-    return user_role == 'admin'
-
-def is_member():
-    user_role, user_id = get_user_role()
-    return user_role == 'member' and user_id is not None
+    return request.headers.get('User-Role') == 'admin'
 
 def init_db():
-    from website_models import db, CallLog, AutoResponse, Member, Meeting, Attendance, MeetingMinutes, Admin, Resource, Payment
     from admin_models import Assignment, Report, FinancialRecord
-    
-    
-    instance_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance')
-    os.makedirs(instance_path, exist_ok=True)
-    
+    os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance'), exist_ok=True)
     with app.app_context():
         db.create_all()
         print("Database tables created successfully")
-        
-        
-        db.session.commit()
 
 init_db()
 
+# ── Health ──
 @app.route('/health', methods=['GET'])
 def health_check():
     try:
@@ -101,475 +35,224 @@ def health_check():
     except Exception as e:
         return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
 
-
-
-@app.route('/')
-def home():
-    return render_template_string('''
-    <!DOCTYPE html>
-    <html>
-    <head><title>Foundation Website</title></head>
-    <body>
-        <h1>Welcome to Our Foundation</h1>
-        <div id="contact-form">
-            <h3>Contact Us</h3>
-            <input id="name" placeholder="Your Name">
-            <input id="phone" placeholder="Phone Number">
-            <select id="type">
-                <option value="inquiry">General Inquiry</option>
-                <option value="complaint">Complaint</option>
-                <option value="registration">Registration</option>
-            </select>
-            <textarea id="message" placeholder="Your Message"></textarea>
-            <button onclick="submitContact()">Submit</button>
-        </div>
-        <script>
-        function submitContact() {
-            fetch('/log-call', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    name: document.getElementById('name').value,
-                    phone: document.getElementById('phone').value,
-                    call_type: document.getElementById('type').value,
-                    message: document.getElementById('message').value
-                })
-            }).then(res => res.json()).then(data => alert(data.message));
-        }
-        </script>
-    </body>
-    </html>
-    ''')
-
-@app.route('/log-call', methods=['POST'])
-def log_call():
-    data = request.json
-    call = CallLog(
-        caller_name=data['name'],
-        phone=data['phone'],
-        call_type=data['call_type'],
-        message=data['message']
-    )
-    db.session.add(call)
-    db.session.commit()
-    
-    response = AutoResponse.query.filter_by(trigger_type=data['call_type']).first()
-    if response:
-        return jsonify({
-            'message': response.message_template,
-            'paybill': response.paybill_no,
-            'whatsapp': response.whatsapp_group
-        })
-    return jsonify({'message': 'Thank you for contacting us!'})
-
-
-@app.route('/register-member-pro', methods=['POST', 'OPTIONS'])
-def register_member_pro():
-    if request.method == 'OPTIONS':
-        response = app.make_response('')
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-        response.headers.add('Access-Control-Allow-Methods', 'POST')
-        return response
-    
+# ── Admin Auth ──
+@app.route('/admin-login', methods=['POST'])
+def admin_login():
     try:
         data = request.json
-        
-        if not data:
-            return jsonify({'error': 'No data received'}), 400
-        
-        required_fields = ['full_names', 'national_id', 'phone_number', 'county', 'constituency', 'ward', 'physical_location', 'category']
-        missing_fields = [field for field in required_fields if not data.get(field)]
-        if missing_fields:
-            return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
-        
-        existing_member = Member.query.filter_by(national_id=data['national_id']).first()
-        if existing_member:
-            return jsonify({'error': 'This National ID is already registered. Please login instead.'}), 400
-        
-        existing_phone = Member.query.filter_by(phone_number=data['phone_number']).first()
-        if existing_phone:
-            return jsonify({'error': 'This phone number is already registered. Please login instead.'}), 400
-        
+        username = data.get('username', '').strip()
+        password = data.get('password', '').strip()
+        if not username or not password:
+            return jsonify({'success': False, 'message': 'Username and password are required'}), 400
+        admin = Admin.query.filter_by(username=username).first()
+        if not admin or not check_password_hash(admin.password, password):
+            return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
+        if not admin.is_active:
+            return jsonify({'success': False, 'message': 'Account deactivated'}), 401
+        admin.last_login = datetime.utcnow()
+        db.session.commit()
+        return jsonify({'success': True, 'name': admin.full_name, 'username': admin.username, 'email': admin.email, 'role': admin.role})
+    except Exception:
+        return jsonify({'success': False, 'message': 'Login failed'}), 500
+
+@app.route('/admin-register', methods=['POST'])
+def admin_register():
+    # Only super admins can create new admins
+    requesting_username = request.headers.get('Admin-Username', '')
+    requester = Admin.query.filter_by(username=requesting_username).first()
+    if not requester or requester.role != 'superadmin':
+        return jsonify({'success': False, 'message': 'Only super admins can create admin accounts'}), 403
+    try:
+        data = request.json
+        for f in ['username', 'password', 'full_name', 'email']:
+            if not data.get(f):
+                return jsonify({'success': False, 'message': f'{f} is required'}), 400
+        if Admin.query.filter_by(username=data['username']).first():
+            return jsonify({'success': False, 'message': 'Username already exists'}), 400
+        if Admin.query.filter_by(email=data['email'].lower()).first():
+            return jsonify({'success': False, 'message': 'Email already registered'}), 400
+        admin = Admin(username=data['username'], password=generate_password_hash(data['password']),
+                      full_name=data['full_name'], email=data['email'].lower(),
+                      phone=data.get('phone', ''), role=data.get('role', 'admin'), is_active=True)
+        db.session.add(admin)
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Admin account created successfully'})
+    except Exception:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': 'Registration failed'}), 500
+
+# ── Member Auth ──
+@app.route('/member-register', methods=['POST'])
+def member_register():
+    try:
+        data = request.json
+        required = ['full_names', 'national_id', 'phone_number', 'category']
+        missing = [f for f in required if not data.get(f)]
+        if missing:
+            return jsonify({'success': False, 'error': f'Please fill all fields'}), 400
+        if Member.query.filter_by(national_id=data['national_id']).first():
+            return jsonify({'success': False, 'error': 'This ID is already registered.'}), 400
+        if Member.query.filter_by(phone_number=data['phone_number']).first():
+            return jsonify({'success': False, 'error': 'This phone number is already registered.'}), 400
         member = Member(
-            full_names=data['full_names'],
-            national_id=data['national_id'],
-            phone_number=data['phone_number'],
-            email=data.get('email', ''),  
-            county=data['county'],
-            constituency=data['constituency'],
-            ward=data['ward'],
-            physical_location=data['physical_location'],
-            gps_latitude=data.get('gps_latitude', ''),
-            gps_longitude=data.get('gps_longitude', ''),
-            category=data['category'],
-            is_verified=True
+            full_names=data['full_names'], national_id=data['national_id'],
+            phone_number=data['phone_number'], category=data['category'],
+            county='', constituency='', ward='', physical_location='',
+            status='pending', created_by='self', is_verified=False
         )
         db.session.add(member)
         db.session.commit()
-        print(f"SUCCESS: Member created with ID: {member.id}")
-        
-       
-        member_email = data.get('email', '')
-        
-        response = jsonify({
-            'message': 'Registration successful', 
-            'user_id': member.id,
-            'member_data': {
-                'full_names': member.full_names,
-                'national_id': member.national_id,
-                'phone_number': member.phone_number,
-                'email': member.email,
-                'county': member.county,
-                'constituency': member.constituency,
-                'ward': member.ward,
-                'category': member.category
-            }
-        })
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        
-        # Send email asynchronously after response
-        if member_email:
-            try:
-                email_subject = "Welcome to Mbogo Welfare Empowerment Foundation!"
-                email_body = f"""
-                <html>
-                <body style="font-family: Arial, sans-serif; padding: 20px;">
-                    <h2 style="color: #006064;">Welcome to Mbogo Welfare Empowerment Foundation!</h2>
-                    <p>Dear {data['full_names']},</p>
-                    <p>Thank you for registering as a member of our foundation. We are delighted to have you join our community.</p>
-                    <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                        <p><strong>Member ID:</strong> {member.id}</p>
-                        <p><strong>Name:</strong> {data['full_names']}</p>
-                        <p><strong>Phone:</strong> {data['phone_number']}</p>
-                        <p><strong>Category:</strong> {data['category']}</p>
-                        <p><strong>Location:</strong> {data['ward']}, {data['constituency']}, {data['county']}</p>
-                    </div>
-                    <h3>Payment Details:</h3>
-                    <p><strong>Paybill:</strong> 123456</p>
-                    <p><strong>Account Name:</strong> Your Name</p>
-                    <p>Join our WhatsApp group: https://chat.whatsapp.com/xyz</p>
-                    <hr>
-                    <p style="color: #666; font-size: 12px;">
-                        This is an automated message from Mbogo Welfare Empowerment Foundation.
-                        Please do not reply to this email.
-                    </p>
-                </body>
-                </html>
-                """
-                # Send email in background without blocking
-                import threading
-                email_thread = threading.Thread(target=send_email, args=(member_email, email_subject, email_body))
-                email_thread.daemon = True
-                email_thread.start()
-            except Exception as e:
-                print(f"Email sending failed: {e}")
-        
-        return response
-        
-    except Exception as e:
+        return jsonify({'success': True})
+    except Exception:
         db.session.rollback()
-        error_msg = str(e)
-        print(f"Registration error: {error_msg}")
-        import traceback
-        traceback.print_exc()
-        if 'UNIQUE constraint failed' in error_msg:
-            return jsonify({'error': 'This National ID or phone number is already registered.'}), 400
-        elif 'FOREIGN KEY constraint' in error_msg:
-            return jsonify({'error': 'Invalid data provided. Please check all fields.'}), 400
-        else:
-            return jsonify({'error': 'Registration failed. Please try again.', 'details': error_msg}), 500
+        return jsonify({'success': False, 'error': 'Registration failed. Try again.'}), 500
 
+@app.route('/member-login', methods=['POST'])
+def member_login():
+    try:
+        data = request.json
+        phone = data.get('phone_number', '').strip()
+        if not phone:
+            return jsonify({'success': False, 'message': 'Please enter your phone number'}), 400
+        member = Member.query.filter_by(phone_number=phone).first()
+        if not member:
+            return jsonify({'success': False, 'message': 'Phone number not found. Please register first.'}), 404
+        if member.status == 'pending':
+            return jsonify({'success': False, 'message': 'Your registration is being reviewed. Please wait for admin approval.'}), 403
+        if member.status == 'rejected':
+            return jsonify({'success': False, 'message': 'Your registration was not approved. Please contact the admin.'}), 403
+        member.last_login = datetime.utcnow()
+        member.last_active = datetime.utcnow()
+        db.session.commit()
+        return jsonify({'success': True, 'member': member.to_dict()})
+    except Exception:
+        return jsonify({'success': False, 'message': 'Something went wrong. Please try again.'}), 500
 
-@app.route('/register-member', methods=['POST'])
-def register_member():
-    return register_member_pro()
+# ── Admin Management (Super Admin only) ──
+@app.route('/admin/list-admins', methods=['GET'])
+def list_admins():
+    requesting_username = request.headers.get('Admin-Username', '')
+    requester = Admin.query.filter_by(username=requesting_username).first()
+    if not requester or requester.role != 'superadmin':
+        return jsonify({'error': 'Super admin access required'}), 403
+    admins = Admin.query.all()
+    return jsonify([{'id': a.id, 'username': a.username, 'full_name': a.full_name, 'email': a.email, 'phone': a.phone, 'role': a.role, 'is_active': a.is_active, 'last_login': a.last_login.isoformat() if a.last_login else None} for a in admins])
+
+@app.route('/admin/delete-admin/<int:admin_id>', methods=['DELETE'])
+def delete_admin(admin_id):
+    requesting_username = request.headers.get('Admin-Username', '')
+    requester = Admin.query.filter_by(username=requesting_username).first()
+    if not requester or requester.role != 'superadmin':
+        return jsonify({'error': 'Super admin access required'}), 403
+    admin = Admin.query.get(admin_id)
+    if not admin:
+        return jsonify({'error': 'Admin not found'}), 404
+    if admin.role == 'superadmin':
+        return jsonify({'error': 'Cannot delete super admin'}), 400
+    db.session.delete(admin)
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'Admin removed'})
+
 
 @app.route('/members', methods=['GET'])
 def get_members():
-    user_role = request.headers.get('User-Role', 'member')
-    user_id = request.headers.get('User-ID')
-    
-    if user_role == 'admin':
-        category = request.args.get('category')
-        if category:
-            members = Member.query.filter_by(category=category).all()
-        else:
-            members = Member.query.all()
-        return jsonify([member.to_dict() for member in members])
-    else:
-        if user_id:
-            member = Member.query.get(user_id)
-            if member:
-                return jsonify([member.to_dict()])
-        return jsonify([])
+    if not is_admin():
+        return jsonify({'error': 'Admin access required'}), 403
+    category = request.args.get('category')
+    members = Member.query.filter_by(category=category).all() if category else Member.query.filter(Member.status != 'pending').all()
+    return jsonify([m.to_dict() for m in members])
 
-@app.route('/member-profile', methods=['GET'])
-def get_member_profile():
-    user_role, user_id = get_user_role()
-    
-    if not user_id:
-        return jsonify({'error': 'Authentication required'}), 401
-    
-    if user_role == 'admin':
-        member_id = request.args.get('member_id')
-        if member_id:
-            member = Member.query.get(member_id)
-        else:
-            return jsonify({'error': 'member_id required for admin'}), 400
-    else:
-        member = Member.query.get(user_id)
-    
-    if member:
-        return jsonify(member.to_dict())
-    return jsonify({'error': 'Member not found'}), 404
+@app.route('/admin/pending-members', methods=['GET'])
+def get_pending_members():
+    if not is_admin():
+        return jsonify({'error': 'Admin access required'}), 403
+    members = Member.query.filter_by(status='pending').order_by(Member.registration_date.desc()).all()
+    return jsonify([m.to_dict() for m in members])
 
-@app.route('/my-messages', methods=['GET'])
-def get_my_messages():
-    user_role, user_id = get_user_role()
-    
-    if not user_id:
-        return jsonify({'error': 'Authentication required'}), 401
-    
-    if user_role == 'admin':
-        call_logs = CallLog.query.order_by(CallLog.timestamp.desc()).all()
-    else:
-        member = Member.query.get(user_id)
-        if member:
-            call_logs = CallLog.query.filter_by(phone=member.phone_number).order_by(CallLog.timestamp.desc()).all()
-        else:
-            call_logs = []
-    
-    return jsonify([{
-        'id': log.id,
-        'caller_name': log.caller_name,
-        'phone': log.phone,
-        'call_type': log.call_type,
-        'message': log.message,
-        'response_sent': log.response_sent,
-        'timestamp': log.timestamp.isoformat()
-    } for log in call_logs])
+@app.route('/admin/approve-member/<int:member_id>', methods=['POST'])
+def approve_member(member_id):
+    if not is_admin():
+        return jsonify({'error': 'Admin access required'}), 403
+    member = Member.query.get(member_id)
+    if not member:
+        return jsonify({'error': 'Member not found'}), 404
+    action = (request.json or {}).get('action', 'approve')
+    member.status = 'approved' if action == 'approve' else 'rejected'
+    member.is_verified = action == 'approve'
+    db.session.commit()
+    return jsonify({'success': True, 'message': f'Member {action}d'})
 
+# ── Admin Register Member ──
+@app.route('/admin/register-member', methods=['POST'])
+def admin_register_member():
+    if not is_admin():
+        return jsonify({'error': 'Admin access required'}), 403
+    try:
+        data = request.json
+        required = ['full_names', 'national_id', 'phone_number', 'county', 'constituency', 'ward', 'physical_location', 'category']
+        missing = [f for f in required if not data.get(f)]
+        if missing:
+            return jsonify({'error': f'Missing: {", ".join(missing)}'}), 400
+        if Member.query.filter_by(national_id=data['national_id']).first():
+            return jsonify({'error': 'National ID already registered'}), 400
+        if Member.query.filter_by(phone_number=data['phone_number']).first():
+            return jsonify({'error': 'Phone number already registered'}), 400
+        member = Member(
+            full_names=data['full_names'], national_id=data['national_id'],
+            phone_number=data['phone_number'], email=data.get('email', ''),
+            county=data['county'], constituency=data['constituency'],
+            ward=data['ward'], physical_location=data['physical_location'],
+            category=data['category'], status='approved',
+            created_by='admin', is_verified=True
+        )
+        db.session.add(member)
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Member registered successfully', 'member_data': member.to_dict()})
+    except Exception:
+        db.session.rollback()
+        return jsonify({'error': 'Registration failed'}), 500
+
+# ── Meetings ──
 @app.route('/meetings', methods=['GET'])
 def get_meetings():
-    user_role, user_id = get_user_role()
-    
-    meetings = Meeting.query.order_by(Meeting.date.desc()).all()
-    
-    return jsonify([meeting.to_dict() for meeting in meetings])
+    return jsonify([m.to_dict() for m in Meeting.query.order_by(Meeting.date.desc()).all()])
 
 @app.route('/meetings', methods=['POST'])
 def create_meeting():
-    """Create a new meeting - admin only"""
     if not is_admin():
         return jsonify({'error': 'Admin access required'}), 403
-    
     try:
         data = request.json
-        if not data:
-            return jsonify({'error': 'No data received'}), 400
-        
-        required_fields = ['title', 'date', 'time']
-        missing_fields = [field for field in required_fields if not data.get(field)]
-        if missing_fields:
-            return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
-        
-        meeting = Meeting(
-            title=data['title'],
-            date=data['date'],
-            time=data['time'],
-            agenda=data.get('description', ''),
-            venue=data.get('venue', ''),
-            meeting_link=data.get('meeting_link', ''),
-            meeting_type=data.get('meeting_type', 'physical'),
-            category=data.get('category', '')
-        )
+        for f in ['title', 'date', 'time']:
+            if not data.get(f):
+                return jsonify({'error': f'{f} is required'}), 400
+        meeting = Meeting(title=data['title'], date=data['date'], time=data['time'],
+                          venue=data.get('venue', ''), agenda=data.get('description', ''),
+                          meeting_type=data.get('meeting_type', 'physical'))
         db.session.add(meeting)
         db.session.commit()
-        
-        print(f"Meeting created: {meeting.title} on {meeting.date}")
-        
-        return jsonify({
-            'success': True,
-            'message': 'Meeting created successfully',
-            'meeting': meeting.to_dict()
-        })
-        
-    except Exception as e:
+        return jsonify({'success': True, 'meeting': meeting.to_dict()})
+    except Exception:
         db.session.rollback()
-        print(f"Meeting creation error: {str(e)}")
-        import traceback
-        traceback.print_exc()
         return jsonify({'error': 'Failed to create meeting'}), 500
 
-@app.route('/attendance-records', methods=['GET'])
-def get_attendance_records():
-    user_role, user_id = get_user_role()
-    
-    if not user_id:
-        return jsonify({'error': 'Authentication required'}), 401
-    
-    if user_role == 'admin':
-        member_id = request.args.get('member_id')
-        if member_id:
-            records = Attendance.query.filter_by(member_id=member_id).all()
-        else:
-            records = Attendance.query.all()
-    else:
-        records = Attendance.query.filter_by(member_id=user_id).all()
-    
-    result = []
-    for record in records:
-        meeting = Meeting.query.get(record.meeting_id)
-        member = Member.query.get(record.member_id)
-        result.append({
-            'id': record.id,
-            'meeting_id': record.meeting_id,
-            'meeting_title': meeting.title if meeting else 'Unknown',
-            'meeting_date': meeting.date if meeting else 'Unknown',
-            'member_id': record.member_id,
-            'member_name': member.full_names if member else 'Unknown',
-            'status': record.status,
-            'recorded_date': record.recorded_date.isoformat()
-        })
-    
-    return jsonify(result)
-
-@app.route('/admin/all-members', methods=['GET'])
-def admin_get_all_members():
-    if not is_admin():
-        return jsonify({'error': 'Admin access required'}), 403
-    
-    members = Member.query.all()
-    return jsonify([member.to_dict() for member in members])
-
-@app.route('/admin/all-call-logs', methods=['GET'])
-def admin_get_all_call_logs():
-    if not is_admin():
-        return jsonify({'error': 'Admin access required'}), 403
-    
-    call_logs = CallLog.query.order_by(CallLog.timestamp.desc()).all()
-    return jsonify([{
-        'id': log.id,
-        'caller_name': log.caller_name,
-        'phone': log.phone,
-        'call_type': log.call_type,
-        'message': log.message,
-        'response_sent': log.response_sent,
-        'timestamp': log.timestamp.isoformat()
-    } for log in call_logs])
-
-@app.route('/admin/all-attendance', methods=['GET'])
-def admin_get_all_attendance():
-    if not is_admin():
-        return jsonify({'error': 'Admin access required'}), 403
-    
-    records = Attendance.query.all()
-    result = []
-    for record in records:
-        meeting = Meeting.query.get(record.meeting_id)
-        member = Member.query.get(record.member_id)
-        result.append({
-            'id': record.id,
-            'meeting_id': record.meeting_id,
-            'meeting_title': meeting.title if meeting else 'Unknown',
-            'meeting_date': meeting.date if meeting else 'Unknown',
-            'member_id': record.member_id,
-            'member_name': member.full_names if member else 'Unknown',
-            'status': record.status,
-            'recorded_date': record.recorded_date.isoformat()
-        })
-    
-    return jsonify(result)
-
-@app.route('/admin/meeting-minutes', methods=['GET'])
-def admin_get_meeting_minutes():
-    if not is_admin():
-        return jsonify({'error': 'Admin access required'}), 403
-    
-    minutes = MeetingMinutes.query.order_by(MeetingMinutes.created_date.desc()).all()
-    return jsonify([m.to_dict() for m in minutes])
-
-
-
-
-
+# ── SMS ──
 @app.route('/send-bulk-sms', methods=['POST'])
 def send_bulk_sms():
     try:
         data = request.json
         message = data.get('message', '').strip()
-        category = data.get('category', '')
-
         if not message:
             return jsonify({'error': 'Message is required'}), 400
-
-        if category:
-            members = Member.query.filter_by(category=category).all()
-        else:
-            members = Member.query.all()
-
-        recipients = len(members)
-        for member in members:
-            print(f"SMS to {member.phone_number}: {message}")
-
-        return jsonify({
-            'success': True,
-            'message': f'SMS sent to {recipients} members',
-            'recipients': recipients
-        })
+        category = data.get('category', '')
+        members = Member.query.filter_by(category=category, status='approved').all() if category else Member.query.filter_by(status='approved').all()
+        for m in members:
+            print(f"SMS to {m.phone_number}: {message}")
+        return jsonify({'success': True, 'recipients': len(members)})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
-def admin_login():
-    """Authenticate an admin using username and password"""
-    try:
-        data = request.json
-        if not data:
-            return jsonify({'success': False, 'message': 'No data received'}), 400
-        
-        username = data.get('username', '').strip()
-        password = data.get('password', '').strip()
-        
-        if not username or not password:
-            return jsonify({'success': False, 'message': 'Username and password are required'}), 400
-        
-        
-        admin = Admin.query.filter_by(username=username).first()
-        
-        if not admin:
-            return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
-        
-       
-        if not check_password(password, admin.password):
-            return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
-        
-        
-        if not admin.is_active:
-            return jsonify({'success': False, 'message': 'Your account has been deactivated'}), 401
-        
-        
-        admin.last_login = datetime.utcnow()
-        db.session.commit()
-        
-        return jsonify({
-            'success': True,
-            'message': 'Login successful',
-            'user_id': admin.id,
-            'role': 'admin',
-            'name': admin.full_name,
-            'username': admin.username,
-            'email': admin.email
-        })
-        
-    except Exception as e:
-        print(f"Admin login error: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'success': False, 'message': 'Login failed. Please try again.'}), 500
-
-
+# ── M-Pesa ──
 @app.route('/mpesa-stk-push', methods=['POST'])
 def mpesa_stk_push():
     try:
@@ -577,142 +260,17 @@ def mpesa_stk_push():
         phone = data.get('phone', '').strip()
         amount = data.get('amount', '')
         name = data.get('name', '')
-        payment_type = data.get('type', 'Donation')
-
         if not phone or not amount or not name:
             return jsonify({'success': False, 'error': 'All fields are required'}), 400
-
-        # Normalize phone number to 2547XXXXXXXX format
         if phone.startswith('0'):
             phone = '254' + phone[1:]
         elif phone.startswith('+'):
             phone = phone[1:]
-
-        # TODO: Replace with real Daraja API credentials when available
-        # consumer_key = os.environ.get('MPESA_CONSUMER_KEY')
-        # consumer_secret = os.environ.get('MPESA_CONSUMER_SECRET')
-        # shortcode = os.environ.get('MPESA_SHORTCODE')
-        # passkey = os.environ.get('MPESA_PASSKEY')
-
-        print(f"STK Push: {name} | {phone} | KES {amount} | {payment_type}")
-
-        return jsonify({
-            'success': True,
-            'message': f'STK Push sent to {phone}',
-            'phone': phone,
-            'amount': amount
-        })
-
+        # TODO: Wire Daraja API credentials here
+        print(f"STK Push: {name} | {phone} | KES {amount} | {data.get('type', 'Donation')}")
+        return jsonify({'success': True, 'phone': phone, 'amount': amount})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
-
-
-def admin_login():
-    try:
-        data = request.json
-        if not data:
-            return jsonify({'success': False, 'message': 'No data received'}), 400
-        username = data.get('username', '').strip()
-        password = data.get('password', '').strip()
-        if not username or not password:
-            return jsonify({'success': False, 'message': 'Username and password are required'}), 400
-        admin = Admin.query.filter_by(username=username).first()
-        if not admin or not check_password(password, admin.password):
-            return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
-        if not admin.is_active:
-            return jsonify({'success': False, 'message': 'Your account has been deactivated'}), 401
-        admin.last_login = datetime.utcnow()
-        db.session.commit()
-        return jsonify({'success': True, 'message': 'Login successful', 'user_id': admin.id, 'role': 'admin', 'name': admin.full_name, 'username': admin.username, 'email': admin.email})
-    except Exception as e:
-        return jsonify({'success': False, 'message': 'Login failed. Please try again.'}), 500
-
-
-def admin_register():
-    """Register a new admin user"""
-    try:
-        data = request.json
-        if not data:
-            return jsonify({'success': False, 'message': 'No data received'}), 400
-        
-        required_fields = ['username', 'password', 'full_name', 'email']
-        missing_fields = [field for field in required_fields if not data.get(field)]
-        if missing_fields:
-            return jsonify({'success': False, 'message': f'Missing required fields: {", ".join(missing_fields)}'}), 400
-        
-        username = data.get('username', '').strip()
-        password = data.get('password', '').strip()
-        full_name = data.get('full_name', '').strip()
-        email = data.get('email', '').strip().lower()
-        phone = data.get('phone', '').strip()
-        
-        
-        existing_admin = Admin.query.filter_by(username=username).first()
-        if existing_admin:
-            return jsonify({'success': False, 'message': 'Username already exists. Please choose a different username.'}), 400
-        
-       
-        if email:
-            existing_email = Admin.query.filter_by(email=email).first()
-            if existing_email:
-                return jsonify({'success': False, 'message': 'Email already registered. Please use a different email.'}), 400
-        
-       
-        new_admin = Admin(
-            username=username,
-            password=hash_password(password),  # Hash the password
-            full_name=full_name,
-            email=email,
-            phone=phone,
-            role='admin',
-            is_active=True
-        )
-        db.session.add(new_admin)
-        db.session.commit()
-        
-        print(f"New admin registered: {username} ({email})")
-        
-        # Send welcome email to admin
-        if email:
-            email_subject = "Welcome to Mbogo Welfare Empowerment Foundation - Admin Account"
-            email_body = f"""
-            <html>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
-                <h2 style="color: #006064;">Welcome to Mbogo Welfare Empowerment Foundation!</h2>
-                <p>Dear {full_name},</p>
-                <p>Your admin account has been successfully created.</p>
-                <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>Username:</strong> {username}</p>
-                    <p><strong>Email:</strong> {email}</p>
-                    <p><strong>Role:</strong> Administrator</p>
-                </div>
-                <p>You can now login to the admin dashboard using your credentials.</p>
-                <p>Please change your password after first login for security.</p>
-                <hr>
-                <p style="color: #666; font-size: 12px;">
-                    This is an automated message from Mbogo Welfare Empowerment Foundation.
-                    Please do not reply to this email.
-                </p>
-            </body>
-            </html>
-            """
-            send_email(email, email_subject, email_body)
-        
-        return jsonify({
-            'success': True,
-            'message': 'Admin account created successfully',
-            'user_id': new_admin.id,
-            'username': new_admin.username
-        })
-        
-    except Exception as e:
-        db.session.rollback()
-        print(f"Admin registration error: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'success': False, 'message': 'Registration failed. Please try again.'}), 500
-
-
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
