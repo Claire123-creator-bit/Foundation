@@ -18,7 +18,7 @@ function LoginPage({ onLogin, onSwitch }) {
       body: JSON.stringify(form)
     })
       .then(r => r.json())
-      .then(d => { setLoading(false); if (d.success) onLogin(d.name); else setError(d.message); })
+      .then(d => { setLoading(false); if (d.success) onLogin(d.name, d.username, d.role); else setError(d.message); })
       .catch(() => { setLoading(false); setError('Cannot connect to server'); });
   };
 
@@ -56,13 +56,7 @@ function LoginPage({ onLogin, onSwitch }) {
             </button>
 
             <div style={s.divider}><div style={s.line2}/><span style={s.or}>or</span><div style={s.line2}/></div>
-
             <GoogleBtn label="Continue with Google" />
-
-            <p style={s.switch}>
-              Don't have an account?{' '}
-              <span style={s.link} onClick={onSwitch}>Sign up</span>
-            </p>
           </form>
         </div>
       </div>

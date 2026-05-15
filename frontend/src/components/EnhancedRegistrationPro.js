@@ -14,7 +14,7 @@ function RegisterMember({ onRegistrationSuccess }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true); setMsg(''); setError('');
-    fetch(`${API_BASE}/register-member-pro`, {
+    fetch(`${API_BASE}/admin/register-member`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
