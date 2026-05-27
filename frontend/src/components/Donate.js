@@ -31,7 +31,7 @@ function Donate() {
   if (status === 'success') {
     return (
       <div style={s.successBox}>
-        <div style={s.successIcon}>✅</div>
+        <div style={s.successIcon}></div>
         <h2 style={{ color: '#0A2463', marginBottom: 8 }}>Request Sent!</h2>
         <p style={{ color: '#444', marginBottom: 24 }}>
           Check your phone <strong>{form.phone}</strong> for an M-Pesa prompt.<br />
@@ -91,14 +91,14 @@ function Donate() {
         />
 
         {status === 'error' && (
-          <p className="msg-error">❌ Cannot connect to server. Please try again.</p>
+          <p className="msg-error">Cannot connect to server. Please try again.</p>
         )}
         {status && status !== 'error' && status !== 'success' && (
-          <p className="msg-error">❌ {status}</p>
+          <p className="msg-error">{status}</p>
         )}
 
         <button type="submit" style={s.btn} disabled={loading}>
-          {loading ? '⏳ Processing...' : '📱 Pay with M-Pesa'}
+          {loading ? 'Processing...' : 'Pay with M-Pesa'}
         </button>
       </form>
     </div>

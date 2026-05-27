@@ -23,9 +23,9 @@ function MembersList() {
       {members.map(m => (
         <div key={m.id} className="card">
           <h3>{m.full_names}</h3>
-          <p>📞 {m.phone_number}</p>
-          <p>📍 {m.ward}, {m.constituency}, {m.county}</p>
-          <p>🏷️ {m.category}</p>
+          <p>{m.phone_number}</p>
+          <p>{m.ward}, {m.constituency}, {m.county}</p>
+          <p>{m.category}</p>
         </div>
       ))}
     </div>

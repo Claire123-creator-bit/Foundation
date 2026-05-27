@@ -55,8 +55,8 @@ function AdminManagement() {
         <button className="small" onClick={() => setShowForm(!showForm)}>{showForm ? 'Close' : '+ Add Admin'}</button>
       </div>
 
-      {msg   && <p className="msg-success" style={{ marginBottom: 12 }}>✅ {msg}</p>}
-      {error && <p className="msg-error"   style={{ marginBottom: 12 }}>❌ {error}</p>}
+      {msg   && <p className="msg-success" style={{ marginBottom: 12 }}> {msg}</p>}
+      {error && <p className="msg-error"   style={{ marginBottom: 12 }}> {error}</p>}
 
       {showForm && (
         <div className="card" style={{ marginBottom: 20 }}>
@@ -107,14 +107,15 @@ function AdminManagement() {
         <div key={a.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
           <div>
             <h3 style={{ marginBottom: 4 }}>{a.full_name}</h3>
-            <p>👤 @{a.username}</p>
-            <p>📧 {a.email}</p>
-            {a.phone && <p>📞 {a.phone}</p>}
-            <p>🏷️ <span style={{ background: a.role === 'superadmin' ? '#0A2463' : '#eef1fa', color: a.role === 'superadmin' ? '#fff' : '#0A2463', padding: '2px 10px', fontSize: 12, fontWeight: 600 }}>{a.role}</span></p>
+            <p> @{a.username}</p>
+            <p> {a.email}</p>
+            {a.phone && <p> {a.phone}</p>}
+            <p> <span style={{ background: a.role === 'superadmin' ? '#0A2463' : '#eef1fa', color: a.role === 'superadmin' ? '#fff' : '#0A2463', padding: '2px 10px', fontSize: 12, fontWeight: 600 }}>{a.role}</span></p>
             <p style={{ fontSize: 12, color: '#999', marginTop: 4 }}>Last login: {a.last_login ? new Date(a.last_login).toLocaleString() : 'Never'}</p>
           </div>
           {a.role !== 'superadmin' && (
-            <button onClick={() => handleDelete(a.id, a.full_name)}
+            <button
+              onClick={() => handleDelete(a.id, a.full_name)}
               style={{ width: 'auto', height: 36, padding: '0 16px', background: '#b00020', color: '#fff', border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
               Remove
             </button>

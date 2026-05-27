@@ -14,10 +14,10 @@ function MemberDashboard({ member, onLogout }) {
   }, []);
 
   const tabs = [
-    { id: 'home',     label: '🏠 Home' },
-    { id: 'meetings', label: '📅 Meetings' },
-    { id: 'donate',   label: '💳 Pay' },
-    { id: 'profile',  label: '👤 Profile' },
+    { id: 'home',     label: 'Home' },
+    { id: 'meetings', label: 'Meetings' },
+    { id: 'donate',   label: 'Pay' },
+    { id: 'profile',  label: 'Profile' },
   ];
 
   return (
@@ -43,7 +43,7 @@ function MemberDashboard({ member, onLogout }) {
           </div>
           <button className="btn-logout" onClick={onLogout}>Logout</button>
         </div>
-        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? '✕' : '☰'}</button>
+        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? 'X' : 'Menu'}</button>
       </nav>
 
       {menuOpen && (
@@ -51,7 +51,7 @@ function MemberDashboard({ member, onLogout }) {
           {tabs.map(t => (
             <button key={t.id} className={`mobile-link ${tab === t.id ? 'mobile-link-active' : ''}`} onClick={() => { setTab(t.id); setMenuOpen(false); }}>{t.label}</button>
           ))}
-          <button className="mobile-link" onClick={onLogout}>🚪 Logout</button>
+          <button className="mobile-link" onClick={onLogout}>Logout</button>
         </div>
       )}
 
@@ -87,7 +87,7 @@ function HomeTab({ member, meetings, setTab }) {
   return (
     <div>
       <div style={{ background: '#0A2463', padding: 24, marginBottom: 24, color: '#fff' }}>
-        <h2 style={{ color: '#fff', marginBottom: 4 }}>Welcome, {member.full_names.split(' ')[0]}! 👋</h2>
+        <h2 style={{ color: '#fff', marginBottom: 4 }}>Welcome, {member.full_names.split(' ')[0]}!</h2>
         <p style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 300 }}>{member.category} — {member.ward}, {member.county}</p>
       </div>
 
@@ -97,7 +97,7 @@ function HomeTab({ member, meetings, setTab }) {
           <span className="stat-label" style={{ color: 'rgba(255,255,255,0.8)' }}>Meetings</span>
         </div>
         <div className="stat-card" style={{ background: '#fff', border: '2px solid #0A2463' }}>
-          <span className="stat-number">✅</span>
+          <span className="stat-number"></span>
           <span className="stat-label">Approved</span>
         </div>
       </div>
@@ -107,8 +107,8 @@ function HomeTab({ member, meetings, setTab }) {
       {upcoming.map(m => (
         <div key={m.id} className="card">
           <h3>{m.title}</h3>
-          <p>📅 {m.date} &nbsp; 🕐 {m.time}</p>
-          {m.venue && <p>📍 {m.venue}</p>}
+          <p>{m.date} &nbsp; {m.time}</p>
+          {m.venue && <p>{m.venue}</p>}
         </div>
       ))}
       {meetings.length > 2 && (
@@ -126,8 +126,8 @@ function MeetingsTab({ meetings }) {
       {meetings.map(m => (
         <div key={m.id} className="card">
           <h3>{m.title}</h3>
-          <p>📅 {m.date} &nbsp; 🕐 {m.time}</p>
-          {m.venue && <p>📍 {m.venue}</p>}
+          <p>{m.date} &nbsp; {m.time}</p>
+          {m.venue && <p>{m.venue}</p>}
           {m.agenda && <p style={{ marginTop: 8 }}>{m.agenda}</p>}
         </div>
       ))}
@@ -157,7 +157,7 @@ function DonateTab({ member }) {
 
   if (status === 'success') return (
     <div style={{ textAlign: 'center', padding: '60px 24px', background: '#fff', border: '2px solid #0A2463' }}>
-      <div style={{ fontSize: 56, marginBottom: 16 }}>✅</div>
+      <div style={{ fontSize: 56, marginBottom: 16 }}></div>
       <h2 style={{ color: '#0A2463', marginBottom: 8 }}>Request Sent!</h2>
       <p style={{ color: '#444', marginBottom: 24 }}>Check your phone <strong>{form.phone}</strong> for an M-Pesa prompt.<br />Enter your PIN to complete KES {form.amount}.</p>
       <button onClick={() => setStatus('')}>Make Another Payment</button>
@@ -193,9 +193,9 @@ function DonateTab({ member }) {
           ))}
         </div>
         <input style={ls.input} value={form.amount} onChange={set('amount')} placeholder="Or enter custom amount" type="number" min="1" required />
-        {status === 'error' && <p className="msg-error">❌ Cannot connect to server</p>}
-        {status && status !== 'error' && status !== 'success' && <p className="msg-error">❌ {status}</p>}
-        <button type="submit" disabled={loading}>{loading ? '⏳ Processing...' : '📱 Pay with M-Pesa'}</button>
+        {status === 'error' && <p className="msg-error">Cannot connect to server</p>}
+        {status && status !== 'error' && status !== 'success' && <p className="msg-error">{status}</p>}
+        <button type="submit" disabled={loading}>{loading ? 'Processing...' : 'Pay with M-Pesa'}</button>
       </form>
     </div>
   );
@@ -216,14 +216,14 @@ function ProfileTab({ member }) {
           </div>
         </div>
         {[
-          ['📞 Phone', member.phone_number],
-          ['🪪 National ID', member.national_id],
-          ['📧 Email', member.email || 'Not provided'],
-          ['📍 Location', `${member.ward}, ${member.constituency}, ${member.county}`],
-          ['🏠 Physical Location', member.physical_location],
-          ['⚧ Gender', member.gender || 'Not provided'],
-          ['🎂 Date of Birth', member.date_of_birth || 'Not provided'],
-          ['📅 Registered', new Date(member.registration_date).toLocaleDateString()],
+          ['Phone', member.phone_number],
+          ['National ID', member.national_id],
+          ['Email', member.email || 'Not provided'],
+          ['Location', `${member.ward}, ${member.constituency}, ${member.county}`],
+          ['Physical Location', member.physical_location],
+          ['Gender', member.gender || 'Not provided'],
+          ['Date of Birth', member.date_of_birth || 'Not provided'],
+          ['Registered', new Date(member.registration_date).toLocaleDateString()],
         ].map(([label, value]) => (
           <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #eee' }}>
             <span style={{ fontWeight: 600, color: '#0A2463', fontSize: 14 }}>{label}</span>

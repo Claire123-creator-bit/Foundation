@@ -27,7 +27,7 @@ function MemberRegister({ onBack }) {
   if (done) return (
     <div style={s.page}>
       <div style={s.box}>
-        <div style={{ fontSize: 64, textAlign: 'center', marginBottom: 16 }}>✅</div>
+        <div style={{ fontSize: 64, textAlign: 'center', marginBottom: 16 }}></div>
         <h2 style={s.title}>Done!</h2>
         <p style={{ color: '#444', fontSize: 16, textAlign: 'center', marginBottom: 32, fontWeight: 300 }}>
           Your registration has been received.<br />Wait for admin to approve you.
