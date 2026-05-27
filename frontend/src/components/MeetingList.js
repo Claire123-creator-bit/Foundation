@@ -44,7 +44,7 @@ function MeetingList() {
         </button>
       </div>
 
-      {msg && <p className="msg-success" style={{ marginBottom: '16px' }}>✅ {msg}</p>}
+      {msg && <p className="msg-success" style={{ marginBottom: '16px' }}>{msg}</p>}
 
       {showForm && (
         <div className="card" style={{ marginBottom: '20px' }}>
@@ -72,8 +72,8 @@ function MeetingList() {
       {meetings.map(m => (
         <div key={m.id} className="card">
           <h3>{m.title}</h3>
-          <p>📅 {m.date} &nbsp; 🕐 {m.time}</p>
-          {m.venue && <p>📍 {m.venue}</p>}
+          <p>{m.date} &nbsp; {m.time}</p>
+          {m.venue && <p>{m.venue}</p>}
         </div>
       ))}
     </div>

@@ -29,7 +29,7 @@ function MemberLogin({ onLogin, onSwitch, onBack }) {
         <p style={s.sub}>Enter your phone number to sign in</p>
 
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-          <label style={s.label}>📞 Phone Number</label>
+          <label style={s.label}>Phone Number</label>
           <input
             style={s.input}
             value={phone}

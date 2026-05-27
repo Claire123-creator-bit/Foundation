@@ -61,8 +61,8 @@ function RegisterMember({ onRegistrationSuccess }) {
           {categories.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
 
-        {msg   && <p className="msg-success">✅ {msg}</p>}
-        {error && <p className="msg-error">❌ {error}</p>}
+        {msg   && <p className="msg-success"> {msg}</p>}
+        {error && <p className="msg-error"> {error}</p>}
 
         <button type="submit" disabled={loading}>{loading ? 'Registering...' : 'Register Member'}</button>
       </form>

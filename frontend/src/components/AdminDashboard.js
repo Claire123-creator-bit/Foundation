@@ -25,13 +25,13 @@ function AdminDashboard({ adminName, onLogout }) {
   }, [tab]);
 
   const tabs = [
-    { id: 'members',  label: '👥 Members' },
-    { id: 'register', label: '➕ Register' },
-    { id: 'pending',  label: '⏳ Pending' },
-    { id: 'sms',      label: '📩 SMS' },
-    { id: 'meetings', label: '📅 Meetings' },
-    { id: 'donate',   label: '💳 Donate' },
-    ...(isSuperAdmin ? [{ id: 'settings', label: '⚙️ Settings' }] : []),
+    { id: 'members',  label: ' Members' },
+    { id: 'register', label: ' Register' },
+    { id: 'pending',  label: ' Pending' },
+    { id: 'sms',      label: ' SMS' },
+    { id: 'meetings', label: ' Meetings' },
+    { id: 'donate',   label: ' Donate' },
+    ...(isSuperAdmin ? [{ id: 'settings', label: ' Settings' }] : []),
   ];
 
   return (
@@ -81,7 +81,7 @@ function AdminDashboard({ adminName, onLogout }) {
               {t.label}
             </button>
           ))}
-          <button className="mobile-link" onClick={onLogout}>🚪 Logout</button>
+          <button className="mobile-link" onClick={onLogout}> Logout</button>
         </div>
       )}
 
@@ -126,7 +126,7 @@ function AdminDashboard({ adminName, onLogout }) {
             <div className="footer-links">
               <p className="footer-links-title">Quick Links</p>
               {tabs.map(t => (
-                <button key={t.id} className="footer-link" onClick={() => setTab(t.id)}>{t.label}</button>
+              <button key={t.id} className="footer-link" onClick={() => setTab(t.id)}>{t.label}</button>
               ))}
             </div>
           </div>

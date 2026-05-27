@@ -39,12 +39,12 @@ function BulkMessaging() {
 
         {status && (
           <p className={status === 'error' ? 'msg-error' : 'msg-success'} style={{ marginTop: '12px' }}>
-            {status === 'error' ? '❌ Failed to send SMS' : `✅ ${status}`}
+            {status === 'error' ? 'Failed to send SMS' : `${status}`}
           </p>
         )}
 
         <button type="submit" disabled={loading} style={{ marginTop: '16px' }}>
-          {loading ? 'Sending...' : '📩 Send SMS'}
+          {loading ? 'Sending...' : 'Send SMS'}
         </button>
       </form>
     </div>

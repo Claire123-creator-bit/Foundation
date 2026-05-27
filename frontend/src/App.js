@@ -56,7 +56,7 @@ function App() {
 
         <div style={s.cards}>
           <div style={s.card}>
-            <div style={s.cardIcon}>👤</div>
+            <div style={s.cardIcon}></div>
             <h2 style={s.cardTitle}>Member Portal</h2>
             <p style={s.cardDesc}>View meetings, make payments and receive updates from the foundation.</p>
             <button style={s.btnWhite} onClick={() => setPage('member-login')}>Member Login</button>
@@ -64,14 +64,14 @@ function App() {
           </div>
 
           <div style={s.card}>
-            <div style={s.cardIcon}>🔐</div>
+            <div style={s.cardIcon}></div>
             <h2 style={s.cardTitle}>Admin Portal</h2>
             <p style={s.cardDesc}>Manage members, send SMS, schedule meetings and process payments.</p>
             <button style={s.btnWhite} onClick={() => setPage('admin-login')}>Admin Login</button>
           </div>
         </div>
 
-        <p style={s.copy}>© {new Date().getFullYear()} Mbogo Welfare Empowerment Foundation</p>
+        <p style={s.copy}> {new Date().getFullYear()} Mbogo Welfare Empowerment Foundation</p>
       </div>
     </div>
   );

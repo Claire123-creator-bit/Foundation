@@ -46,7 +46,7 @@ function LoginPage({ onLogin, onSwitch }) {
             <label style={s.label}>Password</label>
             <div style={{ position: 'relative' }}>
               <input style={s.input} value={form.password} onChange={set('password')} type={show ? 'text' : 'password'} placeholder="Enter password" required />
-              <button type="button" onClick={() => setShow(!show)} style={s.eye}>{show ? '🙈' : '👁️'}</button>
+              <button type="button" onClick={() => setShow(!show)} style={s.eye}>{show ? 'Hide' : 'Show'}</button>
             </div>
 
             {error && <p style={s.error}>{error}</p>}
