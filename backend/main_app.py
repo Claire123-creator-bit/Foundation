@@ -12,7 +12,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
-CORS(app, supports_credentials=True, origins=['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'])
+CORS(app, supports_credentials=True, origins=[
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'https://foundation-drab-eta.vercel.app',
+    'https://*.vercel.app'
+])
 
 def is_admin():
     return request.headers.get('User-Role') == 'admin'
