@@ -92,7 +92,7 @@ def admin_register():
 def member_register():
     try:
         data = request.json
-        required = ['full_names', 'national_id', 'phone_number', 'category']
+        required = ['full_names', 'national_id', 'phone_number', 'category', 'gender', 'county', 'constituency', 'ward']
         missing = [f for f in required if not data.get(f)]
         if missing:
             return jsonify({'success': False, 'error': f'Please fill all fields'}), 400
@@ -103,7 +103,9 @@ def member_register():
         member = Member(
             full_names=data['full_names'], national_id=data['national_id'],
             phone_number=data['phone_number'], category=data['category'],
-            county='', constituency='', ward='', physical_location='',
+            gender=data.get('gender', ''), county=data.get('county', ''),
+            constituency=data.get('constituency', ''), ward=data.get('ward', ''),
+            physical_location=data.get('physical_location', data.get('ward', '')),
             status='pending', created_by='self', is_verified=False
         )
         db.session.add(member)
