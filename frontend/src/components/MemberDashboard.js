@@ -88,7 +88,7 @@ function HomeTab({ member, meetings, setTab }) {
     <div>
       <div style={{ background: '#0A2463', padding: 24, marginBottom: 24, color: '#fff' }}>
         <h2 style={{ color: '#fff', marginBottom: 4 }}>Welcome, {member.full_names.split(' ')[0]}!</h2>
-        <p style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 300 }}>{member.category} — {member.ward}, {member.county}</p>
+        <p style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 300 }}>{member.category}{member.county ? ` — ${member.county}` : ''}</p>
       </div>
 
       <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
@@ -216,18 +216,21 @@ function ProfileTab({ member }) {
           </div>
         </div>
         {[
-          ['Phone', member.phone_number],
-          ['National ID', member.national_id],
-          ['Email', member.email || 'Not provided'],
-          ['Location', `${member.ward}, ${member.constituency}, ${member.county}`],
-          ['Physical Location', member.physical_location],
-          ['Gender', member.gender || 'Not provided'],
-          ['Date of Birth', member.date_of_birth || 'Not provided'],
-          ['Registered', new Date(member.registration_date).toLocaleDateString()],
-        ].map(([label, value]) => (
-          <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #eee' }}>
+          ['📞 Phone', member.phone_number],
+          ['🪪 National ID', member.national_id],
+          ['📧 Email', member.email || '—'],
+          ['📍 County', member.county || '—'],
+          ['📍 Constituency', member.constituency || '—'],
+          ['📍 Ward', member.ward || '—'],
+          ['🏠 Physical Location', member.physical_location || '—'],
+          ['⚧ Gender', member.gender || '—'],
+          ['🎂 Date of Birth', member.date_of_birth || '—'],
+          ['🏷️ Category', member.category],
+          ['📅 Registered', new Date(member.registration_date).toLocaleDateString('en-KE')],
+        ].filter(([, value]) => value && value !== '—' || true).map(([label, value]) => (
+          <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid #eee' }}>
             <span style={{ fontWeight: 600, color: '#0A2463', fontSize: 14 }}>{label}</span>
-            <span style={{ color: '#444', fontSize: 14, fontWeight: 300 }}>{value}</span>
+            <span style={{ color: value === '—' ? '#bbb' : '#444', fontSize: 14, fontWeight: 300, textAlign: 'right', maxWidth: '60%' }}>{value}</span>
           </div>
         ))}
       </div>
