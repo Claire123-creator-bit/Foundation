@@ -42,6 +42,14 @@ def init_db():
             db.session.add(admin)
             db.session.commit()
             print("Superadmin created")
+        else:
+            # Reset password on every startup to ensure it's correct
+            admin = Admin.query.filter_by(username='superadmin').first()
+            admin.password = generate_password_hash('Mbogo@2025')
+            admin.role = 'superadmin'
+            admin.is_active = True
+            db.session.commit()
+            print("Superadmin password reset")
 
 init_db()
 
