@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
 
+const categories = ['Church Leader', 'Pastor', 'Village Elder', 'Agent', 'Youth Leader', 'Women Leader', 'Community Member', 'Government Official', 'NGO Representative', 'Volunteer'];
+const counties = ['Nairobi','Mombasa','Kwale','Kilifi','Tana River','Lamu','Taita Taveta','Garissa','Wajir','Mandera','Marsabit','Isiolo','Meru','Tharaka Nithi','Embu','Kitui','Machakos','Makueni','Nyandarua','Nyeri','Kirinyaga',"Murang'a",'Kiambu','Turkana','West Pokot','Samburu','Trans Nzoia','Uasin Gishu','Elgeyo Marakwet','Nandi','Baringo','Laikipia','Nakuru','Narok','Kajiado','Kericho','Bomet','Kakamega','Vihiga','Bungoma','Busia','Siaya','Kisumu','Homa Bay','Migori','Kisii','Nyamira'];
+
 function MemberRegister({ onBack }) {
-  const [form, setForm] = useState({ full_names: '', national_id: '', phone_number: '', category: '' });
+  const [form, setForm] = useState({
+    full_names: '', national_id: '', phone_number: '', category: '',
+    gender: '', county: '', constituency: '', ward: ''
+  });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
-
-  const categories = ['Church Leader', 'Pastor', 'Village Elder', 'Agent', 'Youth Leader', 'Women Leader', 'Community Member', 'Government Official', 'NGO Representative', 'Volunteer'];
 
   const set = k => e => setForm({ ...form, [k]: e.target.value });
 
@@ -17,7 +21,7 @@ function MemberRegister({ onBack }) {
     fetch(`${API_BASE}/member-register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
+      body: JSON.stringify({ ...form, physical_location: form.ward })
     })
       .then(r => r.json())
       .then(d => { setLoading(false); if (d.success) setDone(true); else setError(d.error || 'Failed. Try again.'); })
@@ -27,7 +31,7 @@ function MemberRegister({ onBack }) {
   if (done) return (
     <div style={s.page}>
       <div style={s.box}>
-        <div style={{ fontSize: 64, textAlign: 'center', marginBottom: 16 }}></div>
+        <div style={{ fontSize: 64, textAlign: 'center', marginBottom: 16 }}>✅</div>
         <h2 style={s.title}>Done!</h2>
         <p style={{ color: '#444', fontSize: 16, textAlign: 'center', marginBottom: 32, fontWeight: 300 }}>
           Your registration has been received.<br />Wait for admin to approve you.
@@ -45,6 +49,7 @@ function MemberRegister({ onBack }) {
         <h2 style={s.title}>Join Mbogo Foundation</h2>
 
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+
           <label style={s.label}>Full Name</label>
           <input style={s.input} value={form.full_names} onChange={set('full_names')} placeholder="Your full name" required />
 
@@ -53,6 +58,26 @@ function MemberRegister({ onBack }) {
 
           <label style={s.label}>Phone Number</label>
           <input style={s.input} value={form.phone_number} onChange={set('phone_number')} placeholder="07XXXXXXXX" type="tel" required />
+
+          <label style={s.label}>Gender</label>
+          <select style={s.input} value={form.gender} onChange={set('gender')} required>
+            <option value="">Select...</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+
+          <label style={s.label}>County</label>
+          <select style={s.input} value={form.county} onChange={set('county')} required>
+            <option value="">Select County...</option>
+            {counties.map(c => <option key={c}>{c}</option>)}
+          </select>
+
+          <label style={s.label}>Constituency</label>
+          <input style={s.input} value={form.constituency} onChange={set('constituency')} placeholder="Your constituency" required />
+
+          <label style={s.label}>Ward</label>
+          <input style={s.input} value={form.ward} onChange={set('ward')} placeholder="Your ward" required />
 
           <label style={s.label}>Your Role</label>
           <select style={s.input} value={form.category} onChange={set('category')} required>
@@ -73,7 +98,7 @@ function MemberRegister({ onBack }) {
 
 const s = {
   page:  { minHeight: '100vh', backgroundImage: 'url(/mbogo-background.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 },
-  box:   { background: '#fff', padding: '40px 32px', width: '100%', maxWidth: 400, border: '2px solid #0A2463' },
+  box:   { background: '#fff', padding: '40px 32px', width: '100%', maxWidth: 420, border: '2px solid #0A2463', maxHeight: '90vh', overflowY: 'auto' },
   back:  { background: 'transparent', border: 'none', color: '#0A2463', fontSize: 14, cursor: 'pointer', padding: 0, marginBottom: 20, width: 'auto', height: 'auto', fontWeight: 600 },
   logo:  { width: 70, height: 70, objectFit: 'cover', borderRadius: '50%', border: '3px solid #0A2463', display: 'block', margin: '0 auto 16px' },
   title: { color: '#0A2463', fontSize: 22, fontWeight: 700, textAlign: 'center', marginBottom: 24 },
