@@ -29,6 +29,19 @@ def init_db():
     with app.app_context():
         db.create_all()
         print("Database tables created successfully")
+        if not Admin.query.filter_by(username='superadmin').first():
+            admin = Admin(
+                username='superadmin',
+                password=generate_password_hash('Mbogo@2025'),
+                full_name='Super Admin',
+                email='admin@mbogofoundation.org',
+                phone='',
+                role='superadmin',
+                is_active=True
+            )
+            db.session.add(admin)
+            db.session.commit()
+            print("Superadmin created")
 
 init_db()
 
