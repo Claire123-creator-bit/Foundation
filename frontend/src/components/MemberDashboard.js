@@ -216,18 +216,16 @@ function ProfileTab({ member }) {
           </div>
         </div>
         {[
-          ['📞 Phone', member.phone_number],
-          ['🪪 National ID', member.national_id],
-          ['📧 Email', member.email || '—'],
-          ['📍 County', member.county || '—'],
-          ['📍 Constituency', member.constituency || '—'],
-          ['📍 Ward', member.ward || '—'],
-          ['🏠 Physical Location', member.physical_location || '—'],
-          ['⚧ Gender', member.gender || '—'],
-          ['🎂 Date of Birth', member.date_of_birth || '—'],
-          ['🏷️ Category', member.category],
-          ['📅 Registered', new Date(member.registration_date).toLocaleDateString('en-KE')],
-        ].filter(([, value]) => value && value !== '—' || true).map(([label, value]) => (
+          ['Phone', member.phone_number],
+          ['National ID', member.national_id],
+          ['County', member.county || '—'],
+          ['Constituency', member.constituency || '—'],
+          ['Ward', member.ward || '—'],
+          ['Physical Location', member.physical_location || '—'],
+          ['Gender', member.gender || '—'],
+          ['Category', member.category],
+          ['Registered', new Date(member.registration_date).toLocaleDateString('en-KE')],
+        ].map(([label, value]) => (
           <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid #eee' }}>
             <span style={{ fontWeight: 600, color: '#0A2463', fontSize: 14 }}>{label}</span>
             <span style={{ color: value === '—' ? '#bbb' : '#444', fontSize: 14, fontWeight: 300, textAlign: 'right', maxWidth: '60%' }}>{value}</span>
