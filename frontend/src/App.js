@@ -79,18 +79,18 @@ function App() {
 
 const s = {
   page:      { minHeight: '100vh', backgroundImage: 'url(/mbogo-background.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center' },
-  overlay:   { minHeight: '100vh', background: 'rgba(10,36,99,0.82)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' },
-  logo:      { textAlign: 'center', marginBottom: 48 },
-  title:     { color: '#fff', fontSize: 26, fontWeight: 700, marginBottom: 8, maxWidth: 500 },
+  overlay:   { minHeight: '100vh', background: 'rgba(10,36,99,0.82)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 16px' },
+  logo:      { textAlign: 'center', marginBottom: 40 },
+  title:     { color: '#fff', fontSize: 'clamp(18px, 5vw, 26px)', fontWeight: 700, marginBottom: 8, maxWidth: 340 },
   tagline:   { color: 'rgba(255,255,255,0.7)', fontSize: 14, fontWeight: 300 },
-  cards:     { display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 40 },
-  card:      { background: 'rgba(255,255,255,0.08)', border: '2px solid rgba(255,255,255,0.2)', padding: 32, width: 280, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12 },
-  cardIcon:  { fontSize: 40, marginBottom: 8 },
-  cardTitle: { color: '#fff', fontSize: 18, fontWeight: 700, margin: 0 },
+  cards:     { display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 32, width: '100%', maxWidth: 600 },
+  card:      { background: 'rgba(255,255,255,0.08)', border: '2px solid rgba(255,255,255,0.2)', padding: 24, flex: '1 1 240px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12 },
+  cardIcon:  { fontSize: 36, marginBottom: 4 },
+  cardTitle: { color: '#fff', fontSize: 17, fontWeight: 700, margin: 0 },
   cardDesc:  { color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 300, lineHeight: 1.6, margin: 0 },
-  btnWhite:  { width: '100%', height: 44, background: '#fff', color: '#0A2463', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' },
-  btnOutline:{ width: '100%', height: 44, background: 'transparent', color: '#fff', border: '2px solid rgba(255,255,255,0.5)', fontSize: 14, fontWeight: 600, cursor: 'pointer' },
-  copy:      { color: 'rgba(255,255,255,0.3)', fontSize: 12, fontWeight: 300 },
+  btnWhite:  { width: '100%', height: 48, background: '#fff', color: '#0A2463', border: 'none', fontSize: 15, fontWeight: 700, cursor: 'pointer', marginTop: 4 },
+  btnOutline:{ width: '100%', height: 48, background: 'transparent', color: '#fff', border: '2px solid rgba(255,255,255,0.5)', fontSize: 15, fontWeight: 600, cursor: 'pointer' },
+  copy:      { color: 'rgba(255,255,255,0.3)', fontSize: 11, fontWeight: 300 },
 };
 
 export default App;
