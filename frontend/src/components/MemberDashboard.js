@@ -43,7 +43,7 @@ function MemberDashboard({ member, onLogout }) {
           </div>
           <button className="btn-logout" onClick={onLogout}>Logout</button>
         </div>
-        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? 'X' : 'Menu'}</button>
+        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? '✕' : '☰'}</button>
       </nav>
 
       {menuOpen && (
