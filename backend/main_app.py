@@ -7,8 +7,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
-db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance', 'foundation_complete.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+db_url = os.environ.get('DATABASE_URL', 'postgresql://postgres:Cla1mbo2-=p@db.rvgnlfspwoybsgwrjpdb.supabase.co:5432/postgres')
+# Fix for SQLAlchemy compatibility
+if db_url.startswith('postgres://'):
+    db_url = db_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -25,7 +28,6 @@ def is_admin():
 
 def init_db():
     from admin_models import Assignment, Report, FinancialRecord
-    os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance'), exist_ok=True)
     with app.app_context():
         db.create_all()
         print("Database tables created successfully")
