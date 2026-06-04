@@ -171,7 +171,8 @@ function DonateTab({ member }) {
         <div style={{ background: '#4CAF50', color: '#fff', fontWeight: 700, fontSize: 13, padding: '8px 12px' }}>M-PESA</div>
         <div>
           <p style={{ fontWeight: 600, color: '#0A2463', fontSize: 14 }}>Lipa Na M-Pesa</p>
-          <p style={{ fontWeight: 300, color: '#666', fontSize: 12 }}>STK Push — you'll receive a prompt on your phone</p>
+          <p style={{ fontWeight: 300, color: '#666', fontSize: 13 }}>Send money to: <strong style={{ color: '#0A2463', fontSize: 16 }}>0143235490</strong></p>
+          <p style={{ fontWeight: 300, color: '#666', fontSize: 12 }}>Use your name as the account reference</p>
         </div>
       </div>
       <form onSubmit={handleSubmit}>
