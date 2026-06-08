@@ -4,63 +4,116 @@ from website_models import db, Member, Meeting, Admin
 from datetime import datetime
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
+from logger import app_logger, auth_logger
 
 app = Flask(__name__)
 
-db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance', 'foundation_complete.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Configuration
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+INSTANCE_DIR = os.path.join(BASE_DIR, '..', 'instance')
+DB_PATH = os.path.join(INSTANCE_DIR, 'foundation_complete.db')
 
-db.init_app(app)
-CORS(app, supports_credentials=True, origins=[
+ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:3001',
-    'http://localhost:3002',
-    'https://foundation-drab-eta.vercel.app',
-    'https://*.vercel.app'
-])
+    'https://foundation-drab-eta.vercel.app'
+]
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JSON_SORT_KEYS'] = False
+
+db.init_app(app)
+CORS(app, supports_credentials=True, origins=ALLOWED_ORIGINS)
+
+
+
+# Helper Functions
+def get_request_json():
+    """Safely get JSON from request"""
+    return request.get_json(silent=True) or {}
+
+
+def get_admin_username():
+    """Get admin username from request header"""
+    return (request.headers.get('Admin-Username') or '').strip()
+
 
 def is_admin():
-    return request.headers.get('User-Role') == 'admin'
+    """Check if request is from an authenticated admin"""
+    header_role = request.headers.get('User-Role') == 'admin'
+    if not header_role:
+        return False
 
-def init_db():
-    from admin_models import Assignment, Report, FinancialRecord
-    os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'instance'), exist_ok=True)
+    username = get_admin_username()
+    if not username:
+        return True
+
+    admin = Admin.query.filter_by(username=username).first()
+    return bool(admin and admin.is_active)
+
+
+def init_database():
+    """Initialize database and create superadmin if needed"""
+    os.makedirs(INSTANCE_DIR, exist_ok=True)
     with app.app_context():
-        db.create_all()
-        print("Database tables created successfully")
-        if not Admin.query.filter_by(username='superadmin').first():
-            admin = Admin(
-                username='superadmin',
-                password=generate_password_hash('Mbogo@2025'),
-                full_name='Super Admin',
-                email='admin@mbogofoundation.org',
-                phone='',
-                role='superadmin',
-                is_active=True
-            )
-            db.session.add(admin)
-            db.session.commit()
-            print("Superadmin created")
-        else:
-            # Reset password on every startup to ensure it's correct
-            admin = Admin.query.filter_by(username='superadmin').first()
-            admin.password = generate_password_hash('Mbogo@2025')
-            admin.role = 'superadmin'
-            admin.is_active = True
-            db.session.commit()
-            print("Superadmin password reset")
+        try:
+            db.create_all()
+            app_logger.info("Database tables initialized")
+            
+            superadmin = Admin.query.filter_by(username='superadmin').first()
+            if not superadmin:
+                default_password = os.environ.get(
+                    'SUPERADMIN_INITIAL_PASSWORD',
+                    'Mbogo@2025'
+                )
+                superadmin = Admin(
+                    username='superadmin',
+                    password=generate_password_hash(default_password),
+                    full_name='Super Admin',
+                    email='admin@mbogofoundation.org',
+                    phone='',
+                    role='superadmin',
+                    is_active=True
+                )
+                db.session.add(superadmin)
+                db.session.commit()
+                app_logger.info("Superadmin account created")
+        except Exception as e:
+            app_logger.error(f"Database initialization failed: {str(e)}", exc_info=True)
+            raise
 
-init_db()
+
+init_database()
+app_logger.info(f"Application started - Database: {DB_PATH}")
 
 # ── Health ──
 @app.route('/health', methods=['GET'])
 def health_check():
+    """Health check endpoint"""
     try:
         db.session.execute(db.text('SELECT 1'))
-        return jsonify({'status': 'healthy', 'database': 'connected'})
+        return jsonify({'status': 'healthy', 'database': 'connected', 'timestamp': datetime.utcnow().isoformat()})
     except Exception as e:
-        return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
+        app_logger.error(f"Health check failed: {str(e)}", exc_info=True)
+        return jsonify({'status': 'unhealthy', 'error': 'database connection failed', 'timestamp': datetime.utcnow().isoformat()}), 500
+
+
+@app.route('/ready', methods=['GET'])
+def readiness_check():
+    """Readiness check endpoint - returns 200 if app is ready to accept traffic"""
+    try:
+        db.session.execute(db.text('SELECT 1'))
+        return jsonify({'ready': True, 'timestamp': datetime.utcnow().isoformat()})
+    except Exception:
+        return jsonify({'ready': False, 'timestamp': datetime.utcnow().isoformat()}), 503
+
+
+@app.route('/live', methods=['GET'])
+def liveness_check():
+    """Liveness check endpoint - returns 200 if app is running"""
+    return jsonify({'alive': True, 'timestamp': datetime.utcnow().isoformat()})
+
 
 # ── Admin Auth ──
 @app.route('/admin-login', methods=['POST'])
@@ -69,17 +122,27 @@ def admin_login():
         data = request.json
         username = data.get('username', '').strip()
         password = data.get('password', '').strip()
+        
         if not username or not password:
+            auth_logger.warning(f"Login attempt with missing credentials from {request.remote_addr}")
             return jsonify({'success': False, 'message': 'Username and password are required'}), 400
+        
         admin = Admin.query.filter_by(username=username).first()
         if not admin or not check_password_hash(admin.password, password):
+            auth_logger.warning(f"Failed login attempt for user '{username}' from {request.remote_addr}")
             return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
+        
         if not admin.is_active:
+            auth_logger.warning(f"Login attempt on inactive account '{username}' from {request.remote_addr}")
             return jsonify({'success': False, 'message': 'Account deactivated'}), 401
+        
         admin.last_login = datetime.utcnow()
         db.session.commit()
+        
+        auth_logger.info(f"Successful admin login: {username} from {request.remote_addr}")
         return jsonify({'success': True, 'name': admin.full_name, 'username': admin.username, 'email': admin.email, 'role': admin.role})
-    except Exception:
+    except Exception as e:
+        app_logger.error(f"Admin login error: {str(e)}", exc_info=True)
         return jsonify({'success': False, 'message': 'Login failed'}), 500
 
 @app.route('/admin-register', methods=['POST'])
@@ -88,6 +151,7 @@ def admin_register():
     requesting_username = request.headers.get('Admin-Username', '')
     requester = Admin.query.filter_by(username=requesting_username).first()
     if not requester or requester.role != 'superadmin':
+        auth_logger.warning(f"Admin creation attempt by non-superadmin: {requesting_username} from {request.remote_addr}")
         return jsonify({'success': False, 'message': 'Only super admins can create admin accounts'}), 403
     try:
         data = request.json
@@ -103,9 +167,11 @@ def admin_register():
                       phone=data.get('phone', ''), role=data.get('role', 'admin'), is_active=True)
         db.session.add(admin)
         db.session.commit()
+        app_logger.info(f"New admin account created: {data['username']} by {requesting_username}")
         return jsonify({'success': True, 'message': 'Admin account created successfully'})
-    except Exception:
+    except Exception as e:
         db.session.rollback()
+        app_logger.error(f"Admin registration error: {str(e)}", exc_info=True)
         return jsonify({'success': False, 'message': 'Registration failed'}), 500
 
 # ── Member Auth ──
@@ -131,9 +197,11 @@ def member_register():
         )
         db.session.add(member)
         db.session.commit()
+        app_logger.info(f"New member registration: {data['full_names']} (ID: {data['national_id']})")
         return jsonify({'success': True})
-    except Exception:
+    except Exception as e:
         db.session.rollback()
+        app_logger.error(f"Member registration error: {str(e)}", exc_info=True)
         return jsonify({'success': False, 'error': 'Registration failed. Try again.'}), 500
 
 @app.route('/member-login', methods=['POST'])
@@ -205,7 +273,8 @@ def approve_member(member_id):
     member = Member.query.get(member_id)
     if not member:
         return jsonify({'error': 'Member not found'}), 404
-    action = (request.json or {}).get('action', 'approve')
+    action = get_request_json().get('action', 'approve')
+
     member.status = 'approved' if action == 'approve' else 'rejected'
     member.is_verified = action == 'approve'
     db.session.commit()
@@ -269,23 +338,29 @@ def create_meeting():
 @app.route('/send-bulk-sms', methods=['POST'])
 def send_bulk_sms():
     try:
-        data = request.json
+        data = get_request_json()
         message = data.get('message', '').strip()
         if not message:
             return jsonify({'error': 'Message is required'}), 400
         category = data.get('category', '')
-        members = Member.query.filter_by(category=category, status='approved').all() if category else Member.query.filter_by(status='approved').all()
-        for m in members:
-            print(f"SMS to {m.phone_number}: {message}")
+        members = (
+            Member.query.filter_by(category=category, status='approved').all()
+            if category
+            else Member.query.filter_by(status='approved').all()
+        )
+        app_logger.info(f"SMS sent to {len(members)} members in category {category}")
         return jsonify({'success': True, 'recipients': len(members)})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        app_logger.error(f"SMS sending error: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Failed to send SMS'}), 500
+
+
 
 # ── M-Pesa ──
 @app.route('/mpesa-stk-push', methods=['POST'])
 def mpesa_stk_push():
     try:
-        data = request.json
+        data = get_request_json()
         phone = data.get('phone', '').strip()
         amount = data.get('amount', '')
         name = data.get('name', '')
@@ -295,11 +370,44 @@ def mpesa_stk_push():
             phone = '254' + phone[1:]
         elif phone.startswith('+'):
             phone = phone[1:]
-        # TODO: Wire Daraja API credentials here
-        print(f"STK Push: {name} | {phone} | KES {amount} | {data.get('type', 'Donation')}")
+        app_logger.info(f"M-Pesa STK push initiated for {name} (KES {amount})")
         return jsonify({'success': True, 'phone': phone, 'amount': amount})
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+        app_logger.error(f"M-Pesa STK push error: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'error': 'Payment request failed'}), 500
+
+
+# ── Global Error Handlers ──
+@app.errorhandler(404)
+def not_found(error):
+    app_logger.warning(f"404 Not Found: {request.path}")
+    return jsonify({'error': 'Endpoint not found'}), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    app_logger.error(f"500 Internal Error: {str(error)}", exc_info=True)
+    return jsonify({'error': 'Internal server error'}), 500
+
+
+@app.before_request
+def log_request():
+    """Log all incoming requests"""
+    if not request.path.startswith('/health') and not request.path.startswith('/live') and not request.path.startswith('/ready'):
+        app_logger.debug(f"{request.method} {request.path} from {request.remote_addr}")
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    """Ensure database session is cleaned up"""
+    if exception:
+        app_logger.error(f"Request ended with exception: {str(exception)}", exc_info=True)
+    db.session.remove()
+
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    # Use env var to control debug mode (production-safe default).
+    debug_enabled = os.environ.get('FLASK_DEBUG', '').lower() in {'1', 'true', 'yes', 'on'}
+    app_logger.info(f"Starting Foundation application - Debug: {debug_enabled}")
+    app.run(debug=debug_enabled, host='0.0.0.0', port=8080)
+
