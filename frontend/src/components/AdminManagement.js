@@ -19,7 +19,10 @@ function AdminManagement() {
       .catch(() => setLoading(false));
   };
 
-  useEffect(() => { fetchAdmins(); }, []);
+  useEffect(() => { 
+    fetchAdmins(); 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCreate = (e) => {
     e.preventDefault();
