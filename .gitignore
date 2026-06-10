@@ -42,3 +42,6 @@ __pycache__/
 *.egg
 venv/
 
+# Logs
+logs/
+*.log
