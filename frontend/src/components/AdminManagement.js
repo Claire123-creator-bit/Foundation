@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import API_BASE from '../utils/apiConfig';
 
 function AdminManagement() {
@@ -15,14 +15,14 @@ function AdminManagement() {
     'User-Role': 'admin',
   });
 
-  const fetchAdmins = () => {
+  const fetchAdmins = useCallback(() => {
     fetch(`${API_BASE}/admin/list-admins`, { headers: getHeaders() })
       .then(r => r.json())
       .then(d => { setAdmins(Array.isArray(d) ? d : []); setLoading(false); })
       .catch(() => setLoading(false));
-  };
+  }, []);
 
-  useEffect(() => { fetchAdmins(); }, []);
+  useEffect(() => { fetchAdmins(); }, [fetchAdmins]);
 
   const handleCreate = (e) => {
     e.preventDefault();
