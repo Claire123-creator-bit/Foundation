@@ -75,13 +75,31 @@ function MeetingList() {
       )}
       {meetings.map(m => (
         <div key={m.id} className="card">
-          <h3>{m.title}</h3>
-          <p>{m.date} &nbsp; {m.time}</p>
-          {m.venue && <p>{m.venue}</p>}
+          <h3 style={{ marginBottom: 12 }}>{m.title}</h3>
+          <MeetingMeta date={m.date} time={m.time} venue={m.venue} />
         </div>
       ))}
     </div>
   );
 }
+
+function MeetingMeta({ date, time, venue }) {
+  const d = date ? new Date(date + 'T00:00:00') : null;
+  const dayName   = d ? d.toLocaleDateString('en-KE', { weekday: 'long' }) : '';
+  const dateStr   = d ? d.toLocaleDateString('en-KE', { day: 'numeric', month: 'long', year: 'numeric' }) : date;
+  const timeStr   = time ? new Date('1970-01-01T' + time).toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div style={row}><span style={lbl}>Date</span><span style={val}>{dateStr}</span></div>
+      <div style={row}><span style={lbl}>Day</span><span style={val}>{dayName}</span></div>
+      <div style={row}><span style={lbl}>Time</span><span style={val}>{timeStr}</span></div>
+      {venue && <div style={row}><span style={lbl}>Venue</span><span style={val}>{venue}</span></div>}
+    </div>
+  );
+}
+
+const row = { display: 'flex', gap: 8, alignItems: 'baseline' };
+const lbl = { fontSize: 12, fontWeight: 600, color: '#0A2463', minWidth: 44, opacity: 0.6, textTransform: 'uppercase', letterSpacing: '0.5px' };
+const val = { fontSize: 14, fontWeight: 400, color: '#0A2463' };
 
 export default MeetingList;

@@ -106,9 +106,8 @@ function HomeTab({ member, meetings, setTab }) {
       {upcoming.length === 0 && <p style={{ fontWeight: 300, color: '#666' }}>No upcoming meetings.</p>}
       {upcoming.map(m => (
         <div key={m.id} className="card">
-          <h3>{m.title}</h3>
-          <p>{m.date} &nbsp; {m.time}</p>
-          {m.venue && <p>{m.venue}</p>}
+          <h3 style={{ marginBottom: 12 }}>{m.title}</h3>
+          <MeetingMeta date={m.date} time={m.time} venue={m.venue} />
         </div>
       ))}
       {meetings.length > 2 && (
@@ -125,10 +124,9 @@ function MeetingsTab({ meetings }) {
       {meetings.length === 0 && <p style={{ fontWeight: 300, color: '#666', textAlign: 'center', padding: 40 }}>No meetings scheduled yet.</p>}
       {meetings.map(m => (
         <div key={m.id} className="card">
-          <h3>{m.title}</h3>
-          <p>{m.date} &nbsp; {m.time}</p>
-          {m.venue && <p>{m.venue}</p>}
-          {m.agenda && <p style={{ marginTop: 8 }}>{m.agenda}</p>}
+          <h3 style={{ marginBottom: 12 }}>{m.title}</h3>
+          <MeetingMeta date={m.date} time={m.time} venue={m.venue} />
+          {m.agenda && <p style={{ marginTop: 10, fontWeight: 300, color: '#444' }}>{m.agenda}</p>}
         </div>
       ))}
     </div>
@@ -236,6 +234,25 @@ function ProfileTab({ member }) {
     </div>
   );
 }
+
+function MeetingMeta({ date, time, venue }) {
+  const d = date ? new Date(date + 'T00:00:00') : null;
+  const dayName = d ? d.toLocaleDateString('en-KE', { weekday: 'long' }) : '';
+  const dateStr = d ? d.toLocaleDateString('en-KE', { day: 'numeric', month: 'long', year: 'numeric' }) : date;
+  const timeStr = time ? new Date('1970-01-01T' + time).toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div style={mr}><span style={ml}>Date</span><span style={mv}>{dateStr}</span></div>
+      <div style={mr}><span style={ml}>Day</span><span style={mv}>{dayName}</span></div>
+      <div style={mr}><span style={ml}>Time</span><span style={mv}>{timeStr}</span></div>
+      {venue && <div style={mr}><span style={ml}>Venue</span><span style={mv}>{venue}</span></div>}
+    </div>
+  );
+}
+
+const mr = { display: 'flex', gap: 8, alignItems: 'baseline' };
+const ml = { fontSize: 12, fontWeight: 600, color: '#0A2463', minWidth: 44, opacity: 0.6, textTransform: 'uppercase', letterSpacing: '0.5px' };
+const mv = { fontSize: 14, fontWeight: 400, color: '#0A2463' };
 
 const ls = {
   label: { display: 'block', fontSize: 13, fontWeight: 600, color: '#0A2463', marginBottom: 6 },
