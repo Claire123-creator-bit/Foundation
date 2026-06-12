@@ -4,66 +4,81 @@ import urllib.parse
 import json
 from logger import app_logger
 
-
-AT_USERNAME = os.environ.get('AFRICASTALKING_USERNAME', '')
-AT_API_KEY = os.environ.get('AFRICASTALKING_API_KEY', '')
-AT_SENDER_ID = os.environ.get('AFRICASTALKING_SENDER_ID', '')
 AT_SMS_URL = 'https://api.africastalking.com/version1/messaging'
 
 
-def send_sms(recipients: list[str], message: str) -> dict:
-    if not AT_USERNAME or not AT_API_KEY:
-        app_logger.warning('Africa\'s Talking credentials not configured — SMS skipped')
-        return {'success': False, 'reason': 'SMS not configured', 'recipients': 0}
+def _normalize_phone(phone: str) -> str:
+    p = phone.strip().replace(' ', '').replace('-', '')
+    if p.startswith('+'):
+        return p[1:]
+    if p.startswith('07') or p.startswith('01'):
+        return '254' + p[1:]
+    if p.startswith('7') or p.startswith('1'):
+        return '254' + p
+    return p
+
+
+def send_sms(recipients: list, message: str) -> dict:
+    username = os.environ.get('AFRICASTALKING_USERNAME', '').strip()
+    api_key  = os.environ.get('AFRICASTALKING_API_KEY', '').strip()
+    sender   = os.environ.get('AFRICASTALKING_SENDER_ID', '').strip()
+
+    if not username or not api_key:
+        app_logger.warning('Africa\'s Talking credentials not set — SMS not sent')
+        return {'success': False, 'reason': 'SMS credentials not configured', 'sent': 0, 'total': len(recipients)}
 
     if not recipients:
-        return {'success': True, 'recipients': 0}
+        return {'success': True, 'sent': 0, 'total': 0}
 
-    normalized = []
-    for phone in recipients:
-        p = phone.strip()
-        if p.startswith('0'):
-            p = '254' + p[1:]
-        elif p.startswith('+'):
-            p = p[1:]
-        if p:
-            normalized.append(p)
+    normalized = [_normalize_phone(p) for p in recipients if p and p.strip()]
+    normalized = [p for p in normalized if len(p) >= 9]
 
     if not normalized:
-        return {'success': True, 'recipients': 0}
+        return {'success': False, 'reason': 'No valid phone numbers', 'sent': 0, 'total': 0}
 
-    payload = {
-        'username': AT_USERNAME,
-        'to': ','.join(normalized),
-        'message': message,
-    }
-    if AT_SENDER_ID:
-        payload['from'] = AT_SENDER_ID
+    BATCH = 1000
+    total_sent = 0
+    errors = []
 
-    data = urllib.parse.urlencode(payload).encode('utf-8')
-    req = urllib.request.Request(
-        AT_SMS_URL,
-        data=data,
-        headers={
-            'Accept': 'application/json',
-            'apiKey': AT_API_KEY,
-            'Content-Type': 'application/x-www-form-urlencoded',
+    for i in range(0, len(normalized), BATCH):
+        batch = normalized[i:i + BATCH]
+        payload = {
+            'username': username,
+            'to':       ','.join(batch),
+            'message':  message,
         }
-    )
+        if sender:
+            payload['from'] = sender
 
-    try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            result = json.loads(resp.read().decode('utf-8'))
-            sms_data = result.get('SMSMessageData', {})
-            recipients_sent = len(sms_data.get('Recipients', []))
-            app_logger.info(f'SMS sent to {recipients_sent}/{len(normalized)} recipients')
-            return {'success': True, 'recipients': recipients_sent}
-    except Exception as e:
-        app_logger.error(f'Africa\'s Talking SMS error: {str(e)}', exc_info=True)
-        return {'success': False, 'reason': str(e), 'recipients': 0}
+        data = urllib.parse.urlencode(payload).encode('utf-8')
+        req  = urllib.request.Request(
+            AT_SMS_URL,
+            data=data,
+            headers={
+                'Accept':       'application/json',
+                'apiKey':        api_key,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                result     = json.loads(resp.read().decode('utf-8'))
+                sms_data   = result.get('SMSMessageData', {})
+                recipients_list = sms_data.get('Recipients', [])
+                batch_sent = sum(1 for r in recipients_list if r.get('status') == 'Success')
+                total_sent += batch_sent
+                app_logger.info(f'SMS batch {i//BATCH + 1}: sent {batch_sent}/{len(batch)}')
+        except Exception as e:
+            app_logger.error(f'SMS batch {i//BATCH + 1} failed: {str(e)}', exc_info=True)
+            errors.append(str(e))
+
+    if errors and total_sent == 0:
+        return {'success': False, 'reason': errors[0], 'sent': 0, 'total': len(normalized)}
+
+    return {'success': True, 'sent': total_sent, 'total': len(normalized)}
 
 
-def send_meeting_sms(meeting: dict, phone_numbers: list[str]) -> dict:
+def send_meeting_sms(meeting: dict, phone_numbers: list) -> dict:
     message = (
         f"MBOGO FOUNDATION\n\n"
         f"New Meeting: {meeting['title']}\n"

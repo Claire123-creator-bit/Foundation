@@ -7,7 +7,7 @@ import secrets
 import threading
 from werkzeug.security import generate_password_hash, check_password_hash
 from logger import app_logger, auth_logger
-from sms_service import send_meeting_sms
+from sms_service import send_sms, send_meeting_sms
 from email_service import send_admin_welcome_email, send_verification_email
 
 
@@ -669,19 +669,20 @@ def send_bulk_sms():
         message = data.get('message', '').strip()
         if not message:
             return jsonify({'error': 'Message is required'}), 400
-        category = data.get('category', '')
+        category = data.get('category', '').strip()
         members = (
             Member.query.filter_by(category=category, status='approved').all()
             if category
             else Member.query.filter_by(status='approved').all()
         )
         phone_numbers = [m.phone_number for m in members if m.phone_number]
+        if not phone_numbers:
+            return jsonify({'success': False, 'error': 'No approved members with phone numbers found'}), 400
         def _send():
-            from sms_service import send_sms
             result = send_sms(phone_numbers, message)
-            app_logger.info(f"Bulk SMS result: {result}")
+            app_logger.info(f"Bulk SMS result: sent={result.get('sent')}/{result.get('total')}")
         threading.Thread(target=_send, daemon=True).start()
-        app_logger.info(f"Bulk SMS queued to {len(phone_numbers)} members")
+        app_logger.info(f"Bulk SMS queued: {len(phone_numbers)} recipients, category='{category or 'all'}'")
         return jsonify({'success': True, 'recipients': len(phone_numbers)})
     except Exception as e:
         app_logger.error(f"SMS sending error: {str(e)}", exc_info=True)
