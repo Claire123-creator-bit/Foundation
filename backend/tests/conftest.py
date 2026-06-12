@@ -1,14 +1,9 @@
-"""
-Pytest configuration and fixtures for Foundation application tests
-"""
-
 import pytest
 import os
 import tempfile
 from werkzeug.security import generate_password_hash
 import sys
 
-# Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from main_app import app as flask_app

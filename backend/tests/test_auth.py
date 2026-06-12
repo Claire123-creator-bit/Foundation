@@ -1,7 +1,3 @@
-"""
-Test cases for authentication endpoints
-"""
-
 import pytest
 import json
 from werkzeug.security import generate_password_hash

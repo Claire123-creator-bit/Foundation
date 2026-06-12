@@ -1,7 +1,3 @@
-"""
-Test cases for database models
-"""
-
 import pytest
 from datetime import datetime, timedelta
 

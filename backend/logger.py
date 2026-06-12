@@ -1,7 +1,3 @@
-"""
-Structured logging configuration for the Foundation application.
-"""
-
 import logging
 import logging.handlers
 import os
@@ -18,8 +14,7 @@ AUTH_LOG_FILE = os.path.join(LOGS_DIR, 'auth.log')
 
 
 class JSONFormatter(logging.Formatter):
-    """Format logs as JSON for structured logging"""
-    
+
     def format(self, record):
         log_data = {
             'timestamp': datetime.utcnow().isoformat(),
@@ -38,25 +33,19 @@ class JSONFormatter(logging.Formatter):
 
 
 def setup_logging():
-    """Configure structured logging for the application"""
-    
-    # Root logger
+
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)
-    
-    # Application logger
+
     app_logger = logging.getLogger('foundation')
     app_logger.setLevel(logging.DEBUG)
-    
-    # Auth logger
+
     auth_logger = logging.getLogger('foundation.auth')
     auth_logger.setLevel(logging.DEBUG)
-    
-    # Remove existing handlers
+
     for handler in root_logger.handlers[:]:
         root_logger.removeHandler(handler)
-    
-    # Console handler
+
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
     console_formatter = logging.Formatter(
@@ -65,8 +54,7 @@ def setup_logging():
     )
     console_handler.setFormatter(console_formatter)
     root_logger.addHandler(console_handler)
-    
-    # App file handler
+
     app_handler = logging.handlers.RotatingFileHandler(
         APP_LOG_FILE,
         maxBytes=10_485_760,  # 10MB
@@ -79,8 +67,7 @@ def setup_logging():
     )
     app_handler.setFormatter(app_formatter)
     app_logger.addHandler(app_handler)
-    
-    # Error file handler
+
     error_handler = logging.handlers.RotatingFileHandler(
         ERROR_LOG_FILE,
         maxBytes=10_485_760,  # 10MB
@@ -93,8 +80,7 @@ def setup_logging():
     )
     error_handler.setFormatter(error_formatter)
     root_logger.addHandler(error_handler)
-    
-    # Auth file handler
+
     auth_handler = logging.handlers.RotatingFileHandler(
         AUTH_LOG_FILE,
         maxBytes=10_485_760,  # 10MB

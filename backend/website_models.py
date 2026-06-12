@@ -5,7 +5,6 @@ db = SQLAlchemy()
 
 
 class Admin(db.Model):
-    """Admin user model"""
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True, index=True)
     password = db.Column(db.String(256), nullable=False)
@@ -32,7 +31,6 @@ class Admin(db.Model):
 
 
 class Member(db.Model):
-    """Member model"""
     id = db.Column(db.Integer, primary_key=True)
     full_names = db.Column(db.String(150), nullable=False)
     national_id = db.Column(db.String(20), nullable=False, unique=True, index=True)
@@ -74,7 +72,6 @@ class Member(db.Model):
 
 
 class Meeting(db.Model):
-    """Meeting model"""
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     date = db.Column(db.String(20), nullable=False, index=True)
@@ -98,7 +95,6 @@ class Meeting(db.Model):
 
 
 class Payment(db.Model):
-    """Payment transaction model"""
     id = db.Column(db.Integer, primary_key=True)
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
     full_name = db.Column(db.String(150))

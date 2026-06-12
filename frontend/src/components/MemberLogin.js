@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
 
-function MemberLogin({ onLogin, onSwitch, onBack }) {
+function MemberLogin({ onLogin, onBack }) {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -72,7 +72,6 @@ const s = {
   btn:         { width: '100%', height: 60, background: '#0A2463', color: '#fff', border: 'none', fontSize: 20, fontWeight: 700, cursor: 'pointer', marginBottom: 24 },
   divider:     { width: '100%', height: 1, background: '#ddd', marginBottom: 20 },
   switchText:  { color: '#666', fontSize: 15, fontWeight: 300, marginBottom: 12, textAlign: 'center' },
-  registerBtn: { width: '100%', height: 52, background: 'transparent', color: '#0A2463', border: '2px solid #0A2463', fontSize: 16, fontWeight: 600, cursor: 'pointer' },
 };
 
 export default MemberLogin;

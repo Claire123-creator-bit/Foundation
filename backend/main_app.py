@@ -70,8 +70,6 @@ CORS(
 
 def get_request_json():
 
-    """Safely get JSON from request"""
-
     return request.get_json(silent=True) or {}
 
 
@@ -80,8 +78,6 @@ def get_request_json():
 
 def get_admin_username():
 
-    """Get admin username from request header"""
-
     return (request.headers.get('Admin-Username') or '').strip()
 
 
@@ -89,8 +85,6 @@ def get_admin_username():
 
 
 def is_admin():
-
-    """Check if request is from an authenticated admin"""
 
     header_role = request.headers.get('User-Role') == 'admin'
 
@@ -117,8 +111,6 @@ def is_admin():
 
 
 def init_database():
-
-    """Initialize database and create superadmin if needed"""
 
     os.makedirs(INSTANCE_DIR, exist_ok=True)
 
@@ -187,8 +179,6 @@ app_logger.info(f"Application started - Database: {DB_PATH}")
 
 def health_check():
 
-    """Health check endpoint"""
-
     try:
 
         db.session.execute(db.text('SELECT 1'))
@@ -209,8 +199,6 @@ def health_check():
 
 def readiness_check():
 
-    """Readiness check endpoint - returns 200 if app is ready to accept traffic"""
-
     try:
 
         db.session.execute(db.text('SELECT 1'))
@@ -228,8 +216,6 @@ def readiness_check():
 @app.route('/live', methods=['GET'])
 
 def liveness_check():
-
-    """Liveness check endpoint - returns 200 if app is running"""
 
     return jsonify({'alive': True, 'timestamp': datetime.utcnow().isoformat()})
 
@@ -371,15 +357,10 @@ def admin_register():
 
 @app.route('/member-register', methods=['POST', 'OPTIONS'])
 def member_register():
-    # Handle CORS preflight explicitly
     if request.method == 'OPTIONS':
         resp = jsonify({'success': True})
         resp.status_code = 200
         return resp
-
-    # NOTE: Flask-Cors will attach the CORS headers to normal requests.
-
-
 
     try:
 
@@ -811,8 +792,6 @@ def internal_error(error):
 
 def log_request():
 
-    """Log all incoming requests"""
-
     if not request.path.startswith('/health') and not request.path.startswith('/live') and not request.path.startswith('/ready'):
 
         app_logger.debug(f"{request.method} {request.path} from {request.remote_addr}")
@@ -824,8 +803,6 @@ def log_request():
 @app.teardown_appcontext
 
 def shutdown_session(exception=None):
-
-    """Ensure database session is cleaned up"""
 
     if exception:
 

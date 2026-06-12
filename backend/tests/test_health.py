@@ -1,7 +1,3 @@
-"""
-Test cases for health check and monitoring endpoints
-"""
-
 import pytest
 import json
 

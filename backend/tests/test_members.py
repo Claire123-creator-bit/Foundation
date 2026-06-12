@@ -1,7 +1,3 @@
-"""
-Test cases for member management endpoints
-"""
-
 import pytest
 import json
 
