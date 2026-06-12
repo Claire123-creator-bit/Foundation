@@ -11,7 +11,11 @@ function BulkMessaging() {
     setLoading(true); setStatus('');
     fetch(`${API_BASE}/send-bulk-sms`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Role': 'admin',
+        'Admin-Username': localStorage.getItem('adminUsername') || '',
+      },
       body: JSON.stringify({ message, category: '' })
     })
       .then(res => res.json())

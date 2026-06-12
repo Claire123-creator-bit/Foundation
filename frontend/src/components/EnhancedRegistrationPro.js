@@ -16,7 +16,11 @@ function RegisterMember({ onRegistrationSuccess }) {
     setLoading(true); setMsg(''); setError('');
     fetch(`${API_BASE}/admin/register-member`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Role': 'admin',
+        'Admin-Username': localStorage.getItem('adminUsername') || '',
+      },
       body: JSON.stringify(form)
     })
       .then(res => res.json().then(data => ({ ok: res.ok, data })))

@@ -661,39 +661,30 @@ def create_meeting():
 # ── SMS ──
 
 @app.route('/send-bulk-sms', methods=['POST'])
-
 def send_bulk_sms():
-
+    if not is_admin():
+        return jsonify({'error': 'Admin access required'}), 403
     try:
-
         data = get_request_json()
-
         message = data.get('message', '').strip()
-
         if not message:
-
             return jsonify({'error': 'Message is required'}), 400
-
         category = data.get('category', '')
-
         members = (
-
             Member.query.filter_by(category=category, status='approved').all()
-
             if category
-
             else Member.query.filter_by(status='approved').all()
-
         )
-
-        app_logger.info(f"SMS sent to {len(members)} members in category {category}")
-
-        return jsonify({'success': True, 'recipients': len(members)})
-
+        phone_numbers = [m.phone_number for m in members if m.phone_number]
+        def _send():
+            from sms_service import send_sms
+            result = send_sms(phone_numbers, message)
+            app_logger.info(f"Bulk SMS result: {result}")
+        threading.Thread(target=_send, daemon=True).start()
+        app_logger.info(f"Bulk SMS queued to {len(phone_numbers)} members")
+        return jsonify({'success': True, 'recipients': len(phone_numbers)})
     except Exception as e:
-
         app_logger.error(f"SMS sending error: {str(e)}", exc_info=True)
-
         return jsonify({'error': 'Failed to send SMS'}), 500
 
 
