@@ -13,6 +13,9 @@ class Admin(db.Model):
     phone = db.Column(db.String(20))
     role = db.Column(db.String(50), default='admin')
     is_active = db.Column(db.Boolean, default=True, index=True)
+    email_verified = db.Column(db.Boolean, default=False)
+    verification_token = db.Column(db.String(100), nullable=True)
+    verification_token_expires = db.Column(db.DateTime, nullable=True)
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
 

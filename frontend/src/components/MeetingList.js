@@ -20,7 +20,11 @@ function MeetingList() {
     e.preventDefault();
     fetch(`${API_BASE}/meetings`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'User-Role': 'admin' },
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Role': 'admin',
+        'Admin-Username': localStorage.getItem('adminUsername') || '',
+      },
       body: JSON.stringify(form)
     })
       .then(res => res.json())

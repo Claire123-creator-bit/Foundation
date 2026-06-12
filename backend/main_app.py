@@ -1,16 +1,14 @@
 from flask import Flask, request, jsonify
-
 from flask_cors import CORS
-
 from website_models import db, Member, Meeting, Admin
-
-from datetime import datetime
-
+from datetime import datetime, timedelta
 import os
-
+import secrets
+import threading
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from logger import app_logger, auth_logger
+from sms_service import send_meeting_sms
+from email_service import send_admin_welcome_email, send_verification_email
 
 
 
@@ -85,26 +83,13 @@ def get_admin_username():
 
 
 def is_admin():
-
-    header_role = request.headers.get('User-Role') == 'admin'
-
-    if not header_role:
-
-        return False
-
-
-
     username = get_admin_username()
-
     if not username:
-
         return False
-
-
-
     admin = Admin.query.filter_by(username=username).first()
-
-    return bool(admin and admin.is_active)
+    if not admin or not admin.is_active:
+        return False
+    return admin.role in ('admin', 'superadmin', 'coordinator', 'finance', 'communication')
 
 
 
@@ -339,16 +324,23 @@ def admin_register():
 
         db.session.commit()
 
+        token = secrets.token_urlsafe(32)
+        admin.verification_token = token
+        admin.verification_token_expires = datetime.utcnow() + timedelta(hours=24)
+        db.session.commit()
         app_logger.info(f"New admin account created: {data['username']} by {requesting_username}")
-
+        plain_password = data['password']
+        admin_email = data['email'].lower()
+        admin_full_name = data['full_name']
+        admin_username = data['username']
+        def _send_emails():
+            send_admin_welcome_email(admin_full_name, admin_email, admin_username, plain_password)
+            send_verification_email(admin_full_name, admin_email, token)
+        threading.Thread(target=_send_emails, daemon=True).start()
         return jsonify({'success': True, 'message': 'Admin account created successfully'})
-
     except Exception as e:
-
         db.session.rollback()
-
         app_logger.error(f"Admin registration error: {str(e)}", exc_info=True)
-
         return jsonify({'success': False, 'message': 'Registration failed'}), 500
 
 
@@ -639,39 +631,29 @@ def get_meetings():
 
 
 @app.route('/meetings', methods=['POST'])
-
 def create_meeting():
-
     if not is_admin():
-
         return jsonify({'error': 'Admin access required'}), 403
-
     try:
-
         data = request.json
-
         for f in ['title', 'date', 'time']:
-
             if not data.get(f):
-
                 return jsonify({'error': f'{f} is required'}), 400
-
         meeting = Meeting(title=data['title'], date=data['date'], time=data['time'],
-
                           venue=data.get('venue', ''), agenda=data.get('description', ''),
-
                           meeting_type=data.get('meeting_type', 'physical'))
-
         db.session.add(meeting)
-
         db.session.commit()
-
-        return jsonify({'success': True, 'meeting': meeting.to_dict()})
-
-    except Exception:
-
+        meeting_snapshot = meeting.to_dict()
+        phone_numbers = [m.phone_number for m in Member.query.filter_by(status='approved').all() if m.phone_number]
+        def _send_sms():
+            result = send_meeting_sms(meeting_snapshot, phone_numbers)
+            app_logger.info(f"Meeting SMS: {result}")
+        threading.Thread(target=_send_sms, daemon=True).start()
+        return jsonify({'success': True, 'meeting': meeting_snapshot, 'sms_recipients': len(phone_numbers)})
+    except Exception as e:
         db.session.rollback()
-
+        app_logger.error(f"Create meeting error: {str(e)}", exc_info=True)
         return jsonify({'error': 'Failed to create meeting'}), 500
 
 
@@ -814,14 +796,41 @@ def shutdown_session(exception=None):
 
 
 
+@app.route('/verify-email/<token>', methods=['GET'])
+def verify_email(token):
+    admin = Admin.query.filter_by(verification_token=token).first()
+    if not admin:
+        return jsonify({'success': False, 'message': 'Invalid verification link'}), 400
+    if admin.verification_token_expires and datetime.utcnow() > admin.verification_token_expires:
+        return jsonify({'success': False, 'message': 'Verification link has expired. Ask super admin to resend.'}), 400
+    admin.email_verified = True
+    admin.verification_token = None
+    admin.verification_token_expires = None
+    db.session.commit()
+    auth_logger.info(f"Email verified for admin: {admin.username}")
+    return jsonify({'success': True, 'message': 'Email verified successfully. You can now log in.'})
+
+
+@app.route('/admin/resend-verification', methods=['POST'])
+def resend_verification():
+    requesting_username = request.headers.get('Admin-Username', '')
+    requester = Admin.query.filter_by(username=requesting_username).first()
+    if not requester or requester.role != 'superadmin':
+        return jsonify({'error': 'Super admin access required'}), 403
+    data = get_request_json()
+    admin = Admin.query.filter_by(username=data.get('username', '')).first()
+    if not admin:
+        return jsonify({'error': 'Admin not found'}), 404
+    token = secrets.token_urlsafe(32)
+    admin.verification_token = token
+    admin.verification_token_expires = datetime.utcnow() + timedelta(hours=24)
+    db.session.commit()
+    threading.Thread(target=send_verification_email, args=(admin.full_name, admin.email, token), daemon=True).start()
+    return jsonify({'success': True, 'message': 'Verification email resent'})
+
+
 if __name__ == '__main__':
-
-    # Use env var to control debug mode (production-safe default).
-
     debug_enabled = os.environ.get('FLASK_DEBUG', '').lower() in {'1', 'true', 'yes', 'on'}
-
     app_logger.info(f"Starting Foundation application - Debug: {debug_enabled}")
-
     port = int(os.environ.get("PORT", 8080))
-
     app.run(debug=debug_enabled, host='0.0.0.0', port=port)

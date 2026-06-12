@@ -7,15 +7,17 @@ import MemberRegister from './components/MemberRegister';
 
 function App() {
   const [adminName, setAdminName] = useState(null);
+  const [adminUsername, setAdminUsername] = useState(null);
   const [member, setMember] = useState(null);
   const [page, setPage] = useState('home');
 
   useEffect(() => {
-    const storedAdmin = localStorage.getItem('adminName');
+    const storedName = localStorage.getItem('adminName');
+    const storedUsername = localStorage.getItem('adminUsername');
     const storedMember = localStorage.getItem('memberData');
-    
-    if (storedAdmin) {
-      setAdminName(storedAdmin);
+    if (storedName && storedUsername) {
+      setAdminName(storedName);
+      setAdminUsername(storedUsername);
     } else if (storedMember) {
       try {
         setMember(JSON.parse(storedMember));
@@ -27,6 +29,7 @@ function App() {
 
   const handleAdminLogin = (name, username, role) => {
     setAdminName(name);
+    setAdminUsername(username);
     localStorage.setItem('adminName', name);
     localStorage.setItem('adminUsername', username);
     localStorage.setItem('adminRole', role);
@@ -39,12 +42,13 @@ function App() {
 
   const handleLogout = () => {
     setAdminName(null);
+    setAdminUsername(null);
     setMember(null);
     ['adminName', 'adminUsername', 'adminRole', 'memberData'].forEach(k => localStorage.removeItem(k));
     setPage('home');
   };
 
-  if (adminName) return <AdminDashboard adminName={adminName} onLogout={handleLogout} />;
+  if (adminName && adminUsername) return <AdminDashboard adminName={adminName} onLogout={handleLogout} />;
   if (member) return <MemberDashboard member={member} onLogout={handleLogout} />;
 
   if (page === 'admin-login') return <LoginPage onLogin={handleAdminLogin} onBack={() => setPage('home')} />;
