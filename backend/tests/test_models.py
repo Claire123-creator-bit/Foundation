@@ -3,10 +3,7 @@ from datetime import datetime, timedelta
 
 
 class TestAdminModel:
-    """Tests for Admin model"""
-    
     def test_admin_creation(self, app):
-        """Test creating an admin"""
         with app.app_context():
             from website_models import Admin, db
             from werkzeug.security import generate_password_hash
@@ -29,7 +26,6 @@ class TestAdminModel:
             assert retrieved.is_active is True
     
     def test_admin_username_unique(self, app):
-        """Test that admin usernames are unique"""
         with app.app_context():
             from website_models import Admin, db
             from werkzeug.security import generate_password_hash
@@ -46,7 +42,6 @@ class TestAdminModel:
             db.session.add(admin1)
             db.session.commit()
             
-            # Attempting to add another admin with same username should fail
             admin2 = Admin(
                 username='unique_user',
                 password=generate_password_hash('pass2'),
@@ -63,10 +58,7 @@ class TestAdminModel:
 
 
 class TestMemberModel:
-    """Tests for Member model"""
-    
     def test_member_creation(self, app):
-        """Test creating a member"""
         with app.app_context():
             from website_models import Member, db
             
@@ -93,7 +85,6 @@ class TestMemberModel:
             assert retrieved.status == 'approved'
     
     def test_member_national_id_unique(self, app):
-        """Test that member national IDs are unique"""
         with app.app_context():
             from website_models import Member, db
             
@@ -116,7 +107,7 @@ class TestMemberModel:
             
             member2 = Member(
                 full_names='Person Two',
-                national_id='87654321',  # Duplicate
+                national_id='87654321',
                 phone_number='254700000002',
                 gender='Female',
                 category='Active',
@@ -134,7 +125,6 @@ class TestMemberModel:
                 db.session.commit()
     
     def test_member_status_workflow(self, app):
-        """Test member status transitions"""
         with app.app_context():
             from website_models import Member, db
             
@@ -155,7 +145,6 @@ class TestMemberModel:
             db.session.add(member)
             db.session.commit()
             
-            # Transition to approved
             member.status = 'approved'
             member.is_verified = True
             db.session.commit()
@@ -166,10 +155,7 @@ class TestMemberModel:
 
 
 class TestMeetingModel:
-    """Tests for Meeting model"""
-    
     def test_meeting_creation(self, app):
-        """Test creating a meeting"""
         with app.app_context():
             from website_models import Meeting, db
             
@@ -190,7 +176,6 @@ class TestMeetingModel:
             assert retrieved.created_by == 'admin'
     
     def test_meeting_future_dates(self, app):
-        """Test that meetings can be scheduled for future dates"""
         with app.app_context():
             from website_models import Meeting, db
             
@@ -210,10 +195,7 @@ class TestMeetingModel:
 
 
 class TestPaymentModel:
-    """Tests for Payment model"""
-    
     def test_payment_creation(self, app):
-        """Test creating a payment record"""
         with app.app_context():
             from website_models import Payment, db
             
@@ -234,11 +216,9 @@ class TestPaymentModel:
             assert retrieved.status == 'completed'
     
     def test_payment_indexing(self, app):
-        """Test payment queries with indexes"""
         with app.app_context():
             from website_models import Payment, db
             
-            # Create multiple payments
             for i in range(10):
                 payment = Payment(
                     phone_number=f'25470000000{i}',
@@ -251,11 +231,9 @@ class TestPaymentModel:
                 db.session.add(payment)
             db.session.commit()
             
-            # Query by phone_number (indexed)
             results = Payment.query.filter_by(phone_number='254700000005').all()
             assert len(results) > 0
-            
-            # Query by transaction_id (indexed)
+
             result = Payment.query.filter_by(transaction_id='TXN000005').first()
             assert result is not None
             assert result.amount == 600

@@ -3,10 +3,7 @@ import json
 
 
 class TestMemberRegistration:
-    """Tests for member self-registration endpoint"""
-    
     def test_member_register_success(self, client):
-        """Test successful member registration"""
         response = client.post('/member-register', json={
             'full_names': 'Jane Doe',
             'national_id': '11111111',
@@ -18,28 +15,25 @@ class TestMemberRegistration:
             'ward': 'Kilimani',
             'physical_location': 'Kilimani'
         })
-        
+
         assert response.status_code == 200
         data = json.loads(response.data)
         assert data['success'] is True
-    
+
     def test_member_register_missing_fields(self, client):
-        """Test member registration with missing required fields"""
         response = client.post('/member-register', json={
             'full_names': 'John Doe',
             'national_id': '22222222'
-            # Missing other required fields
         })
-        
+
         assert response.status_code == 400
         data = json.loads(response.data)
         assert data['success'] is False
-    
+
     def test_member_register_duplicate_id(self, client, sample_member):
-        """Test registration with duplicate national ID"""
         response = client.post('/member-register', json={
             'full_names': 'Another Person',
-            'national_id': '12345678',  # Same as sample_member
+            'national_id': '12345678',
             'phone_number': '254799999999',
             'gender': 'Male',
             'category': 'Active',
@@ -48,17 +42,16 @@ class TestMemberRegistration:
             'ward': 'Karura',
             'physical_location': 'Karura'
         })
-        
+
         assert response.status_code == 400
         data = json.loads(response.data)
         assert 'already registered' in data['error']
-    
+
     def test_member_register_duplicate_phone(self, client, sample_member):
-        """Test registration with duplicate phone number"""
         response = client.post('/member-register', json={
             'full_names': 'Another Person',
             'national_id': '33333333',
-            'phone_number': '254712345678',  # Same as sample_member
+            'phone_number': '254712345678',
             'gender': 'Male',
             'category': 'Active',
             'county': 'Nairobi',
@@ -66,34 +59,28 @@ class TestMemberRegistration:
             'ward': 'Karura',
             'physical_location': 'Karura'
         })
-        
+
         assert response.status_code == 400
         data = json.loads(response.data)
         assert 'already registered' in data['error']
 
 
 class TestMembersList:
-    """Tests for members list endpoint"""
-    
     def test_members_list_empty(self, client):
-        """Test members list when no members exist"""
         response = client.get('/members')
         assert response.status_code == 200
         data = json.loads(response.data)
         assert isinstance(data, list)
         assert len(data) == 0
-    
+
     def test_members_list_with_members(self, client, sample_member):
-        """Test members list returns existing members"""
         response = client.get('/members')
         assert response.status_code == 200
         data = json.loads(response.data)
         assert len(data) > 0
         assert any(m['full_names'] == 'John Doe' for m in data)
-    
+
     def test_members_list_pagination_works(self, client, app):
-        """Test members list pagination"""
-        # Create multiple members
         with app.app_context():
             from website_models import Member, db
             for i in range(15):
@@ -113,7 +100,7 @@ class TestMembersList:
                 )
                 db.session.add(member)
             db.session.commit()
-        
+
         response = client.get('/members')
         assert response.status_code == 200
         data = json.loads(response.data)
@@ -121,11 +108,7 @@ class TestMembersList:
 
 
 class TestPendingMembers:
-    """Tests for pending members endpoint"""
-    
     def test_pending_members_list(self, client, app, auth_headers):
-        """Test retrieving pending members"""
-        # Create pending member
         with app.app_context():
             from website_models import Member, db
             member = Member(
@@ -144,18 +127,15 @@ class TestPendingMembers:
             )
             db.session.add(member)
             db.session.commit()
-        
-        response = client.get('/admin/pending-members',
-            headers=auth_headers
-        )
-        
+
+        response = client.get('/admin/pending-members', headers=auth_headers)
+
         assert response.status_code == 200
         data = json.loads(response.data)
         assert len(data) > 0
         assert any(m['full_names'] == 'Pending Member' for m in data)
-    
+
     def test_approve_member(self, client, app, auth_headers):
-        """Test approving a pending member"""
         with app.app_context():
             from website_models import Member, db
             member = Member(
@@ -175,17 +155,16 @@ class TestPendingMembers:
             db.session.add(member)
             db.session.commit()
             member_id = member.id
-        
+
         response = client.post(f'/admin/approve-member/{member_id}',
             headers=auth_headers,
             json={}
         )
-        
+
         assert response.status_code == 200
         data = json.loads(response.data)
         assert data['success'] is True
-        
-        # Verify member status changed
+
         with app.app_context():
             from website_models import Member
             approved = Member.query.get(member_id)

@@ -12,17 +12,14 @@ from website_models import db, Admin, Member, Meeting
 
 @pytest.fixture(scope='session')
 def app():
-    """Create Flask app configured for testing"""
     flask_app.config['TESTING'] = True
     flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
     flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
     return flask_app
 
 
 @pytest.fixture(scope='function')
 def client(app):
-    """Create test client for each test"""
     with app.app_context():
         db.create_all()
         yield app.test_client()
@@ -32,9 +29,7 @@ def client(app):
 
 @pytest.fixture
 def auth_headers(client, app):
-    """Create authentication headers for testing"""
     with app.app_context():
-        # Create test admin
         admin = Admin(
             username='testadmin',
             password=generate_password_hash('testpass123'),
@@ -46,7 +41,7 @@ def auth_headers(client, app):
         )
         db.session.add(admin)
         db.session.commit()
-    
+
     return {
         'User-Role': 'admin',
         'Admin-Username': 'testadmin'
@@ -55,9 +50,7 @@ def auth_headers(client, app):
 
 @pytest.fixture
 def superadmin_headers(client, app):
-    """Create superadmin authentication headers"""
     with app.app_context():
-        # Create test superadmin
         superadmin = Admin(
             username='superadmin_test',
             password=generate_password_hash('superpass123'),
@@ -69,7 +62,7 @@ def superadmin_headers(client, app):
         )
         db.session.add(superadmin)
         db.session.commit()
-    
+
     return {
         'User-Role': 'admin',
         'Admin-Username': 'superadmin_test'
@@ -78,7 +71,6 @@ def superadmin_headers(client, app):
 
 @pytest.fixture
 def sample_member(app):
-    """Create sample member for testing"""
     with app.app_context():
         member = Member(
             full_names='John Doe',
@@ -101,7 +93,6 @@ def sample_member(app):
 
 @pytest.fixture
 def sample_meeting(app, sample_member):
-    """Create sample meeting for testing"""
     with app.app_context():
         from datetime import datetime, timedelta
         meeting = Meeting(
