@@ -16,11 +16,13 @@ function AdminDashboard({ adminName, onLogout }) {
   const isSuperAdmin = adminRole === 'superadmin';
 
   useEffect(() => {
-    fetch(`${API_BASE}/members`, { headers: { 'User-Role': 'admin' } })
+    const adminUsername = localStorage.getItem('adminUsername');
+    const adminHeaders = { 'User-Role': 'admin', 'Admin-Username': adminUsername };
+    fetch(`${API_BASE}/members`, { headers: adminHeaders })
       .then(r => r.json()).then(d => setStats(s => ({ ...s, total: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
     fetch(`${API_BASE}/meetings`)
       .then(r => r.json()).then(d => setStats(s => ({ ...s, meetings: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
-    fetch(`${API_BASE}/admin/pending-members`, { headers: { 'User-Role': 'admin' } })
+    fetch(`${API_BASE}/admin/pending-members`, { headers: adminHeaders })
       .then(r => r.json()).then(d => setStats(s => ({ ...s, pending: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
   }, [tab]);
 

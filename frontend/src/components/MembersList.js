@@ -6,7 +6,7 @@ function MembersList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_BASE}/members`, { headers: { 'User-Role': 'admin' } })
+    fetch(`${API_BASE}/members`, { headers: { 'User-Role': 'admin', 'Admin-Username': localStorage.getItem('adminUsername') } })
       .then(res => res.json())
       .then(data => { setMembers(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));

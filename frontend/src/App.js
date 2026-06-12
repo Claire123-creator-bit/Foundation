@@ -40,7 +40,7 @@ function App() {
   const handleLogout = () => {
     setAdminName(null);
     setMember(null);
-    localStorage.clear();
+    ['adminName', 'adminUsername', 'adminRole', 'memberData'].forEach(k => localStorage.removeItem(k));
     setPage('home');
   };
 

@@ -7,7 +7,7 @@ function PendingMembers() {
   const [processing, setProcessing] = useState(null);
 
   const fetchPending = () => {
-    fetch(`${API_BASE}/admin/pending-members`, { headers: { 'User-Role': 'admin' } })
+    fetch(`${API_BASE}/admin/pending-members`, { headers: { 'User-Role': 'admin', 'Admin-Username': localStorage.getItem('adminUsername') } })
       .then(r => r.json())
       .then(d => { setMembers(Array.isArray(d) ? d : []); setLoading(false); })
       .catch(() => setLoading(false));
@@ -19,7 +19,7 @@ function PendingMembers() {
     setProcessing(id);
     fetch(`${API_BASE}/admin/approve-member/${id}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'User-Role': 'admin' },
+      headers: { 'Content-Type': 'application/json', 'User-Role': 'admin', 'Admin-Username': localStorage.getItem('adminUsername') },
       body: JSON.stringify({ action })
     })
       .then(r => r.json())

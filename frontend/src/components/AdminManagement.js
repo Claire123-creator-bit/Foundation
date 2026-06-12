@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import API_BASE from '../utils/apiConfig';
 
 function AdminManagement() {
-  const username = localStorage.getItem('adminUsername');
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -10,10 +9,14 @@ function AdminManagement() {
   const [msg, setMsg] = useState('');
   const [error, setError] = useState('');
 
-  const headers = { 'Content-Type': 'application/json', 'Admin-Username': username };
+  const getHeaders = () => ({
+    'Content-Type': 'application/json',
+    'Admin-Username': localStorage.getItem('adminUsername'),
+    'User-Role': 'admin',
+  });
 
   const fetchAdmins = () => {
-    fetch(`${API_BASE}/admin/list-admins`, { headers })
+    fetch(`${API_BASE}/admin/list-admins`, { headers: getHeaders() })
       .then(r => r.json())
       .then(d => { setAdmins(Array.isArray(d) ? d : []); setLoading(false); })
       .catch(() => setLoading(false));
@@ -28,7 +31,7 @@ function AdminManagement() {
     e.preventDefault();
     setMsg(''); setError('');
     fetch(`${API_BASE}/admin-register`, {
-      method: 'POST', headers,
+      method: 'POST', headers: getHeaders(),
       body: JSON.stringify(form)
     })
       .then(r => r.json())
@@ -41,7 +44,7 @@ function AdminManagement() {
 
   const handleDelete = (id, name) => {
     if (!window.confirm(`Remove admin "${name}"?`)) return;
-    fetch(`${API_BASE}/admin/delete-admin/${id}`, { method: 'DELETE', headers })
+    fetch(`${API_BASE}/admin/delete-admin/${id}`, { method: 'DELETE', headers: getHeaders() })
       .then(r => r.json())
       .then(d => { if (d.success) { setMsg('Admin removed'); fetchAdmins(); } else setError(d.error); })
       .catch(() => setError('Cannot connect to server'));
