@@ -45,3 +45,7 @@ venv/
 # Logs
 logs/
 *.log
+.env
+.env.*
+*.env
+backend/.env.save
