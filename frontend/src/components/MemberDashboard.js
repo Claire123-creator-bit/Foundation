@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import API_BASE from '../utils/apiConfig';
+import { apiFetch } from '../utils/apiClient';
+
+
 
 function MemberDashboard({ member, onLogout }) {
+
   const [tab, setTab] = useState('home');
   const [meetings, setMeetings] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_BASE}/meetings`)
-      .then(r => r.json())
+    apiFetch('/meetings')
       .then(d => setMeetings(Array.isArray(d) ? d : []))
       .catch(() => {});
   }, []);
+
 
   const tabs = [
     { id: 'home',     label: 'Home' },
@@ -144,13 +147,24 @@ function DonateTab({ member }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true); setStatus('');
-    fetch(`${API_BASE}/mpesa-stk-push`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
+    apiFetch('/payments/mpesa/stk-push', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount: form.amount,
+        phone: form.phone,
+        payment_type: form.type,
+      }),
     })
-      .then(r => r.json())
-      .then(d => { setLoading(false); if (d.success) setStatus('success'); else setStatus(d.error || 'Failed'); })
+      .then(d => {
+        setLoading(false);
+        if (d.success) setStatus('pending');
+        else setStatus(d.error || d.message || 'Failed');
+      })
       .catch(() => { setLoading(false); setStatus('error'); });
+
   };
 
   if (status === 'success') return (

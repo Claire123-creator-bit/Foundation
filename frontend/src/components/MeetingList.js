@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { apiFetch } from '../utils/apiClient';
 import API_BASE from '../utils/apiConfig';
-import { authHeaders } from '../utils/auth';
+
 
 function MeetingList() {
 
@@ -10,8 +11,7 @@ function MeetingList() {
   const [msg, setMsg] = useState('');
 
   useEffect(() => {
-    fetch(`${API_BASE}/meetings`)
-      .then(res => res.json())
+    apiFetch('/meetings')
       .then(data => setMeetings(Array.isArray(data) ? data : []))
       .catch(() => {});
   }, []);
@@ -20,15 +20,13 @@ function MeetingList() {
 
   const handleCreate = (e) => {
     e.preventDefault();
-    fetch(`${API_BASE}/meetings`, {
+    apiFetch('/meetings', {
       method: 'POST',
       headers: {
-        ...authHeaders(),
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(form)
     })
-      .then(res => res.json())
-
       .then(data => {
         if (data.success) {
           setMeetings(prev => [data.meeting, ...prev]);

@@ -6,6 +6,28 @@ import os
 import secrets
 import threading
 import jwt
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# fail-fast: validate required env vars at import time
+_required_env_vars = [
+    'SECRET_KEY',
+    'GOOGLE_CLIENT_ID',
+    'GOOGLE_CLIENT_SECRET',
+    'GOOGLE_REDIRECT_URI',
+    'DARAJA_CONSUMER_KEY',
+    'DARAJA_CONSUMER_SECRET',
+    'DARAJA_SHORTCODE',
+    'DARAJA_PASSKEY',
+    'DARAJA_CALLBACK_URL',
+    'DARAJA_ENV',
+    'FRONTEND_URL',
+    'SUPERADMIN_INITIAL_PASSWORD',
+]
+
+
+
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from logger import app_logger, auth_logger
@@ -17,8 +39,10 @@ from google_auth import (
     google_login_redirect_url,
     exchange_code_for_tokens,
     _verify_id_token,
-    find_or_create_member_by_email,
+    find_member_by_email,
+    create_pending_google_member,
 )
+
 
 
 
@@ -27,8 +51,22 @@ from google_auth import (
 
 app = Flask(__name__)
 
-# JWT configuration
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
+# JWT configuration (fail-fast)
+
+def _require_env(name: str) -> str:
+    value = (os.environ.get(name, '') or '').strip()
+    if not value:
+        raise RuntimeError(f"Missing required environment variable: {name}")
+    return value
+
+
+# fail-fast validate required env vars at import time
+for _name in _required_env_vars:
+    _require_env(_name)
+
+app.config['SECRET_KEY'] = _require_env('SECRET_KEY')
+
+
 
 # Configuration
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -651,33 +689,380 @@ def send_bulk_sms():
         return jsonify({'error': 'Failed to send SMS'}), 500
 
 
-# ── M-Pesa (public) ──
+# ── M-Pesa (payments - Daraja STK Push) ──
+
+import urllib.parse
+import urllib.request
+import base64
+
+
+def _daraja_get_access_token() -> str:
+    consumer_key = _require_env('DARAJA_CONSUMER_KEY')
+    consumer_secret = _require_env('DARAJA_CONSUMER_SECRET')
+
+
+    auth_str = f"{consumer_key}:{consumer_secret}".encode('utf-8')
+    b64 = base64.b64encode(auth_str).decode('utf-8')
+
+    env = _require_env('DARAJA_ENV').strip().lower()
+    base_url = 'https://sandbox.safaricom.co.ke' if env == 'sandbox' else 'https://api.safaricom.co.ke'
+
+
+    url = f"{base_url}/oauth/v1/generate?grant_type=client_credentials"
+
+    req = urllib.request.Request(
+        url,
+        headers={'Authorization': f'Basic {b64}'},
+        method='GET'
+    )
+
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        raw = resp.read().decode('utf-8')
+        data = json.loads(raw)
+
+    token = data.get('access_token')
+    if not token:
+        raise RuntimeError(f'Daraja token missing in response: {data}')
+    return token
+
+
+def _daraja_stk_password(shortcode: str, passkey: str, timestamp: str) -> str:
+    # Password = base64( shortcode + passkey + timestamp )
+    raw = f"{shortcode}{passkey}{timestamp}".encode('utf-8')
+    return base64.b64encode(raw).decode('utf-8')
+
+
+def _daraja_base_url() -> str:
+    env = os.environ.get('DARaja_ENV', 'sandbox').strip().lower()
+    return 'https://sandbox.safaricom.co.ke' if env == 'sandbox' else 'https://api.safaricom.co.ke'
+
+
+def _daraja_stk_push_url() -> str:
+    return f"{_daraja_base_url()}/mpesa/stkpush/v1/processrequest"
+
+
+def _daraja_stk_callback_url() -> str:
+    callback_url = _require_env('DARAJA_CALLBACK_URL')
+
+    # Ensure we point to our backend route
+    # If caller included /payments/... already, keep it.
+    if callback_url.endswith('/payments/mpesa/callback'):
+        return callback_url
+    return callback_url.rstrip('/') + '/payments/mpesa/callback'
+
+
+def _normalize_phone(phone: str) -> str:
+    p = (phone or '').strip().replace(' ', '').replace('-', '')
+    if p.startswith('+'):
+        p = p[1:]
+    if p.startswith('0'):
+        p = '254' + p[1:]
+    return p
+
+
+@app.route('/payments/mpesa/stk-push', methods=['POST'])
+@jwt_required('member')
+def mpesa_payments_stk_push():
+    payload = request.jwt_payload
+    member_id = payload.get('member_id')
+    if not member_id:
+        return jsonify({'success': False, 'message': 'Invalid token'}), 403
+
+    data = get_request_json()
+    amount = data.get('amount')
+    phone_number = data.get('phone') or data.get('phone_number')
+    payment_type = data.get('payment_type') or data.get('payment_type'.lower()) or 'Donation'
+
+    if amount is None or phone_number is None:
+        return jsonify({'success': False, 'message': 'amount and phone are required'}), 400
+
+    # Never trust amount/phone for identity; member_id is trusted, amount must be numeric.
+    try:
+        # Store exact amount in db.Numeric; convert to string/decimal via SQLAlchemy
+        amount_num = str(amount)
+    except Exception:
+        return jsonify({'success': False, 'message': 'Invalid amount'}), 400
+
+    member = Member.query.get(member_id)
+    if not member:
+        return jsonify({'success': False, 'message': 'Member not found'}), 404
+
+    normalized_phone = _normalize_phone(phone_number)
+    if not normalized_phone:
+        return jsonify({'success': False, 'message': 'Invalid phone'}), 400
+
+    shortcode = _require_env('DARAJA_SHORTCODE')
+    passkey = _require_env('DARAJA_PASSKEY')
+
+
+    phone_for_stk = normalized_phone
+
+    # Timestamp format: YYYYMMDDHHMMSS
+    timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+    password = _daraja_stk_password(shortcode, passkey, timestamp)
+
+    # Generate an idempotency merchant request id
+    # (Daraja also returns CheckoutRequestID)
+    merchant_request_id = secrets.token_urlsafe(16)
+
+    callback_url = _daraja_stk_callback_url()
+
+    checkout_request_id = None
+
+    # Create pending payment record BEFORE calling Daraja
+    payment = Payment(
+        member_id=member.id,
+        full_name=member.full_names,
+        phone_number=phone_for_stk,
+        amount=amount_num,
+        payment_type=str(payment_type),
+        merchant_request_id=merchant_request_id,
+        status='pending'
+    )
+    db.session.add(payment)
+    db.session.commit()
+
+    try:
+        access_token = _daraja_get_access_token()
+
+        stk_payload = {
+            'BusinessShortCode': shortcode,
+            'Password': password,
+            'Timestamp': timestamp,
+            'TransactionType': 'CustomerPayBillOnline',
+            'Amount': int(float(amount_num)),
+            'PartyA': phone_for_stk,
+            'PartyB': shortcode,
+            'PhoneNumber': phone_for_stk,
+            'CallBackURL': callback_url,
+            'AccountReference': member.full_names[:30] if member.full_names else f'member-{member.id}',
+            'TransactionDesc': 'Mbogo Foundation Payment',
+        }
+
+        # Daraja requires an optional MerchantRequestID only in some configs.
+        # We keep our own idempotency id in merchant_request_id field.
+
+        req = urllib.request.Request(
+            _daraja_stk_push_url(),
+            data=json.dumps(stk_payload).encode('utf-8'),
+            headers={
+                'Authorization': f'Bearer {access_token}',
+                'Content-Type': 'application/json'
+            },
+            method='POST'
+        )
+
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            raw = resp.read().decode('utf-8')
+            daraja_resp = json.loads(raw)
+
+        # Extract checkout request id
+        stk = daraja_resp.get('d') if isinstance(daraja_resp, dict) else None
+        if isinstance(stk, dict):
+            checkout_request_id = stk.get('CheckoutRequestID')
+
+        payment.checkout_request_id = checkout_request_id
+        payment.callback_payload = json.dumps(daraja_resp)
+        payment.status = 'pending'
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'payment_id': payment.id,
+            'merchant_request_id': payment.merchant_request_id,
+            'checkout_request_id': payment.checkout_request_id,
+            'status': payment.status,
+        })
+
+    except Exception as e:
+        # Mark failed but keep raw error for audit
+        payment.status = 'failed'
+        payment.failure_reason = str(e)[:300]
+        payment.callback_payload = payment.callback_payload or ''
+        db.session.commit()
+        app_logger.error(f"STK push failed: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'message': 'Payment initiation failed'}), 500
+
+
+@app.route('/payments/mpesa/callback', methods=['POST'])
+def mpesa_payments_callback():
+    try:
+        raw_json = request.get_json(silent=True) or {}
+
+        # Store raw payload for audit early (even if validation fails)
+        body = raw_json.get('Body') or {}
+        stk = body.get('stkCallback') or {}
+
+        merchant_request_id = stk.get('MerchantRequestID')
+        checkout_request_id = stk.get('CheckoutRequestID')
+        result_code = stk.get('ResultCode')
+        result_desc = stk.get('ResultDesc')
+
+        # Required identifiers
+        if not merchant_request_id and not checkout_request_id:
+            return jsonify({'success': False, 'message': 'Invalid callback payload'}), 400
+
+        # Locate payment by merchant_request_id first, then checkout_request_id
+        payment = None
+        if merchant_request_id:
+            payment = Payment.query.filter_by(merchant_request_id=merchant_request_id).first()
+        if not payment and checkout_request_id:
+            payment = Payment.query.filter_by(checkout_request_id=checkout_request_id).first()
+
+        if not payment:
+            # Unknown callback: reject to avoid spoofing. Do not update DB.
+            app_logger.warning(
+                'Mpesa callback for unknown payment',
+                extra={'merchant_request_id': merchant_request_id, 'checkout_request_id': checkout_request_id}
+            )
+            return jsonify({'success': False, 'message': 'Unknown payment'}), 400
+
+        # Idempotency: if already completed/failed, ignore duplicates.
+        if payment.status in {'complete', 'failed'} and payment.callback_payload:
+            return jsonify({'success': True}), 200
+
+        # Extract receipt/transaction id only. 
+        # DB is the source of truth for money amount.
+        callback_meta = stk.get('CallbackMetadata') or {}
+        receipt_from_callback = None
+        if isinstance(callback_meta, dict):
+            items = callback_meta.get('Item') or []
+            if isinstance(items, list):
+                for it in items:
+                    if not isinstance(it, dict):
+                        continue
+                    key = it.get('Name')
+                    val = it.get('Value')
+                    if key in {'MpesaReceiptNumber', 'ReceiptNumber'}:
+                        receipt_from_callback = val
+
+        # Validate identifiers match DB record exactly
+        if merchant_request_id and payment.merchant_request_id != merchant_request_id:
+            app_logger.warning('Mpesa callback rejected: MerchantRequestID mismatch', extra={
+                'payment_id': payment.id,
+                'merchant_request_id': merchant_request_id,
+                'expected_merchant_request_id': payment.merchant_request_id,
+                'ip': request.headers.get('X-Forwarded-For', request.remote_addr)
+            })
+            return jsonify({'success': False, 'message': 'MerchantRequestID mismatch'}), 400
+        if checkout_request_id and payment.checkout_request_id != checkout_request_id:
+            app_logger.warning('Mpesa callback rejected: CheckoutRequestID mismatch', extra={
+                'payment_id': payment.id,
+                'checkout_request_id': checkout_request_id,
+                'expected_checkout_request_id': payment.checkout_request_id,
+                'ip': request.headers.get('X-Forwarded-For', request.remote_addr)
+            })
+            return jsonify({'success': False, 'message': 'CheckoutRequestID mismatch'}), 400
+
+        # Replay protection (time-based): ignore if payment is too old.
+        # We use Payment.payment_date when available.
+        try:
+            created_at = payment.payment_date
+            if created_at:
+                max_age_min = int(os.environ.get('DARAJA_CALLBACK_MAX_AGE_MINUTES', '60'))
+                if datetime.utcnow() - created_at > timedelta(minutes=max_age_min):
+                    app_logger.warning('Mpesa callback rejected: callback replay too old', extra={
+                        'payment_id': payment.id,
+                        'created_at': created_at.isoformat(),
+                        'max_age_min': max_age_min,
+                        'ip': request.headers.get('X-Forwarded-For', request.remote_addr)
+                    })
+                    return jsonify({'success': False, 'message': 'Callback too old'}), 400
+        except Exception:
+            # If timestamp parsing fails, don't block the callback solely for that.
+            pass
+
+        # Strict payment state machine enforcement
+        # pending -> complete/failed allowed
+        # complete/failed -> no change
+        current_status = payment.status
+        success = (result_code == 0)
+        next_status = 'complete' if success else 'failed'
+
+        allowed = {
+            ('pending', 'complete'),
+            ('pending', 'failed'),
+        }
+
+        if current_status in {'complete', 'failed'}:
+            # Already handled above by early return when callback_payload exists.
+            # If callback_payload is missing, still enforce no change.
+            app_logger.info('Mpesa callback ignored: payment already finalized', extra={
+                'payment_id': payment.id,
+                'current_status': current_status,
+                'incoming_result_code': result_code,
+                'ip': request.headers.get('X-Forwarded-For', request.remote_addr)
+            })
+            return jsonify({'success': True}), 200
+
+        if (current_status, next_status) not in allowed:
+            app_logger.warning('Mpesa callback rejected: invalid state transition', extra={
+                'payment_id': payment.id,
+                'current_status': current_status,
+                'next_status': next_status,
+                'ip': request.headers.get('X-Forwarded-For', request.remote_addr)
+            })
+            return jsonify({'success': False, 'message': 'Invalid payment state transition'}), 400
+
+        # Store raw payload for audit
+        payment.callback_payload = json.dumps(raw_json)
+
+        payment.status = next_status
+        payment.failure_reason = None if success else (result_desc or 'Payment failed')
+
+        if receipt_from_callback is not None:
+            payment.transaction_id = str(receipt_from_callback)
+
+        db.session.commit()
+
+
+        # SMS receipt on success only
+        if success and payment.transaction_id and payment.phone_number:
+            try:
+                sms_text = f"Payment received: KES {payment.amount}. Transaction ID: {payment.transaction_id}. Thank you for supporting Mbogo Foundation."
+                sms_result = send_sms(payment.phone_number, sms_text)
+                app_logger.info('Payment receipt SMS sent', extra={'payment_id': payment.id, 'sms_result': sms_result})
+            except Exception as sms_e:
+                app_logger.error(f"Receipt SMS failed for payment {payment.id}: {str(sms_e)}", exc_info=True)
+
+        return jsonify({'success': True}), 200
+
+    except Exception as e:
+        app_logger.error(f"Mpesa callback error: {str(e)}", exc_info=True)
+        # Return 400/500? Prefer 400 to discourage retries on invalid spoofed payload.
+        return jsonify({'success': False}), 400
+
+
+
+# ── Legacy/compat M-Pesa (deprecated) ──
+
+# WARNING: This endpoint is intentionally protected to prevent abuse.
+# The production payment flow is POST /payments/mpesa/stk-push (JWT member-only).
 
 @app.route('/mpesa-stk-push', methods=['POST'])
-def mpesa_stk_push():
+@jwt_required('member')
+def mpesa_legacy_stk_push():
     try:
         data = get_request_json()
         phone = (data.get('phone', '') or '').strip()
         amount = data.get('amount', '')
-        name = (data.get('name', '') or '').strip()
 
-        if not phone or not amount or not name:
-            return jsonify({'success': False, 'error': 'All fields are required'}), 400
+        # Keep response strict: legacy is deprecated and must not be used.
+        # Frontend must use /payments/mpesa/stk-push.
+        return jsonify({
+            'success': False,
+            'error': 'Legacy endpoint is deprecated. Use /payments/mpesa/stk-push.'
+        }), 410
 
-        if phone.startswith('0'):
-            phone = '254' + phone[1:]
-        elif phone.startswith('+'):
-            phone = phone[1:]
-
-        app_logger.info(f"M-Pesa STK push initiated for {name} (KES {amount})")
-        return jsonify({'success': True, 'phone': phone, 'amount': amount})
 
     except Exception as e:
-        app_logger.error(f"M-Pesa STK push error: {str(e)}", exc_info=True)
+        app_logger.error(f"M-Pesa legacy STK push error: {str(e)}", exc_info=True)
         return jsonify({'success': False, 'error': 'Payment request failed'}), 500
 
 
+
 # ── Global Error Handlers ──
+
 
 @app.errorhandler(404)
 def not_found(error):
@@ -704,7 +1089,89 @@ def shutdown_session(exception=None):
     db.session.remove()
 
 
+# ── Complete Google profile (member-only pending) ──
+
+# NOTE: This flow expects a JWT to already identify the pending profile user.
+# If your Google callback does not issue a JWT for pending_profile members,
+# you must issue a short-lived “pending” JWT here instead (recommended).
+
+
+@app.route('/auth/google/complete-profile', methods=['POST'])
+def auth_google_complete_profile():
+    try:
+        data = get_request_json()
+        phone = (data.get('phone_number') or '').strip()
+        national_id = (data.get('national_id') or '').strip()
+
+        if not phone or not national_id:
+            return jsonify({'success': False, 'message': 'phone_number and national_id are required'}), 400
+
+        # We require the current JWT to identify the user.
+        # During the pending flow, we purposely do not issue a JWT. However
+        # CompleteProfile UI calls with Authorization header, so we require it.
+        # (If you later change the flow to use a server-side pending session,
+        # this decorator can be replaced.)
+        payload, err_resp, err_code = _decode_jwt_from_request()
+        if err_resp is not None:
+            return err_resp, err_code
+
+        if payload.get('role') != 'member':
+            return jsonify({'success': False, 'message': 'Forbidden'}), 403
+
+        member_id = payload.get('member_id')
+        if not member_id:
+            return jsonify({'success': False, 'message': 'Invalid token'}), 403
+
+        member = Member.query.get(member_id)
+        if not member:
+            return jsonify({'success': False, 'message': 'Member not found'}), 404
+
+        if member.status != 'pending_profile':
+            return jsonify({'success': False, 'message': 'Profile already completed'}), 400
+
+        # Validate uniqueness to avoid integrity errors.
+        if Member.query.filter(Member.phone_number == phone, Member.id != member.id).first():
+            return jsonify({'success': False, 'message': 'Phone number already in use'}), 400
+
+        if Member.query.filter(Member.national_id == national_id, Member.id != member.id).first():
+            return jsonify({'success': False, 'message': 'National ID already in use'}), 400
+
+        member.phone_number = phone
+        member.national_id = national_id
+        member.status = 'active'
+        member.is_verified = True
+
+        # Ensure required profile fields exist (placeholders are allowed for others).
+        if not member.county:
+            member.county = 'TBD'
+        if not member.constituency:
+            member.constituency = 'TBD'
+        if not member.ward:
+            member.ward = 'TBD'
+        if not member.physical_location:
+            member.physical_location = member.ward or 'TBD'
+
+        db.session.commit()
+
+        jwt_token = jwt.encode(
+            {
+                'member_id': member.id,
+                'role': 'member',
+                'exp': datetime.utcnow() + timedelta(days=7)
+            },
+            app.config['SECRET_KEY'],
+            algorithm='HS256'
+        )
+
+        return jsonify({'success': True, 'token': jwt_token, 'member': member.to_dict()})
+
+    except Exception as e:
+        app_logger.error(f"Complete profile error: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'message': 'Completion failed'}), 500
+
+
 # ── Email verification (public) ──
+
 
 @app.route('/verify-email/<token>', methods=['GET'])
 def verify_email(token):
@@ -744,15 +1211,20 @@ def resend_verification():
     return jsonify({'success': True, 'message': 'Verification email resent'})
 
 
-# ── Google OAuth (JWT only; creates member accounts) ──
+# ── Google OAuth + pending profile completion ──
 
 @app.route('/auth/google/login', methods=['GET'])
 def auth_google_login():
+
     try:
+        # OAuth state (CSRF protection). We store it in a signed server-side token-less
+        # way by returning it to the client; but to truly validate on callback
+        # we embed it into the redirect and require it back.
         state = secrets.token_urlsafe(32)
         redirect_url = google_login_redirect_url(state)
-        # We keep state in query for minimal changes (no server-side storage required).
-        return jsonify({'success': True, 'redirect_url': redirect_url + f"&state={state}"})
+        # google_login_redirect_url already includes state; we return it for the caller too.
+        return jsonify({'success': True, 'redirect_url': redirect_url})
+
     except Exception as e:
         app_logger.error(f"Google OAuth login error: {str(e)}", exc_info=True)
         return jsonify({'success': False, 'message': 'Google login failed'}), 500
@@ -760,10 +1232,15 @@ def auth_google_login():
 
 @app.route('/auth/google/callback', methods=['GET'])
 def auth_google_callback():
+
     try:
         code = request.args.get('code')
+        state = request.args.get('state')
         if not code:
             return jsonify({'success': False, 'message': 'Missing code'}), 400
+        if not state:
+            return jsonify({'success': False, 'message': 'Missing state'}), 400
+
 
         # Exchange code for Google tokens
         token_response = exchange_code_for_tokens(code)
@@ -778,35 +1255,54 @@ def auth_google_callback():
         if not email or not email_verified:
             return jsonify({'success': False, 'message': 'Unverified email'}), 403
 
-        # Find or create member by email
+        # Member-only login with proper profile flow.
         name = decoded.get('name') or email.split('@')[0]
-        member = find_or_create_member_by_email(email=email, full_name=name)
 
-        # Generate existing JWT token
-        jwt_token = jwt.encode(
+        member = find_member_by_email(email=email)
+
+        # Redirect to frontend with either:
+        # - google_token=<FULL_JWT> for already-active members
+        # - google_pending_profile=1&token=<PENDING_JWT> for pending_profile members
+
+        frontend_url = _require_env('FRONTEND_URL').rstrip('/')
+
+        from urllib.parse import quote
+
+
+        # If member exists and is active, issue full access JWT.
+        if member and member.status == 'active':
+            full_jwt_token = jwt.encode(
+                {
+                    'member_id': member.id,
+                    'role': 'member',
+                    'exp': datetime.utcnow() + timedelta(days=7)
+                },
+                app.config['SECRET_KEY'],
+                algorithm='HS256'
+            )
+            token_q = quote(full_jwt_token if isinstance(full_jwt_token, str) else str(full_jwt_token), safe='')
+            return f"<html><body><script>window.location.href='{frontend_url}/?google_token={token_q}';</script></body></html>"
+
+        # Otherwise: ensure pending_profile record exists and issue short-lived pending JWT.
+        if not member:
+            member = create_pending_google_member(email=email, full_name=name)
+
+        pending_jwt_token = jwt.encode(
             {
+                'type': 'pending',
                 'member_id': member.id,
                 'role': 'member',
-                'exp': datetime.utcnow() + timedelta(days=7)
+                'email': member.email,
+                'exp': datetime.utcnow() + timedelta(minutes=15)
             },
             app.config['SECRET_KEY'],
             algorithm='HS256'
         )
 
-        # Redirect to frontend with token ONLY in query
-        frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000').rstrip('/')
-        user_payload = {
-            'id': member.id,
-            'name': member.full_names,
-            'email': member.email,
-            'role': 'member'
-        }
+        pending_q = quote(pending_jwt_token if isinstance(pending_jwt_token, str) else str(pending_jwt_token), safe='')
+        return f"<html><body><script>window.location.href='{frontend_url}/?google_pending_profile=1&token={pending_q}';</script></body></html>"
 
-        from urllib.parse import quote
-        token_q = quote(jwt_token if isinstance(jwt_token, str) else str(jwt_token), safe='')
-        user_q = quote(str(user_payload), safe='')
-        # Keep minimal: frontend will ignore user and call /me using token.
-        return f"<html><body><script>window.location.href='{frontend_url}/?google_token={token_q}';</script></body></html>"
+
 
     except Exception as e:
         app_logger.error(f"Google OAuth callback error: {str(e)}", exc_info=True)

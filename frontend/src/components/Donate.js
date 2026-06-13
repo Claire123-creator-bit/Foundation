@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import API_BASE from '../utils/apiConfig';
+import { apiFetch } from '../utils/apiClient';
 
 function Donate() {
   const [form, setForm] = useState({ phone: '', amount: '', name: '', type: 'Donation' });
@@ -14,16 +14,16 @@ function Donate() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true); setStatus('');
-    fetch(`${API_BASE}/mpesa-stk-push`, {
+
+    apiFetch('/payments/mpesa/stk-push', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
     })
-      .then(res => res.json())
       .then(data => {
         setLoading(false);
         if (data.success) setStatus('success');
-        else setStatus(data.error || 'Payment failed. Please try again.');
+        else setStatus(data.error || data.message || 'Payment failed. Please try again.');
       })
       .catch(() => { setLoading(false); setStatus('error'); });
   };

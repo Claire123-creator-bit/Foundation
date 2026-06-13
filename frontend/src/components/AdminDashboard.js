@@ -6,8 +6,9 @@ import MeetingList from './MeetingList';
 import Donate from './Donate';
 import PendingMembers from './PendingMembers';
 import AdminManagement from './AdminManagement';
+import { apiFetch } from '../utils/apiClient';
 import API_BASE from '../utils/apiConfig';
-import { authHeaders } from '../utils/auth';
+
 
 function AdminDashboard({ adminName, onLogout }) {
 
@@ -16,13 +17,18 @@ function AdminDashboard({ adminName, onLogout }) {
   const [stats, setStats] = useState({ total: 0, meetings: 0, pending: 0 });
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
-    fetch(`${API_BASE}/members`, { headers: authHeaders() })
-      .then(r => r.json()).then(d => setStats(s => ({ ...s, total: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
+    apiFetch('/members')
+      .then(d => setStats(s => ({ ...s, total: Array.isArray(d) ? d.length : 0 })))
+      .catch(() => {});
 
-    fetch(`${API_BASE}/meetings`)
-      .then(r => r.json()).then(d => setStats(s => ({ ...s, meetings: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
-    fetch(`${API_BASE}/admin/pending-members`, { headers: authHeaders() })
-      .then(r => r.json()).then(d => setStats(s => ({ ...s, pending: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
+    apiFetch('/meetings')
+      .then(d => setStats(s => ({ ...s, meetings: Array.isArray(d) ? d.length : 0 })))
+      .catch(() => {});
+
+    apiFetch('/admin/pending-members')
+      .then(d => setStats(s => ({ ...s, pending: Array.isArray(d) ? d.length : 0 })))
+      .catch(() => {});
+
 
 
   }, [tab]);
@@ -115,6 +121,7 @@ function AdminDashboard({ adminName, onLogout }) {
         {tab === 'meetings' && <MeetingList />}
         {tab === 'donate'   && <Donate />}
         {tab === 'settings' && <AdminManagement />}
+
 
 
 

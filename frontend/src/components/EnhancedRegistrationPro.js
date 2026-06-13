@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
+import { authHeaders } from '../utils/auth';
+
 
 const categories = ['Church Leader', 'Pastor', 'Village Elder', 'Agent', 'Youth Leader', 'Women Leader', 'Community Member', 'Government Official', 'NGO Representative', 'Volunteer'];
 
@@ -18,13 +20,13 @@ function RegisterMember({ onRegistrationSuccess }) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'User-Role': 'admin',
-        'Admin-Username': localStorage.getItem('adminUsername') || '',
+        ...authHeaders(),
       },
       body: JSON.stringify(form)
     })
       .then(res => res.json().then(data => ({ ok: res.ok, data })))
       .then(({ ok, data }) => {
+
         setLoading(false);
         if (ok) {
           setMsg('Member registered successfully!');

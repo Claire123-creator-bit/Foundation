@@ -102,10 +102,25 @@ class Payment(db.Model):
     member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
     full_name = db.Column(db.String(150))
     phone_number = db.Column(db.String(20), nullable=False, index=True)
-    amount = db.Column(db.Float, nullable=False)
+
+    # Use fixed-precision numeric for money safety.
+    amount = db.Column(db.Numeric(18, 2), nullable=False)
+
     payment_type = db.Column(db.String(50), nullable=False)
+
+    # Daraja/STK identifiers
+    merchant_request_id = db.Column(db.String(100), unique=True, index=True)
+    checkout_request_id = db.Column(db.String(100), unique=True, index=True)
+
+    # Mpesa receipt / provider transaction id
     transaction_id = db.Column(db.String(100), unique=True, index=True)
+
     status = db.Column(db.String(20), default='pending', index=True)
+    failure_reason = db.Column(db.String(300))
+
+    # Store raw callback payload for audit/reconciliation.
+    callback_payload = db.Column(db.Text)
+
     payment_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
@@ -114,9 +129,13 @@ class Payment(db.Model):
             'member_id': self.member_id,
             'full_name': self.full_name,
             'phone_number': self.phone_number,
-            'amount': self.amount,
+            'amount': str(self.amount) if self.amount is not None else None,
             'payment_type': self.payment_type,
+            'merchant_request_id': self.merchant_request_id,
+            'checkout_request_id': self.checkout_request_id,
             'transaction_id': self.transaction_id,
             'status': self.status,
-            'payment_date': self.payment_date.isoformat(),
+            'failure_reason': self.failure_reason,
+            'payment_date': self.payment_date.isoformat() if self.payment_date else None,
         }
+

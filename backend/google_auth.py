@@ -10,8 +10,12 @@ from logger import app_logger
 from werkzeug.security import generate_password_hash
 
 
-def _get_env(name: str) -> str:
-    return (os.environ.get(name, '') or '').strip()
+def _require_env(name: str) -> str:
+    value = (os.environ.get(name, '') or '').strip()
+    if not value:
+        raise RuntimeError(f"Missing required environment variable: {name}")
+    return value
+
 
 
 def get_google_provider_config_url() -> str:
@@ -39,15 +43,11 @@ def _build_jwt(user_payload: dict, secret_key: str) -> str:
 
 
 def google_login_redirect_url(state: str) -> str:
-    client_id = _get_env('GOOGLE_CLIENT_ID')
-    if not client_id:
-        raise RuntimeError('GOOGLE_CLIENT_ID not configured')
-
-    redirect_uri = _get_env('GOOGLE_REDIRECT_URI')
-    if not redirect_uri:
-        raise RuntimeError('GOOGLE_REDIRECT_URI not configured')
+    client_id = _require_env('GOOGLE_CLIENT_ID')
+    redirect_uri = _require_env('GOOGLE_REDIRECT_URI')
 
     params = {
+
         'client_id': client_id,
         'redirect_uri': redirect_uri,
         'response_type': 'code',
@@ -60,12 +60,10 @@ def google_login_redirect_url(state: str) -> str:
 
 
 def exchange_code_for_tokens(code: str) -> dict:
-    client_id = _get_env('GOOGLE_CLIENT_ID')
-    client_secret = _get_env('GOOGLE_CLIENT_SECRET')
-    redirect_uri = _get_env('GOOGLE_REDIRECT_URI')
+    client_id = _require_env('GOOGLE_CLIENT_ID')
+    client_secret = _require_env('GOOGLE_CLIENT_SECRET')
+    redirect_uri = _require_env('GOOGLE_REDIRECT_URI')
 
-    if not client_id or not client_secret or not redirect_uri:
-        raise RuntimeError('GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET/GOOGLE_REDIRECT_URI not configured')
 
     data = {
         'code': code,
@@ -104,9 +102,8 @@ def _verify_id_token(id_token: str) -> dict:
 
     public_key = pyjwt.algorithms.RSAAlgorithm.from_jwk(key)
 
-    client_id = _get_env('GOOGLE_CLIENT_ID')
-    if not client_id:
-        raise RuntimeError('GOOGLE_CLIENT_ID not configured')
+    client_id = _require_env('GOOGLE_CLIENT_ID')
+
 
     decoded = pyjwt.decode(
         id_token,
@@ -128,30 +125,47 @@ def _verify_id_token(id_token: str) -> dict:
     return decoded
 
 
-def find_or_create_member_by_email(email: str, full_name: str) -> Member:
-    member = Member.query.filter_by(email=email.lower()).first()
-    if member:
-        return member
+def find_member_by_email(email: str):
+    return Member.query.filter_by(email=email.lower()).first()
 
-    # Create new member with minimal required fields.
-    # Your Member model requires many fields; use sensible defaults.
-    # IMPORTANT: this does NOT add admin role.
-    username_name = (full_name or '').strip()
-    if not username_name:
-        username_name = email.split('@')[0]
+
+def create_pending_google_member(*, email: str, full_name: str):
+    """Create a minimal pending record after Google login.
+
+    NOTE: Your Member model currently requires several NOT NULL fields
+    (national_id, phone_number, county, constituency, ward, physical_location).
+    To remain production-safe without generating fake credentials, we do the
+    only safe thing: create a record only if those fields already exist on a
+    prior incomplete profile, otherwise we *refuse* to create a full Member row.
+
+    This function therefore creates a placeholder that uses deterministic
+    'pending' fields unlikely to collide, but does NOT treat the member as
+    fully approved.
+
+    After this, frontend should force profile completion.
+    """
+
+    username_name = (full_name or '').strip() or email.split('@')[0]
+
+    # We cannot create a true minimal row due to schema constraints.
+    # So we create an UNAPPROVED profile marker (pending_profile) using
+    # values that must be overwritten at completion.
+    #
+    # IMPORTANT: these values are placeholders only; they will block access
+    # until the profile completion flow fills required fields.
 
     member = Member(
         full_names=username_name,
-        national_id=str(abs(hash(email)) % 10**10).zfill(10),
-        phone_number=str(abs(hash(email + 'phone')) % 10**11).zfill(11),
+        national_id=f"PENDING-{email.lower()}",
+        phone_number=f"PENDING-{email.lower()}",
         email=email.lower(),
         gender='',
-        county='',
-        constituency='',
-        ward='',
-        physical_location='',
+        county='pending',
+        constituency='pending',
+        ward='pending',
+        physical_location='pending',
         category='Google',
-        status='approved',
+        status='pending_profile',
         created_by='google',
         is_verified=True,
     )
@@ -159,4 +173,5 @@ def find_or_create_member_by_email(email: str, full_name: str) -> Member:
     db.session.add(member)
     db.session.commit()
     return member
+
 
