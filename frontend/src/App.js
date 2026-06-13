@@ -126,14 +126,20 @@ function App() {
             <button style={s.btnOutline} onClick={() => setPage('member-register')}>Register Now</button>
           </div>
 
-          <div style={s.card}>
-            <h2 style={s.cardTitle}>Admin Portal</h2>
-            <p style={s.cardDesc}>Manage members, send SMS, schedule meetings and process payments.</p>
-            <button style={s.btnWhite} onClick={() => setPage('admin-login')}>Admin Login</button>
-          </div>
+
         </div>
 
-        <p style={s.copy}>© {new Date().getFullYear()} Mbogo Welfare Empowerment Foundation</p>
+        <div style={s.footerRow}>
+          <p style={s.copy}>© {new Date().getFullYear()} Mbogo Welfare Empowerment Foundation</p>
+          <button
+            type="button"
+            onClick={() => setPage('admin-login')}
+            style={s.staffLink}
+          >
+            Staff Access
+          </button>
+        </div>
+
       </div>
     </div>
   );
@@ -152,7 +158,10 @@ const s = {
   btnWhite:  { width: '100%', height: 48, background: '#fff', color: '#0A2463', border: 'none', fontSize: 15, fontWeight: 700, cursor: 'pointer', marginTop: 4 },
   btnOutline:{ width: '100%', height: 48, background: 'transparent', color: '#fff', border: '2px solid rgba(255,255,255,0.5)', fontSize: 15, fontWeight: 600, cursor: 'pointer' },
   copy:      { color: 'rgba(255,255,255,0.3)', fontSize: 11, fontWeight: 300 },
+  footerRow: { width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, marginTop: 12 },
+  staffLink: { width: 'auto', height: 34, background: 'rgba(255,255,255,0.12)', color: '#fff', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 20, padding: '0 16px', fontSize: 12, fontWeight: 600, cursor: 'pointer' },
 };
+
 
 export default App;
 

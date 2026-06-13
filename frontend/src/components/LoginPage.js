@@ -67,16 +67,7 @@ function LoginPage({ onLogin, onBack }) {
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
 
-            <button
-              type="button"
-              style={s.googleBtn}
-              onClick={() => {
-                window.location.href = `${API_BASE}/auth/google/login`;
-              }}
-              disabled={loading}
-            >
-              Continue with Google
-            </button>
+
           </form>
         </div>
       </div>
@@ -103,8 +94,8 @@ const s = {
   eye:       { position: 'absolute', right: 12, top: 10, width: 28, height: 28, border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 16, padding: 0 },
   error:     { color: '#b00020', fontSize: 13, fontWeight: 600, marginBottom: 12 },
   btn:       { width: '100%', height: 48, background: '#0A2463', color: '#fff', border: '2px solid #0A2463', fontSize: 15, fontWeight: 600, cursor: 'pointer', marginBottom: 12 },
-  googleBtn: { width: '100%', height: 48, background: '#fff', color: '#111', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 4, fontSize: 15, fontWeight: 600, cursor: 'pointer', marginBottom: 0 },
 };
+
 
 
 export default LoginPage;
