@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import API_BASE from '../utils/apiConfig';
+import { authHeaders } from '../utils/auth';
 
 function MeetingList() {
+
   const [meetings, setMeetings] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ title: '', date: '', time: '', venue: '' });
@@ -21,13 +23,12 @@ function MeetingList() {
     fetch(`${API_BASE}/meetings`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'User-Role': 'admin',
-        'Admin-Username': localStorage.getItem('adminUsername') || '',
+        ...authHeaders(),
       },
       body: JSON.stringify(form)
     })
       .then(res => res.json())
+
       .then(data => {
         if (data.success) {
           setMeetings(prev => [data.meeting, ...prev]);

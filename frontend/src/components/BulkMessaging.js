@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
+import { authHeaders } from '../utils/auth';
+
 
 const CATEGORIES = [
   'Church Leader', 'Pastor', 'Village Elder', 'Agent', 'Youth Leader',
@@ -19,12 +21,12 @@ function BulkMessaging() {
     fetch(`${API_BASE}/send-bulk-sms`, {
       method: 'POST',
       headers: {
-        'Content-Type':   'application/json',
-        'User-Role':      'admin',
-        'Admin-Username': localStorage.getItem('adminUsername') || '',
+        'Content-Type': 'application/json',
+        ...authHeaders(),
       },
       body: JSON.stringify({ message, category }),
     })
+
       .then(res => res.json())
       .then(data => {
         setLoading(false);

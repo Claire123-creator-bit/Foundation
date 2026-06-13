@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import API_BASE from '../utils/apiConfig';
+import { authHeaders } from '../utils/auth';
+
+
 
 function PendingMembers() {
   const [members, setMembers] = useState([]);
@@ -7,11 +10,12 @@ function PendingMembers() {
   const [processing, setProcessing] = useState(null);
 
   const fetchPending = () => {
-    fetch(`${API_BASE}/admin/pending-members`, { headers: { 'User-Role': 'admin', 'Admin-Username': localStorage.getItem('adminUsername') } })
+    fetch(`${API_BASE}/admin/pending-members`, { headers: authHeaders() })
       .then(r => r.json())
       .then(d => { setMembers(Array.isArray(d) ? d : []); setLoading(false); })
       .catch(() => setLoading(false));
   };
+
 
   useEffect(() => { fetchPending(); }, []);
 
@@ -19,12 +23,14 @@ function PendingMembers() {
     setProcessing(id);
     fetch(`${API_BASE}/admin/approve-member/${id}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'User-Role': 'admin', 'Admin-Username': localStorage.getItem('adminUsername') },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ action })
     })
       .then(r => r.json())
+
       .then(d => { setProcessing(null); if (d.success) fetchPending(); })
       .catch(() => setProcessing(null));
+
   };
 
   if (loading) return <p style={{ padding: 40, textAlign: 'center', fontWeight: 300 }}>Loading...</p>;

@@ -1,52 +1,102 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoginPage from './components/LoginPage';
 import AdminDashboard from './components/AdminDashboard';
 import MemberLogin from './components/MemberLogin';
 import MemberDashboard from './components/MemberDashboard';
 import MemberRegister from './components/MemberRegister';
+import { getToken, me, setToken } from './utils/auth';
 
 function App() {
   const [adminName, setAdminName] = useState(null);
   const [adminUsername, setAdminUsername] = useState(null);
+  const [adminRole, setAdminRole] = useState(null);
+
   const [member, setMember] = useState(null);
   const [page, setPage] = useState('home');
+  const [restoring, setRestoring] = useState(true);
 
   useEffect(() => {
-    const storedName = localStorage.getItem('adminName');
-    const storedUsername = localStorage.getItem('adminUsername');
-    const storedMember = localStorage.getItem('memberData');
-    if (storedName && storedUsername) {
-      setAdminName(storedName);
-      setAdminUsername(storedUsername);
-    } else if (storedMember) {
-      try {
-        setMember(JSON.parse(storedMember));
-      } catch (e) {
-        localStorage.removeItem('memberData');
-      }
+    const params = new URLSearchParams(window.location.search);
+    const googleToken = params.get('google_token');
+    if (googleToken) {
+      setToken(googleToken);
+      params.delete('google_token');
+      const newUrl = window.location.pathname + (params.toString() ? `?${params.toString()}` : '');
+      window.history.replaceState({}, document.title, newUrl);
     }
+
+    const token = getToken();
+    if (!token) {
+      setRestoring(false);
+      return;
+    }
+
+
+    (async () => {
+      try {
+        const data = await me();
+
+        if (data.role === 'admin' && data.admin) {
+          setAdminName(data.admin.full_name);
+          setAdminUsername(data.admin.username);
+          setAdminRole(data.admin.role || 'admin');
+          setMember(null);
+        } else if (data.role === 'member' && data.member) {
+          setMember(data.member);
+          setAdminName(null);
+          setAdminUsername(null);
+          setAdminRole(null);
+        } else {
+          setAdminName(null);
+          setAdminUsername(null);
+          setAdminRole(null);
+          setMember(null);
+        }
+      } catch (e) {
+        setToken(null);
+        setAdminName(null);
+        setAdminUsername(null);
+        setMember(null);
+      } finally {
+        setRestoring(false);
+      }
+    })();
   }, []);
 
-  const handleAdminLogin = (name, username, role) => {
+  const handleAdminLogin = (name, username, role, token) => {
+    setToken(token);
     setAdminName(name);
     setAdminUsername(username);
-    localStorage.setItem('adminName', name);
-    localStorage.setItem('adminUsername', username);
-    localStorage.setItem('adminRole', role);
+    setAdminRole(role);
+    setMember(null);
   };
 
-  const handleMemberLogin = (memberData) => {
+
+  const handleMemberLogin = (memberData, token) => {
+    setToken(token);
     setMember(memberData);
-    localStorage.setItem('memberData', JSON.stringify(memberData));
+    setAdminName(null);
+    setAdminUsername(null);
+    setAdminRole(null);
   };
 
   const handleLogout = () => {
+    setToken(null);
     setAdminName(null);
     setAdminUsername(null);
+    setAdminRole(null);
     setMember(null);
-    ['adminName', 'adminUsername', 'adminRole', 'memberData'].forEach(k => localStorage.removeItem(k));
     setPage('home');
   };
+
+
+  if (restoring) {
+    return (
+      <div style={s.page}>
+        <div style={{ textAlign: 'center', padding: 40, fontWeight: 300 }}>Loading session...</div>
+      </div>
+    );
+  }
 
   if (adminName && adminUsername) return <AdminDashboard adminName={adminName} onLogout={handleLogout} />;
   if (member) return <MemberDashboard member={member} onLogout={handleLogout} />;
@@ -59,7 +109,11 @@ function App() {
     <div style={s.page}>
       <div style={s.overlay}>
         <div style={s.logo}>
-          <img src="/mbogo-background.jpeg" alt="Mbogo Foundation logo" style={{ width: 90, height: 90, objectFit: 'cover', borderRadius: '50%', border: '4px solid #fff', marginBottom: 16 }} />
+          <img
+            src="/mbogo-background.jpeg"
+            alt="Mbogo Foundation logo"
+            style={{ width: 90, height: 90, objectFit: 'cover', borderRadius: '50%', border: '4px solid #fff', marginBottom: 16 }}
+          />
           <h1 style={s.title}>Mbogo Welfare Empowerment Foundation</h1>
           <p style={s.tagline}>Empowering Communities Through Unity</p>
         </div>
@@ -101,3 +155,4 @@ const s = {
 };
 
 export default App;
+

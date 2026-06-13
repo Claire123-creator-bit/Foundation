@@ -22,7 +22,7 @@ function LoginPage({ onLogin, onBack }) {
       .then(d => {
         setLoading(false);
         if (d.success) {
-          onLogin(d.name, d.username, d.role);
+          onLogin(d.name, d.username, d.role, d.token);
         } else {
           setError(d.message || 'Login failed');
         }
@@ -32,6 +32,7 @@ function LoginPage({ onLogin, onBack }) {
         setError('Cannot connect to server');
       });
   };
+
 
   return (
     <div style={s.page}>
@@ -65,12 +66,24 @@ function LoginPage({ onLogin, onBack }) {
             <button type="submit" style={s.btn} disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
+
+            <button
+              type="button"
+              style={s.googleBtn}
+              onClick={() => {
+                window.location.href = `${API_BASE}/auth/google/login`;
+              }}
+              disabled={loading}
+            >
+              Continue with Google
+            </button>
           </form>
         </div>
       </div>
     </div>
   );
 }
+
 
 const s = {
   page:      { display: 'flex', minHeight: '100vh', backgroundImage: 'url(/mbogo-background.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' },
@@ -89,7 +102,9 @@ const s = {
   input:     { width: '100%', padding: '12px 14px', fontSize: 14, border: '2px solid #0A2463', background: '#fff', color: '#0A2463', outline: 'none', marginBottom: 16, boxSizing: 'border-box' },
   eye:       { position: 'absolute', right: 12, top: 10, width: 28, height: 28, border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 16, padding: 0 },
   error:     { color: '#b00020', fontSize: 13, fontWeight: 600, marginBottom: 12 },
-  btn:       { width: '100%', height: 48, background: '#0A2463', color: '#fff', border: '2px solid #0A2463', fontSize: 15, fontWeight: 600, cursor: 'pointer', marginBottom: 20 },
+  btn:       { width: '100%', height: 48, background: '#0A2463', color: '#fff', border: '2px solid #0A2463', fontSize: 15, fontWeight: 600, cursor: 'pointer', marginBottom: 12 },
+  googleBtn: { width: '100%', height: 48, background: '#fff', color: '#111', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 4, fontSize: 15, fontWeight: 600, cursor: 'pointer', marginBottom: 0 },
 };
+
 
 export default LoginPage;

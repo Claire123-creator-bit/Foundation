@@ -7,23 +7,24 @@ import Donate from './Donate';
 import PendingMembers from './PendingMembers';
 import AdminManagement from './AdminManagement';
 import API_BASE from '../utils/apiConfig';
+import { authHeaders } from '../utils/auth';
 
 function AdminDashboard({ adminName, onLogout }) {
+
+
   const [tab, setTab] = useState('members');
   const [stats, setStats] = useState({ total: 0, meetings: 0, pending: 0 });
   const [menuOpen, setMenuOpen] = useState(false);
-  const adminRole = localStorage.getItem('adminRole');
-  const isSuperAdmin = adminRole === 'superadmin';
-
   useEffect(() => {
-    const adminUsername = localStorage.getItem('adminUsername');
-    const adminHeaders = { 'User-Role': 'admin', 'Admin-Username': adminUsername };
-    fetch(`${API_BASE}/members`, { headers: adminHeaders })
+    fetch(`${API_BASE}/members`, { headers: authHeaders() })
       .then(r => r.json()).then(d => setStats(s => ({ ...s, total: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
+
     fetch(`${API_BASE}/meetings`)
       .then(r => r.json()).then(d => setStats(s => ({ ...s, meetings: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
-    fetch(`${API_BASE}/admin/pending-members`, { headers: adminHeaders })
+    fetch(`${API_BASE}/admin/pending-members`, { headers: authHeaders() })
       .then(r => r.json()).then(d => setStats(s => ({ ...s, pending: Array.isArray(d) ? d.length : 0 }))).catch(() => {});
+
+
   }, [tab]);
 
   const tabs = [
@@ -33,7 +34,6 @@ function AdminDashboard({ adminName, onLogout }) {
     { id: 'sms',      label: ' SMS' },
     { id: 'meetings', label: ' Meetings' },
     { id: 'donate',   label: ' Donate' },
-    ...(isSuperAdmin ? [{ id: 'settings', label: ' Settings' }] : []),
   ];
 
   return (
@@ -78,8 +78,11 @@ function AdminDashboard({ adminName, onLogout }) {
       {menuOpen && (
         <div className="mobile-menu">
           {tabs.map(t => (
-            <button key={t.id} className={`mobile-link ${tab === t.id ? 'mobile-link-active' : ''}`}
-              onClick={() => { setTab(t.id); setMenuOpen(false); }}>
+            <button
+              key={t.id}
+              className={`mobile-link ${tab === t.id ? 'mobile-link-active' : ''}`}
+              onClick={() => { setTab(t.id); setMenuOpen(false); }}
+            >
               {t.label}
             </button>
           ))}
@@ -111,7 +114,10 @@ function AdminDashboard({ adminName, onLogout }) {
         {tab === 'sms'      && <BulkMessaging />}
         {tab === 'meetings' && <MeetingList />}
         {tab === 'donate'   && <Donate />}
-        {tab === 'settings' && isSuperAdmin && <AdminManagement />}
+        {tab === 'settings' && <AdminManagement />}
+
+
+
       </main>
 
       {/* ── Footer ── */}

@@ -1,0 +1,6 @@
+[2026-06-13 11:51:47] ERROR    [foundation] Database initialization failed: SUPERADMIN_INITIAL_PASSWORD environment variable is required
+(<class 'ValueError'>, ValueError('SUPERADMIN_INITIAL_PASSWORD environment variable is required'), <traceback object at 0x73484332c900>)
+Traceback (most recent call last):
+  File "/home/claire/Foundation/backend/main_app.py", line 119, in init_database
+    raise ValueError('SUPERADMIN_INITIAL_PASSWORD environment variable is required')
+ValueError: SUPERADMIN_INITIAL_PASSWORD environment variable is required

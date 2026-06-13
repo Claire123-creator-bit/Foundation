@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import API_BASE from '../utils/apiConfig';
+import { authHeaders } from '../utils/auth';
+
+
 
 function MembersList() {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_BASE}/members`, { headers: { 'User-Role': 'admin', 'Admin-Username': localStorage.getItem('adminUsername') } })
+    fetch(`${API_BASE}/members`, { headers: authHeaders() })
       .then(res => res.json())
       .then(data => { setMembers(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
+
 
   if (loading) return <p style={{ padding: '40px', textAlign: 'center', fontWeight: 300 }}>Loading...</p>;
 

@@ -9,3 +9,19 @@
 [2026-06-10 22:30:38] INFO     [foundation] Starting Foundation application - Debug: False
 [2026-06-10 23:49:03] INFO     [foundation] Database tables initialized
 [2026-06-10 23:49:03] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
+[2026-06-13 11:51:47] INFO     [foundation] Database tables initialized
+[2026-06-13 11:51:47] ERROR    [foundation] Database initialization failed: SUPERADMIN_INITIAL_PASSWORD environment variable is required
+Traceback (most recent call last):
+  File "/home/claire/Foundation/backend/main_app.py", line 119, in init_database
+    raise ValueError('SUPERADMIN_INITIAL_PASSWORD environment variable is required')
+ValueError: SUPERADMIN_INITIAL_PASSWORD environment variable is required
+[2026-06-13 11:53:47] INFO     [foundation] Database tables initialized
+[2026-06-13 11:53:48] INFO     [foundation] Superadmin account created
+[2026-06-13 11:53:48] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
+[2026-06-13 11:53:48] INFO     [foundation] Starting Foundation application - Debug: False
+[2026-06-13 11:56:12] INFO     [foundation] Database tables initialized
+[2026-06-13 11:56:12] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
+[2026-06-13 11:56:12] INFO     [foundation] Starting Foundation application - Debug: False
+[2026-06-13 12:14:20] INFO     [foundation] Database tables initialized
+[2026-06-13 12:14:20] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
+[2026-06-13 12:14:20] INFO     [foundation] Starting Foundation application - Debug: False

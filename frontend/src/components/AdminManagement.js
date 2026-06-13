@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import API_BASE from '../utils/apiConfig';
+import { authHeaders } from '../utils/auth';
 
 function AdminManagement() {
   const [admins, setAdmins] = useState([]);
@@ -9,11 +10,9 @@ function AdminManagement() {
   const [msg, setMsg] = useState('');
   const [error, setError] = useState('');
 
-  const getHeaders = () => ({
-    'Content-Type': 'application/json',
-    'Admin-Username': localStorage.getItem('adminUsername'),
-    'User-Role': 'admin',
-  });
+  const getHeaders = () => authHeaders();
+
+
 
   const fetchAdmins = useCallback(() => {
     fetch(`${API_BASE}/admin/list-admins`, { headers: getHeaders() })
@@ -25,6 +24,7 @@ function AdminManagement() {
   useEffect(() => { fetchAdmins(); }, [fetchAdmins]);
 
   const handleCreate = (e) => {
+
     e.preventDefault();
     setMsg(''); setError('');
     fetch(`${API_BASE}/admin-register`, {
