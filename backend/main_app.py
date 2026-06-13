@@ -8,23 +8,32 @@ import threading
 import jwt
 from dotenv import load_dotenv
 
-load_dotenv()
+# Always load the backend/.env explicitly so SECRET_KEY is stable across restarts.
+# This prevents JWT signature mismatches after reboot/service restart.
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
+
 
 # fail-fast: validate required env vars at import time
+# NOTE: Mpesa can be temporarily disabled (mock mode) until Daraja env vars are configured.
 _required_env_vars = [
     'SECRET_KEY',
     'GOOGLE_CLIENT_ID',
     'GOOGLE_CLIENT_SECRET',
     'GOOGLE_REDIRECT_URI',
+    'FRONTEND_URL',
+    'SUPERADMIN_INITIAL_PASSWORD',
+]
+
+# Mpesa/Daraja env vars (optional until configured)
+_DARAJA_REQUIRED_ENV_VARS = [
     'DARAJA_CONSUMER_KEY',
     'DARAJA_CONSUMER_SECRET',
     'DARAJA_SHORTCODE',
     'DARAJA_PASSKEY',
     'DARAJA_CALLBACK_URL',
     'DARAJA_ENV',
-    'FRONTEND_URL',
-    'SUPERADMIN_INITIAL_PASSWORD',
 ]
+
 
 
 
@@ -65,6 +74,10 @@ for _name in _required_env_vars:
     _require_env(_name)
 
 app.config['SECRET_KEY'] = _require_env('SECRET_KEY')
+
+# Mpesa availability flag (prevents server from crashing when Daraja env is not configured)
+_DARAJA_READY = all((os.environ.get(k, '') or '').strip() for k in _DARAJA_REQUIRED_ENV_VARS)
+
 
 
 
@@ -791,8 +804,16 @@ def mpesa_payments_stk_push():
     if not normalized_phone:
         return jsonify({'success': False, 'message': 'Invalid phone'}), 400
 
+    if not _DARAJA_READY:
+        return jsonify({
+            'success': True,
+            'message': 'Mpesa temporarily disabled (setup pending)',
+            'status': 'mock'
+        }), 503
+
     shortcode = _require_env('DARAJA_SHORTCODE')
     passkey = _require_env('DARAJA_PASSKEY')
+
 
 
     phone_for_stk = normalized_phone

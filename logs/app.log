@@ -25,3 +25,9 @@ ValueError: SUPERADMIN_INITIAL_PASSWORD environment variable is required
 [2026-06-13 12:14:20] INFO     [foundation] Database tables initialized
 [2026-06-13 12:14:20] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
 [2026-06-13 12:14:20] INFO     [foundation] Starting Foundation application - Debug: False
+[2026-06-13 21:09:57] INFO     [foundation] Database tables initialized
+[2026-06-13 21:09:57] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
+[2026-06-13 21:09:57] INFO     [foundation] Starting Foundation application - Debug: False
+[2026-06-13 21:44:49] INFO     [foundation] Database tables initialized
+[2026-06-13 21:44:49] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
+[2026-06-13 21:44:49] INFO     [foundation] Starting Foundation application - Debug: False

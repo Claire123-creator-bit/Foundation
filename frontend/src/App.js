@@ -16,6 +16,9 @@ function App() {
   const [page, setPage] = useState('home');
   const [restoring, setRestoring] = useState(true);
 
+  // Single source of truth for token restoration on every reload.
+
+
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
