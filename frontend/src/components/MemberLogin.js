@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
-import { storeToken } from '../utils/auth';
 
 
 function MemberLogin({ onLogin, onBack }) {
@@ -17,7 +16,7 @@ function MemberLogin({ onLogin, onBack }) {
       body: JSON.stringify({ phone_number: phone })
     })
       .then(r => r.json())
-      .then(d => { setLoading(false); if (d.success) { storeToken(d.token); onLogin(d.member, d.token); } else setError(d.message); })
+      .then(d => { setLoading(false); if (d.success) { onLogin(d.token); } else setError(d.message); })
       .catch(() => { setLoading(false); setError('Cannot connect. Please try again.'); });
 
 

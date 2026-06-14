@@ -22,7 +22,7 @@ function LoginPage({ onLogin, onBack }) {
       .then(d => {
         setLoading(false);
         if (d.success) {
-          onLogin(d.name, d.username, d.role, d.token);
+          onLogin(d.token);
         } else {
           setError(d.message || 'Login failed');
         }

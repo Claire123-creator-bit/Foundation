@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { apiFetch } from '../utils/apiClient';
-import API_BASE from '../utils/apiConfig';
 
 
 function MeetingList() {

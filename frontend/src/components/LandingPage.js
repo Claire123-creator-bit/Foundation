@@ -4,7 +4,6 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const [media, setMedia] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
     fetchMedia();
@@ -28,7 +27,6 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
-      setActiveSection(sectionId);
     }
   };
 

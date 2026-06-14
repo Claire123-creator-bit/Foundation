@@ -1,5 +1,5 @@
 import API_BASE from './apiConfig';
-import { getToken, setToken, clearNonTokenAuthState, authHeaders } from './auth';
+import { setToken, clearNonTokenAuthState, authHeaders } from './auth';
 
 function redirectToLogin() {
   // Hard reload keeps logic simple and avoids stale state.
