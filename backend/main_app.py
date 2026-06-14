@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from website_models import db, Member, Meeting, Admin
+from website_models import db, Member, Meeting, Admin, Media, MeetingAttendance
+from werkzeug.utils import secure_filename
+
 from datetime import datetime, timedelta
 import os
 import secrets
@@ -8,13 +10,8 @@ import threading
 import jwt
 from dotenv import load_dotenv
 
-# Always load the backend/.env explicitly so SECRET_KEY is stable across restarts.
-# This prevents JWT signature mismatches after reboot/service restart.
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
-
-# fail-fast: validate required env vars at import time
-# NOTE: Mpesa can be temporarily disabled (mock mode) until Daraja env vars are configured.
 _required_env_vars = [
     'SECRET_KEY',
     'GOOGLE_CLIENT_ID',
@@ -24,26 +21,12 @@ _required_env_vars = [
     'SUPERADMIN_INITIAL_PASSWORD',
 ]
 
-# Mpesa/Daraja env vars (optional until configured)
-_DARAJA_REQUIRED_ENV_VARS = [
-    'DARAJA_CONSUMER_KEY',
-    'DARAJA_CONSUMER_SECRET',
-    'DARAJA_SHORTCODE',
-    'DARAJA_PASSKEY',
-    'DARAJA_CALLBACK_URL',
-    'DARAJA_ENV',
-]
-
-
-
-
+_DARAJA_REQUIRED_ENV_VARS = []
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from logger import app_logger, auth_logger
 from sms_service import send_sms, send_bulk_sms, build_meeting_alert_message
-
 from email_service import send_admin_welcome_email, send_verification_email
-
 from google_auth import (
     google_login_redirect_url,
     exchange_code_for_tokens,
@@ -51,12 +34,6 @@ from google_auth import (
     find_member_by_email,
     create_pending_google_member,
 )
-
-
-
-
-
-
 
 app = Flask(__name__)
 
@@ -85,6 +62,9 @@ _DARAJA_READY = all((os.environ.get(k, '') or '').strip() for k in _DARAJA_REQUI
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 INSTANCE_DIR = os.path.join(BASE_DIR, '..', 'instance')
 DB_PATH = os.path.join(INSTANCE_DIR, 'foundation_complete.db')
+UPLOAD_FOLDER = os.path.join(BASE_DIR, '..', 'uploads')
+ALLOWED_MEDIA_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'mov', 'avi', 'webm'}
+MAX_FILE_SIZE = 50 * 1024 * 1024
 
 ALLOWED_ORIGINS = [
     'http://localhost:3000',
@@ -121,9 +101,13 @@ def _extract_bearer_token():
     return None
 
 
-def _decode_jwt_from_request():
+def _decode_jwt_from_request(endpoint_name: str = ''):
     token = _extract_bearer_token()
     if not token:
+        auth_logger.info(
+            "AUTH_DIAG endpoint=%s reason=missing_token exp_required=true",
+            endpoint_name or request.path,
+        )
         return None, jsonify({'success': False, 'message': 'Missing Authorization token'}), 401
 
     try:
@@ -133,11 +117,27 @@ def _decode_jwt_from_request():
             algorithms=['HS256'],
             options={'require': ['exp']}
         )
+        auth_logger.info(
+            "AUTH_DIAG endpoint=%s validation=ok role=%s admin_id=%s member_id=%s",
+            endpoint_name or request.path,
+            payload.get('role'),
+            payload.get('admin_id'),
+            payload.get('member_id'),
+        )
         return payload, None, None
     except jwt.ExpiredSignatureError:
+        auth_logger.info(
+            "AUTH_DIAG endpoint=%s reason=expired_token",
+            endpoint_name or request.path,
+        )
         return None, jsonify({'success': False, 'message': 'Token expired'}), 401
     except jwt.InvalidTokenError:
+        auth_logger.info(
+            "AUTH_DIAG endpoint=%s reason=invalid_token",
+            endpoint_name or request.path,
+        )
         return None, jsonify({'success': False, 'message': 'Invalid token'}), 401
+
 
 
 def jwt_required(*allowed_roles):
@@ -152,14 +152,25 @@ def jwt_required(*allowed_roles):
 
     def decorator(fn):
         def wrapped(*args, **kwargs):
-            payload, err_resp, err_code = _decode_jwt_from_request()
+            endpoint = getattr(fn, '__name__', '') or request.path
+            payload, err_resp, err_code = _decode_jwt_from_request(endpoint_name=endpoint)
             if err_resp is not None:
                 return err_resp, err_code
 
             if allowed_roles:
                 role = payload.get('role')
+                allowed = list(allowed_roles)
                 if role not in set(allowed_roles):
+                    auth_logger.info(
+                        "AUTH_DIAG endpoint=%s reason=role_forbidden role=%s allowed_roles=%s admin_id=%s member_id=%s",
+                        endpoint,
+                        role,
+                        allowed,
+                        payload.get('admin_id'),
+                        payload.get('member_id'),
+                    )
                     return jsonify({'success': False, 'message': 'Forbidden'}), 403
+
 
             request.jwt_payload = payload
             return fn(*args, **kwargs)
@@ -178,37 +189,43 @@ def _require_admin_roles(request_payload):
 
 def init_database():
     os.makedirs(INSTANCE_DIR, exist_ok=True)
-    with app.app_context():
+    try:
+        db.create_all()
+        app_logger.info("Database tables initialized")
+
+        superadmin = Admin.query.filter_by(username='superadmin').first()
+        if not superadmin:
+            default_password = os.environ.get('SUPERADMIN_INITIAL_PASSWORD')
+            if not default_password:
+                raise ValueError('SUPERADMIN_INITIAL_PASSWORD environment variable is required')
+
+            superadmin = Admin(
+                username='superadmin',
+                password=generate_password_hash(default_password),
+                full_name='Super Admin',
+                email='admin@mbogofoundation.org',
+                phone='',
+                role='superadmin',
+                is_active=True
+            )
+            db.session.add(superadmin)
+            db.session.commit()
+            app_logger.info("Superadmin account created")
+
+    except Exception as e:
+        app_logger.error(f"Database initialization failed: {str(e)}", exc_info=True)
+        raise
+
+
+@app.before_request
+def initialize_database_if_needed():
+    if not hasattr(app, '_db_initialized'):
         try:
-            db.create_all()
-            app_logger.info("Database tables initialized")
-
-            superadmin = Admin.query.filter_by(username='superadmin').first()
-            if not superadmin:
-                default_password = os.environ.get('SUPERADMIN_INITIAL_PASSWORD')
-                if not default_password:
-                    raise ValueError('SUPERADMIN_INITIAL_PASSWORD environment variable is required')
-
-                superadmin = Admin(
-                    username='superadmin',
-                    password=generate_password_hash(default_password),
-                    full_name='Super Admin',
-                    email='admin@mbogofoundation.org',
-                    phone='',
-                    role='superadmin',
-                    is_active=True
-                )
-                db.session.add(superadmin)
-                db.session.commit()
-                app_logger.info("Superadmin account created")
-
+            init_database()
+            app._db_initialized = True
+            app_logger.info(f"Application started - Database: {DB_PATH}")
         except Exception as e:
-            app_logger.error(f"Database initialization failed: {str(e)}", exc_info=True)
-            raise
-
-
-init_database()
-app_logger.info(f"Application started - Database: {DB_PATH}")
+            app_logger.error(f"Failed to initialize database on first request: {str(e)}", exc_info=True)
 
 
 # ── Health ──
@@ -255,6 +272,14 @@ def home():
 def me():
     payload = request.jwt_payload
     role = payload.get('role')
+    auth_logger.info(
+        "AUTH_DIAG endpoint=%s reason=me role=%s admin_id=%s member_id=%s",
+        'GET /me',
+        role,
+        payload.get('admin_id'),
+        payload.get('member_id'),
+    )
+
 
     if role in {'admin', 'superadmin', 'coordinator', 'finance', 'communication'}:
         admin_id = payload.get('admin_id')
@@ -514,6 +539,18 @@ def delete_admin(admin_id):
 @jwt_required(*ADMIN_ROLES)
 def get_members():
     category = request.args.get('category')
+    # Diagnostic logging: role/admin_id/member_id and guard context
+    payload = getattr(request, 'jwt_payload', {}) or {}
+    auth_logger.info(
+        "AUTH_DIAG endpoint=%s reason=members role=%s admin_id=%s member_id=%s allowed_roles=%s category=%s",
+        '/members',
+        payload.get('role'),
+        payload.get('admin_id'),
+        payload.get('member_id'),
+        list(ADMIN_ROLES),
+        category,
+    )
+
     members = (
         Member.query.filter_by(category=category).all()
         if category
@@ -525,7 +562,18 @@ def get_members():
 @app.route('/admin/pending-members', methods=['GET'])
 @jwt_required(*ADMIN_ROLES)
 def get_pending_members():
+    # Diagnostic logging: role/admin_id/member_id and guard context
+    payload = getattr(request, 'jwt_payload', {}) or {}
+    auth_logger.info(
+        "AUTH_DIAG endpoint=%s reason=pending_members role=%s admin_id=%s member_id=%s allowed_roles=%s",
+        '/admin/pending-members',
+        payload.get('role'),
+        payload.get('admin_id'),
+        payload.get('member_id'),
+        list(ADMIN_ROLES),
+    )
     members = Member.query.filter_by(status='pending').order_by(Member.registration_date.desc()).all()
+
     return jsonify([m.to_dict() for m in members])
 
 
@@ -667,6 +715,62 @@ def create_meeting():
         return jsonify({'error': 'Failed to create meeting'}), 500
 
 
+@app.route('/meetings/<int:meeting_id>/attendance', methods=['POST'])
+@jwt_required(*ADMIN_ROLES)
+def register_attendance(meeting_id):
+    try:
+        meeting = Meeting.query.get(meeting_id)
+        if not meeting:
+            return jsonify({'success': False, 'error': 'Meeting not found'}), 404
+
+        data = request.json
+        member_id = data.get('member_id')
+
+        if not member_id:
+            return jsonify({'success': False, 'error': 'member_id is required'}), 400
+
+        member = Member.query.get(member_id)
+        if not member:
+            return jsonify({'success': False, 'error': 'Member not found'}), 404
+
+        existing = MeetingAttendance.query.filter_by(meeting_id=meeting_id, member_id=member_id).first()
+        if existing:
+            return jsonify({'success': False, 'error': 'Attendance already registered'}), 400
+
+        attendance = MeetingAttendance(
+            meeting_id=meeting_id,
+            member_id=member_id,
+            registered_by=request.jwt_payload.get('admin_id')
+        )
+
+        db.session.add(attendance)
+        meeting.attendance_count = MeetingAttendance.query.filter_by(meeting_id=meeting_id).count() + 1
+        db.session.commit()
+
+        return jsonify({'success': True, 'attendance': attendance.to_dict()})
+
+    except Exception as e:
+        db.session.rollback()
+        app_logger.error(f"Register attendance error: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'error': 'Failed to register attendance'}), 500
+
+
+@app.route('/meetings/<int:meeting_id>/attendance', methods=['GET'])
+@jwt_required(*ADMIN_ROLES)
+def get_meeting_attendance(meeting_id):
+    try:
+        meeting = Meeting.query.get(meeting_id)
+        if not meeting:
+            return jsonify({'success': False, 'error': 'Meeting not found'}), 404
+
+        attendances = MeetingAttendance.query.filter_by(meeting_id=meeting_id).all()
+        return jsonify([a.to_dict() for a in attendances])
+
+    except Exception as e:
+        app_logger.error(f"Get attendance error: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Failed to fetch attendance'}), 500
+
+
 # ── SMS (custom admin sender) ──
 
 @app.route('/send-bulk-sms', methods=['POST'])
@@ -702,383 +806,114 @@ def send_bulk_sms():
         return jsonify({'error': 'Failed to send SMS'}), 500
 
 
-# ── M-Pesa (payments - Daraja STK Push) ──
+# ── Payments removed completely ──
 
-import urllib.parse
-import urllib.request
-import base64
+# All M-Pesa/Daraja payment endpoints, callbacks, and payment workflow code has been removed.
 
 
-def _daraja_get_access_token() -> str:
-    consumer_key = _require_env('DARAJA_CONSUMER_KEY')
-    consumer_secret = _require_env('DARAJA_CONSUMER_SECRET')
+# ── Media Upload (Landing Page) ──
+
+def _allowed_media_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_MEDIA_EXTENSIONS
 
 
-    auth_str = f"{consumer_key}:{consumer_secret}".encode('utf-8')
-    b64 = base64.b64encode(auth_str).decode('utf-8')
-
-    env = _require_env('DARAJA_ENV').strip().lower()
-    base_url = 'https://sandbox.safaricom.co.ke' if env == 'sandbox' else 'https://api.safaricom.co.ke'
-
-
-    url = f"{base_url}/oauth/v1/generate?grant_type=client_credentials"
-
-    req = urllib.request.Request(
-        url,
-        headers={'Authorization': f'Basic {b64}'},
-        method='GET'
-    )
-
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        raw = resp.read().decode('utf-8')
-        data = json.loads(raw)
-
-    token = data.get('access_token')
-    if not token:
-        raise RuntimeError(f'Daraja token missing in response: {data}')
-    return token
+def _get_media_type(filename):
+    ext = filename.rsplit('.', 1)[1].lower()
+    if ext in {'mp4', 'mov', 'avi', 'webm'}:
+        return 'video'
+    return 'image'
 
 
-def _daraja_stk_password(shortcode: str, passkey: str, timestamp: str) -> str:
-    # Password = base64( shortcode + passkey + timestamp )
-    raw = f"{shortcode}{passkey}{timestamp}".encode('utf-8')
-    return base64.b64encode(raw).decode('utf-8')
-
-
-def _daraja_base_url() -> str:
-    env = os.environ.get('DARaja_ENV', 'sandbox').strip().lower()
-    return 'https://sandbox.safaricom.co.ke' if env == 'sandbox' else 'https://api.safaricom.co.ke'
-
-
-def _daraja_stk_push_url() -> str:
-    return f"{_daraja_base_url()}/mpesa/stkpush/v1/processrequest"
-
-
-def _daraja_stk_callback_url() -> str:
-    callback_url = _require_env('DARAJA_CALLBACK_URL')
-
-    # Ensure we point to our backend route
-    # If caller included /payments/... already, keep it.
-    if callback_url.endswith('/payments/mpesa/callback'):
-        return callback_url
-    return callback_url.rstrip('/') + '/payments/mpesa/callback'
-
-
-def _normalize_phone(phone: str) -> str:
-    p = (phone or '').strip().replace(' ', '').replace('-', '')
-    if p.startswith('+'):
-        p = p[1:]
-    if p.startswith('0'):
-        p = '254' + p[1:]
-    return p
-
-
-@app.route('/payments/mpesa/stk-push', methods=['POST'])
-@jwt_required('member')
-def mpesa_payments_stk_push():
-    payload = request.jwt_payload
-    member_id = payload.get('member_id')
-    if not member_id:
-        return jsonify({'success': False, 'message': 'Invalid token'}), 403
-
-    data = get_request_json()
-    amount = data.get('amount')
-    phone_number = data.get('phone') or data.get('phone_number')
-    payment_type = data.get('payment_type') or data.get('payment_type'.lower()) or 'Donation'
-
-    if amount is None or phone_number is None:
-        return jsonify({'success': False, 'message': 'amount and phone are required'}), 400
-
-    # Never trust amount/phone for identity; member_id is trusted, amount must be numeric.
+@app.route('/media', methods=['POST'])
+@jwt_required(*ADMIN_ROLES)
+def upload_media():
     try:
-        # Store exact amount in db.Numeric; convert to string/decimal via SQLAlchemy
-        amount_num = str(amount)
-    except Exception:
-        return jsonify({'success': False, 'message': 'Invalid amount'}), 400
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'error': 'No file provided'}), 400
 
-    member = Member.query.get(member_id)
-    if not member:
-        return jsonify({'success': False, 'message': 'Member not found'}), 404
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'success': False, 'error': 'No file selected'}), 400
 
-    normalized_phone = _normalize_phone(phone_number)
-    if not normalized_phone:
-        return jsonify({'success': False, 'message': 'Invalid phone'}), 400
+        if not _allowed_media_file(file.filename):
+            return jsonify({'success': False, 'error': 'Invalid file type. Allowed: png, jpg, jpeg, gif, mp4, mov, avi, webm'}), 400
 
-    if not _DARAJA_READY:
-        return jsonify({
-            'success': True,
-            'message': 'Mpesa temporarily disabled (setup pending)',
-            'status': 'mock'
-        }), 503
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+        file.seek(0)
 
-    shortcode = _require_env('DARAJA_SHORTCODE')
-    passkey = _require_env('DARAJA_PASSKEY')
+        if file_size > MAX_FILE_SIZE:
+            return jsonify({'success': False, 'error': 'File too large. Maximum size: 50MB'}), 400
 
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        filename = secure_filename(file.filename)
+        timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+        unique_filename = f"{timestamp}_{filename}"
+        file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+        file.save(file_path)
 
+        title = request.form.get('title', unique_filename)
+        description = request.form.get('description', '')
+        media_type = _get_media_type(filename)
+        file_type = filename.rsplit('.', 1)[1].lower()
+        uploaded_by = request.jwt_payload.get('admin_id')
 
-    phone_for_stk = normalized_phone
-
-    # Timestamp format: YYYYMMDDHHMMSS
-    timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
-    password = _daraja_stk_password(shortcode, passkey, timestamp)
-
-    # Generate an idempotency merchant request id
-    # (Daraja also returns CheckoutRequestID)
-    merchant_request_id = secrets.token_urlsafe(16)
-
-    callback_url = _daraja_stk_callback_url()
-
-    checkout_request_id = None
-
-    # Create pending payment record BEFORE calling Daraja
-    payment = Payment(
-        member_id=member.id,
-        full_name=member.full_names,
-        phone_number=phone_for_stk,
-        amount=amount_num,
-        payment_type=str(payment_type),
-        merchant_request_id=merchant_request_id,
-        status='pending'
-    )
-    db.session.add(payment)
-    db.session.commit()
-
-    try:
-        access_token = _daraja_get_access_token()
-
-        stk_payload = {
-            'BusinessShortCode': shortcode,
-            'Password': password,
-            'Timestamp': timestamp,
-            'TransactionType': 'CustomerPayBillOnline',
-            'Amount': int(float(amount_num)),
-            'PartyA': phone_for_stk,
-            'PartyB': shortcode,
-            'PhoneNumber': phone_for_stk,
-            'CallBackURL': callback_url,
-            'AccountReference': member.full_names[:30] if member.full_names else f'member-{member.id}',
-            'TransactionDesc': 'Mbogo Foundation Payment',
-        }
-
-        # Daraja requires an optional MerchantRequestID only in some configs.
-        # We keep our own idempotency id in merchant_request_id field.
-
-        req = urllib.request.Request(
-            _daraja_stk_push_url(),
-            data=json.dumps(stk_payload).encode('utf-8'),
-            headers={
-                'Authorization': f'Bearer {access_token}',
-                'Content-Type': 'application/json'
-            },
-            method='POST'
+        media = Media(
+            title=title,
+            description=description,
+            file_path=f'/uploads/{unique_filename}',
+            file_type=file_type,
+            media_type=media_type,
+            file_size=file_size,
+            uploaded_by=uploaded_by,
+            is_active=True
         )
 
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            raw = resp.read().decode('utf-8')
-            daraja_resp = json.loads(raw)
-
-        # Extract checkout request id
-        stk = daraja_resp.get('d') if isinstance(daraja_resp, dict) else None
-        if isinstance(stk, dict):
-            checkout_request_id = stk.get('CheckoutRequestID')
-
-        payment.checkout_request_id = checkout_request_id
-        payment.callback_payload = json.dumps(daraja_resp)
-        payment.status = 'pending'
+        db.session.add(media)
         db.session.commit()
 
-        return jsonify({
-            'success': True,
-            'payment_id': payment.id,
-            'merchant_request_id': payment.merchant_request_id,
-            'checkout_request_id': payment.checkout_request_id,
-            'status': payment.status,
-        })
+        app_logger.info(f"Media uploaded: {unique_filename} by admin {uploaded_by}")
+        return jsonify({'success': True, 'media': media.to_dict()})
 
     except Exception as e:
-        # Mark failed but keep raw error for audit
-        payment.status = 'failed'
-        payment.failure_reason = str(e)[:300]
-        payment.callback_payload = payment.callback_payload or ''
-        db.session.commit()
-        app_logger.error(f"STK push failed: {str(e)}", exc_info=True)
-        return jsonify({'success': False, 'message': 'Payment initiation failed'}), 500
+        db.session.rollback()
+        app_logger.error(f"Media upload error: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'error': 'Upload failed'}), 500
 
 
-@app.route('/payments/mpesa/callback', methods=['POST'])
-def mpesa_payments_callback():
+@app.route('/media', methods=['GET'])
+def get_media():
     try:
-        raw_json = request.get_json(silent=True) or {}
+        media_list = Media.query.filter_by(is_active=True).order_by(Media.created_date.desc()).all()
+        return jsonify([m.to_dict() for m in media_list])
+    except Exception as e:
+        app_logger.error(f"Get media error: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Failed to fetch media'}), 500
 
-        # Store raw payload for audit early (even if validation fails)
-        body = raw_json.get('Body') or {}
-        stk = body.get('stkCallback') or {}
 
-        merchant_request_id = stk.get('MerchantRequestID')
-        checkout_request_id = stk.get('CheckoutRequestID')
-        result_code = stk.get('ResultCode')
-        result_desc = stk.get('ResultDesc')
+@app.route('/media/<int:media_id>', methods=['DELETE'])
+@jwt_required(*ADMIN_ROLES)
+def delete_media(media_id):
+    try:
+        media = Media.query.get(media_id)
+        if not media:
+            return jsonify({'success': False, 'error': 'Media not found'}), 404
 
-        # Required identifiers
-        if not merchant_request_id and not checkout_request_id:
-            return jsonify({'success': False, 'message': 'Invalid callback payload'}), 400
+        file_path = os.path.join(BASE_DIR, '..', media.file_path.lstrip('/'))
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
-        # Locate payment by merchant_request_id first, then checkout_request_id
-        payment = None
-        if merchant_request_id:
-            payment = Payment.query.filter_by(merchant_request_id=merchant_request_id).first()
-        if not payment and checkout_request_id:
-            payment = Payment.query.filter_by(checkout_request_id=checkout_request_id).first()
-
-        if not payment:
-            # Unknown callback: reject to avoid spoofing. Do not update DB.
-            app_logger.warning(
-                'Mpesa callback for unknown payment',
-                extra={'merchant_request_id': merchant_request_id, 'checkout_request_id': checkout_request_id}
-            )
-            return jsonify({'success': False, 'message': 'Unknown payment'}), 400
-
-        # Idempotency: if already completed/failed, ignore duplicates.
-        if payment.status in {'complete', 'failed'} and payment.callback_payload:
-            return jsonify({'success': True}), 200
-
-        # Extract receipt/transaction id only. 
-        # DB is the source of truth for money amount.
-        callback_meta = stk.get('CallbackMetadata') or {}
-        receipt_from_callback = None
-        if isinstance(callback_meta, dict):
-            items = callback_meta.get('Item') or []
-            if isinstance(items, list):
-                for it in items:
-                    if not isinstance(it, dict):
-                        continue
-                    key = it.get('Name')
-                    val = it.get('Value')
-                    if key in {'MpesaReceiptNumber', 'ReceiptNumber'}:
-                        receipt_from_callback = val
-
-        # Validate identifiers match DB record exactly
-        if merchant_request_id and payment.merchant_request_id != merchant_request_id:
-            app_logger.warning('Mpesa callback rejected: MerchantRequestID mismatch', extra={
-                'payment_id': payment.id,
-                'merchant_request_id': merchant_request_id,
-                'expected_merchant_request_id': payment.merchant_request_id,
-                'ip': request.headers.get('X-Forwarded-For', request.remote_addr)
-            })
-            return jsonify({'success': False, 'message': 'MerchantRequestID mismatch'}), 400
-        if checkout_request_id and payment.checkout_request_id != checkout_request_id:
-            app_logger.warning('Mpesa callback rejected: CheckoutRequestID mismatch', extra={
-                'payment_id': payment.id,
-                'checkout_request_id': checkout_request_id,
-                'expected_checkout_request_id': payment.checkout_request_id,
-                'ip': request.headers.get('X-Forwarded-For', request.remote_addr)
-            })
-            return jsonify({'success': False, 'message': 'CheckoutRequestID mismatch'}), 400
-
-        # Replay protection (time-based): ignore if payment is too old.
-        # We use Payment.payment_date when available.
-        try:
-            created_at = payment.payment_date
-            if created_at:
-                max_age_min = int(os.environ.get('DARAJA_CALLBACK_MAX_AGE_MINUTES', '60'))
-                if datetime.utcnow() - created_at > timedelta(minutes=max_age_min):
-                    app_logger.warning('Mpesa callback rejected: callback replay too old', extra={
-                        'payment_id': payment.id,
-                        'created_at': created_at.isoformat(),
-                        'max_age_min': max_age_min,
-                        'ip': request.headers.get('X-Forwarded-For', request.remote_addr)
-                    })
-                    return jsonify({'success': False, 'message': 'Callback too old'}), 400
-        except Exception:
-            # If timestamp parsing fails, don't block the callback solely for that.
-            pass
-
-        # Strict payment state machine enforcement
-        # pending -> complete/failed allowed
-        # complete/failed -> no change
-        current_status = payment.status
-        success = (result_code == 0)
-        next_status = 'complete' if success else 'failed'
-
-        allowed = {
-            ('pending', 'complete'),
-            ('pending', 'failed'),
-        }
-
-        if current_status in {'complete', 'failed'}:
-            # Already handled above by early return when callback_payload exists.
-            # If callback_payload is missing, still enforce no change.
-            app_logger.info('Mpesa callback ignored: payment already finalized', extra={
-                'payment_id': payment.id,
-                'current_status': current_status,
-                'incoming_result_code': result_code,
-                'ip': request.headers.get('X-Forwarded-For', request.remote_addr)
-            })
-            return jsonify({'success': True}), 200
-
-        if (current_status, next_status) not in allowed:
-            app_logger.warning('Mpesa callback rejected: invalid state transition', extra={
-                'payment_id': payment.id,
-                'current_status': current_status,
-                'next_status': next_status,
-                'ip': request.headers.get('X-Forwarded-For', request.remote_addr)
-            })
-            return jsonify({'success': False, 'message': 'Invalid payment state transition'}), 400
-
-        # Store raw payload for audit
-        payment.callback_payload = json.dumps(raw_json)
-
-        payment.status = next_status
-        payment.failure_reason = None if success else (result_desc or 'Payment failed')
-
-        if receipt_from_callback is not None:
-            payment.transaction_id = str(receipt_from_callback)
-
+        db.session.delete(media)
         db.session.commit()
 
-
-        # SMS receipt on success only
-        if success and payment.transaction_id and payment.phone_number:
-            try:
-                sms_text = f"Payment received: KES {payment.amount}. Transaction ID: {payment.transaction_id}. Thank you for supporting Mbogo Foundation."
-                sms_result = send_sms(payment.phone_number, sms_text)
-                app_logger.info('Payment receipt SMS sent', extra={'payment_id': payment.id, 'sms_result': sms_result})
-            except Exception as sms_e:
-                app_logger.error(f"Receipt SMS failed for payment {payment.id}: {str(sms_e)}", exc_info=True)
-
-        return jsonify({'success': True}), 200
+        app_logger.info(f"Media deleted: {media_id}")
+        return jsonify({'success': True, 'message': 'Media deleted'})
 
     except Exception as e:
-        app_logger.error(f"Mpesa callback error: {str(e)}", exc_info=True)
-        # Return 400/500? Prefer 400 to discourage retries on invalid spoofed payload.
-        return jsonify({'success': False}), 400
+        db.session.rollback()
+        app_logger.error(f"Delete media error: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'error': 'Delete failed'}), 500
 
-
-
-# ── Legacy/compat M-Pesa (deprecated) ──
-
-# WARNING: This endpoint is intentionally protected to prevent abuse.
-# The production payment flow is POST /payments/mpesa/stk-push (JWT member-only).
-
-@app.route('/mpesa-stk-push', methods=['POST'])
-@jwt_required('member')
-def mpesa_legacy_stk_push():
-    try:
-        data = get_request_json()
-        phone = (data.get('phone', '') or '').strip()
-        amount = data.get('amount', '')
-
-        # Keep response strict: legacy is deprecated and must not be used.
-        # Frontend must use /payments/mpesa/stk-push.
-        return jsonify({
-            'success': False,
-            'error': 'Legacy endpoint is deprecated. Use /payments/mpesa/stk-push.'
-        }), 410
-
-
-    except Exception as e:
-        app_logger.error(f"M-Pesa legacy STK push error: {str(e)}", exc_info=True)
-        return jsonify({'success': False, 'error': 'Payment request failed'}), 500
 
 
 

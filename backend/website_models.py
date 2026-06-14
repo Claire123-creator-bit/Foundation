@@ -76,12 +76,19 @@ class Member(db.Model):
 
 class Meeting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+
     title = db.Column(db.String(200), nullable=False)
     date = db.Column(db.String(20), nullable=False, index=True)
     time = db.Column(db.String(10), nullable=False)
     venue = db.Column(db.String(200))
     agenda = db.Column(db.Text)
     meeting_type = db.Column(db.String(20), default='physical')
+
+    meeting_name = db.Column(db.String(200))
+    date_time = db.Column(db.DateTime)
+    attendance_count = db.Column(db.Integer, default=0)
+    created_by = db.Column(db.String(50))
+
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
@@ -94,48 +101,64 @@ class Meeting(db.Model):
             'agenda': self.agenda or '',
             'meeting_type': self.meeting_type,
             'created_date': self.created_date.isoformat(),
+            'meeting_name': self.meeting_name or self.title,
+            'date_time': self.date_time.isoformat() if self.date_time else None,
+            'attendance_count': self.attendance_count,
+            'created_by': self.created_by or '',
         }
 
 
-class Payment(db.Model):
+class Media(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
-    full_name = db.Column(db.String(150))
-    phone_number = db.Column(db.String(20), nullable=False, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    file_path = db.Column(db.String(500), nullable=False)
+    file_type = db.Column(db.String(50), nullable=False)
+    media_type = db.Column(db.String(20), nullable=False)
+    file_size = db.Column(db.Integer)
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('admin.id'))
+    is_active = db.Column(db.Boolean, default=True)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Use fixed-precision numeric for money safety.
-    amount = db.Column(db.Numeric(18, 2), nullable=False)
-
-    payment_type = db.Column(db.String(50), nullable=False)
-
-    # Daraja/STK identifiers
-    merchant_request_id = db.Column(db.String(100), unique=True, index=True)
-    checkout_request_id = db.Column(db.String(100), unique=True, index=True)
-
-    # Mpesa receipt / provider transaction id
-    transaction_id = db.Column(db.String(100), unique=True, index=True)
-
-    status = db.Column(db.String(20), default='pending', index=True)
-    failure_reason = db.Column(db.String(300))
-
-    # Store raw callback payload for audit/reconciliation.
-    callback_payload = db.Column(db.Text)
-
-    payment_date = db.Column(db.DateTime, default=datetime.utcnow)
+    admin = db.relationship('Admin', backref='media_uploads')
 
     def to_dict(self):
         return {
             'id': self.id,
-            'member_id': self.member_id,
-            'full_name': self.full_name,
-            'phone_number': self.phone_number,
-            'amount': str(self.amount) if self.amount is not None else None,
-            'payment_type': self.payment_type,
-            'merchant_request_id': self.merchant_request_id,
-            'checkout_request_id': self.checkout_request_id,
-            'transaction_id': self.transaction_id,
-            'status': self.status,
-            'failure_reason': self.failure_reason,
-            'payment_date': self.payment_date.isoformat() if self.payment_date else None,
+            'title': self.title,
+            'description': self.description or '',
+            'file_path': self.file_path,
+            'file_type': self.file_type,
+            'media_type': self.media_type,
+            'file_size': self.file_size,
+            'uploaded_by': self.uploaded_by,
+            'is_active': self.is_active,
+            'created_date': self.created_date.isoformat(),
         }
+
+
+class MeetingAttendance(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), nullable=False)
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
+    attended_at = db.Column(db.DateTime, default=datetime.utcnow)
+    registered_by = db.Column(db.Integer, db.ForeignKey('admin.id'))
+
+    meeting = db.relationship('Meeting', backref='attendances')
+    member = db.relationship('Member', backref='meeting_attendances')
+    admin = db.relationship('Admin', backref='registered_attendances')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'meeting_id': self.meeting_id,
+            'member_id': self.member_id,
+            'attended_at': self.attended_at.isoformat(),
+            'registered_by': self.registered_by,
+        }
+
+
+
+# Payments removed completely (Mpesa/Daraja).
+
 

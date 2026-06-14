@@ -3,11 +3,16 @@ import os
 import tempfile
 from werkzeug.security import generate_password_hash
 import sys
+import jwt
+from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from main_app import app as flask_app
-from website_models import db, Admin, Member, Meeting
+import main_app as main_app_module
+
+flask_app = main_app_module.app
+
+from website_models import db, Admin, Member, Meeting, Media, MeetingAttendance
 
 
 @pytest.fixture(scope='session')
@@ -15,6 +20,7 @@ def app():
     flask_app.config['TESTING'] = True
     flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
     flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    flask_app.config['SECRET_KEY'] = 'test-secret-key-for-testing'
     return flask_app
 
 
@@ -25,6 +31,24 @@ def client(app):
         yield app.test_client()
         db.session.remove()
         db.drop_all()
+
+
+def _generate_jwt_token(admin_id, role):
+    payload = {
+        'admin_id': admin_id,
+        'role': role,
+        'exp': datetime.utcnow() + timedelta(days=7)
+    }
+    return jwt.encode(payload, 'test-secret-key-for-testing', algorithm='HS256')
+
+
+def _generate_member_jwt_token(member_id):
+    payload = {
+        'member_id': member_id,
+        'role': 'member',
+        'exp': datetime.utcnow() + timedelta(days=7)
+    }
+    return jwt.encode(payload, 'test-secret-key-for-testing', algorithm='HS256')
 
 
 @pytest.fixture
@@ -41,11 +65,9 @@ def auth_headers(client, app):
         )
         db.session.add(admin)
         db.session.commit()
+        token = _generate_jwt_token(admin.id, 'admin')
 
-    return {
-        'User-Role': 'admin',
-        'Admin-Username': 'testadmin'
-    }
+    return {'Authorization': f'Bearer {token}'}
 
 
 @pytest.fixture
@@ -62,11 +84,9 @@ def superadmin_headers(client, app):
         )
         db.session.add(superadmin)
         db.session.commit()
+        token = _generate_jwt_token(superadmin.id, 'superadmin')
 
-    return {
-        'User-Role': 'admin',
-        'Admin-Username': 'superadmin_test'
-    }
+    return {'Authorization': f'Bearer {token}'}
 
 
 @pytest.fixture

@@ -66,21 +66,22 @@ class TestMemberRegistration:
 
 
 class TestMembersList:
-    def test_members_list_empty(self, client):
-        response = client.get('/members')
+    def test_members_list_empty(self, client, auth_headers):
+        response = client.get('/members', headers=auth_headers)
         assert response.status_code == 200
         data = json.loads(response.data)
         assert isinstance(data, list)
         assert len(data) == 0
 
-    def test_members_list_with_members(self, client, sample_member):
-        response = client.get('/members')
+
+    def test_members_list_with_members(self, client, sample_member, auth_headers):
+        response = client.get('/members', headers=auth_headers)
         assert response.status_code == 200
         data = json.loads(response.data)
         assert len(data) > 0
         assert any(m['full_names'] == 'John Doe' for m in data)
 
-    def test_members_list_pagination_works(self, client, app):
+    def test_members_list_pagination_works(self, client, app, auth_headers):
         with app.app_context():
             from website_models import Member, db
             for i in range(15):
@@ -101,7 +102,7 @@ class TestMembersList:
                 db.session.add(member)
             db.session.commit()
 
-        response = client.get('/members')
+        response = client.get('/members', headers=auth_headers)
         assert response.status_code == 200
         data = json.loads(response.data)
         assert len(data) == 15

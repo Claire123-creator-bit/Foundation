@@ -42,6 +42,9 @@ def setup_logging():
 
     auth_logger = logging.getLogger('foundation.auth')
     auth_logger.setLevel(logging.DEBUG)
+    # Prevent Flask/Gunicorn/root logging hierarchy from swallowing auth logs.
+    auth_logger.propagate = False
+
 
     for handler in root_logger.handlers[:]:
         root_logger.removeHandler(handler)

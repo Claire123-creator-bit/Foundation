@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 
 class TestAdminModel:
-    def test_admin_creation(self, app):
+    def test_admin_creation(self, client, app):
         with app.app_context():
             from website_models import Admin, db
             from werkzeug.security import generate_password_hash
@@ -25,7 +25,7 @@ class TestAdminModel:
             assert retrieved.full_name == 'Test User'
             assert retrieved.is_active is True
     
-    def test_admin_username_unique(self, app):
+    def test_admin_username_unique(self, client, app):
         with app.app_context():
             from website_models import Admin, db
             from werkzeug.security import generate_password_hash
@@ -58,7 +58,7 @@ class TestAdminModel:
 
 
 class TestMemberModel:
-    def test_member_creation(self, app):
+    def test_member_creation(self, client, app):
         with app.app_context():
             from website_models import Member, db
             
@@ -84,7 +84,7 @@ class TestMemberModel:
             assert retrieved.full_names == 'John Doe'
             assert retrieved.status == 'approved'
     
-    def test_member_national_id_unique(self, app):
+    def test_member_national_id_unique(self, client, app):
         with app.app_context():
             from website_models import Member, db
             
@@ -124,7 +124,7 @@ class TestMemberModel:
             with pytest.raises(Exception):  # IntegrityError
                 db.session.commit()
     
-    def test_member_status_workflow(self, app):
+    def test_member_status_workflow(self, client, app):
         with app.app_context():
             from website_models import Member, db
             
@@ -155,13 +155,15 @@ class TestMemberModel:
 
 
 class TestMeetingModel:
-    def test_meeting_creation(self, app):
+    def test_meeting_creation(self, client, app):
         with app.app_context():
             from website_models import Meeting, db
             
             meeting_date = datetime.utcnow() + timedelta(days=7)
             meeting = Meeting(
-                meeting_name='Monthly Meeting',
+                title='Monthly Meeting',
+                date=meeting_date.strftime('%Y-%m-%d'),
+                time='14:00',
                 date_time=meeting_date,
                 venue='Conference Room A',
                 attendance_count=0,
@@ -170,18 +172,20 @@ class TestMeetingModel:
             db.session.add(meeting)
             db.session.commit()
             
-            retrieved = Meeting.query.filter_by(meeting_name='Monthly Meeting').first()
+            retrieved = Meeting.query.filter_by(title='Monthly Meeting').first()
             assert retrieved is not None
             assert retrieved.venue == 'Conference Room A'
             assert retrieved.created_by == 'admin'
     
-    def test_meeting_future_dates(self, app):
+    def test_meeting_future_dates(self, client, app):
         with app.app_context():
             from website_models import Meeting, db
             
             future_date = datetime.utcnow() + timedelta(days=30)
             meeting = Meeting(
-                meeting_name='Future Meeting',
+                title='Future Meeting',
+                date=future_date.strftime('%Y-%m-%d'),
+                time='15:00',
                 date_time=future_date,
                 venue='Test Venue',
                 attendance_count=0,
@@ -194,46 +198,5 @@ class TestMeetingModel:
             assert retrieved.date_time > datetime.utcnow()
 
 
-class TestPaymentModel:
-    def test_payment_creation(self, app):
-        with app.app_context():
-            from website_models import Payment, db
-            
-            payment = Payment(
-                phone_number='254712345678',
-                amount=500,
-                transaction_id='TXN123456',
-                status='completed',
-                payment_type='donation',
-                created_by='member'
-            )
-            db.session.add(payment)
-            db.session.commit()
-            
-            retrieved = Payment.query.filter_by(transaction_id='TXN123456').first()
-            assert retrieved is not None
-            assert retrieved.amount == 500
-            assert retrieved.status == 'completed'
-    
-    def test_payment_indexing(self, app):
-        with app.app_context():
-            from website_models import Payment, db
-            
-            for i in range(10):
-                payment = Payment(
-                    phone_number=f'25470000000{i}',
-                    amount=100 * (i + 1),
-                    transaction_id=f'TXN{i:06d}',
-                    status='completed',
-                    payment_type='donation',
-                    created_by='member'
-                )
-                db.session.add(payment)
-            db.session.commit()
-            
-            results = Payment.query.filter_by(phone_number='254700000005').all()
-            assert len(results) > 0
+# Payments removed from the system; payment model tests removed.
 
-            result = Payment.query.filter_by(transaction_id='TXN000005').first()
-            assert result is not None
-            assert result.amount == 600

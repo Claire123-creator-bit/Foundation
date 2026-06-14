@@ -1,0 +1,198 @@
+[2026-06-14 09:48:09] INFO     Successful admin login: admin1 from 127.0.0.1
+[2026-06-14 09:48:09] WARNING  Failed login attempt for user 'nonexistent' from 127.0.0.1
+[2026-06-14 09:48:10] WARNING  Failed login attempt for user 'admin2' from 127.0.0.1
+[2026-06-14 09:48:10] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:48:10] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:48:10] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:48:11] WARNING  Login attempt on inactive account 'admin_inactive' from 127.0.0.1
+[2026-06-14 09:48:12] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:48:13] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:48:13] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:48:14] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:48:16] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:48:16] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:48:16] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:48:17] INFO     AUTH_DIAG endpoint=get_pending_members reason=missing_token exp_required=true
+[2026-06-14 09:48:17] INFO     AUTH_DIAG endpoint=approve_member reason=missing_token exp_required=true
+[2026-06-14 09:50:08] INFO     Successful admin login: admin1 from 127.0.0.1
+[2026-06-14 09:50:08] WARNING  Failed login attempt for user 'nonexistent' from 127.0.0.1
+[2026-06-14 09:50:09] WARNING  Failed login attempt for user 'admin2' from 127.0.0.1
+[2026-06-14 09:50:09] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:50:09] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:50:09] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:50:10] WARNING  Login attempt on inactive account 'admin_inactive' from 127.0.0.1
+[2026-06-14 09:50:10] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:50:11] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:50:11] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:50:13] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:50:14] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:50:14] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:50:14] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:50:15] INFO     AUTH_DIAG endpoint=get_pending_members reason=missing_token exp_required=true
+[2026-06-14 09:50:15] INFO     AUTH_DIAG endpoint=approve_member reason=missing_token exp_required=true
+[2026-06-14 09:51:53] INFO     Successful admin login: admin1 from 127.0.0.1
+[2026-06-14 09:51:53] WARNING  Failed login attempt for user 'nonexistent' from 127.0.0.1
+[2026-06-14 09:51:53] WARNING  Failed login attempt for user 'admin2' from 127.0.0.1
+[2026-06-14 09:51:54] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:51:54] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:51:54] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:51:54] WARNING  Login attempt on inactive account 'admin_inactive' from 127.0.0.1
+[2026-06-14 09:51:55] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:51:55] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:51:56] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:51:57] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:51:58] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:51:58] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:51:58] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:51:59] INFO     AUTH_DIAG endpoint=get_pending_members reason=missing_token exp_required=true
+[2026-06-14 09:51:59] INFO     AUTH_DIAG endpoint=approve_member reason=missing_token exp_required=true
+[2026-06-14 09:53:46] INFO     Successful admin login: admin1 from 127.0.0.1
+[2026-06-14 09:53:46] WARNING  Failed login attempt for user 'nonexistent' from 127.0.0.1
+[2026-06-14 09:53:47] WARNING  Failed login attempt for user 'admin2' from 127.0.0.1
+[2026-06-14 09:53:47] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:53:47] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:53:47] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:53:48] WARNING  Login attempt on inactive account 'admin_inactive' from 127.0.0.1
+[2026-06-14 09:53:48] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:53:49] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:53:49] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:53:50] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:53:51] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:53:51] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:53:51] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:53:52] INFO     AUTH_DIAG endpoint=get_pending_members reason=missing_token exp_required=true
+[2026-06-14 09:53:52] INFO     AUTH_DIAG endpoint=approve_member reason=missing_token exp_required=true
+[2026-06-14 09:54:57] INFO     Successful admin login: admin1 from 127.0.0.1
+[2026-06-14 09:54:57] WARNING  Failed login attempt for user 'nonexistent' from 127.0.0.1
+[2026-06-14 09:54:58] WARNING  Failed login attempt for user 'admin2' from 127.0.0.1
+[2026-06-14 09:54:58] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:54:58] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:54:59] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 09:54:59] WARNING  Login attempt on inactive account 'admin_inactive' from 127.0.0.1
+[2026-06-14 09:55:00] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:55:01] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:55:01] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:55:02] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 09:55:03] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:55:03] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:55:04] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 09:55:04] INFO     AUTH_DIAG endpoint=get_pending_members reason=missing_token exp_required=true
+[2026-06-14 09:55:05] INFO     AUTH_DIAG endpoint=approve_member reason=missing_token exp_required=true
+[2026-06-14 10:01:37] INFO     Successful admin login: admin1 from 127.0.0.1
+[2026-06-14 10:01:37] WARNING  Failed login attempt for user 'nonexistent' from 127.0.0.1
+[2026-06-14 10:01:38] WARNING  Failed login attempt for user 'admin2' from 127.0.0.1
+[2026-06-14 10:01:38] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 10:01:38] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 10:01:38] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 10:01:39] WARNING  Login attempt on inactive account 'admin_inactive' from 127.0.0.1
+[2026-06-14 10:01:40] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 10:01:40] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 10:01:41] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 10:01:42] INFO     AUTH_DIAG endpoint=admin_register reason=missing_token exp_required=true
+[2026-06-14 10:01:43] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 10:01:43] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 10:01:43] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 10:01:44] INFO     AUTH_DIAG endpoint=get_pending_members reason=missing_token exp_required=true
+[2026-06-14 10:01:44] INFO     AUTH_DIAG endpoint=approve_member reason=missing_token exp_required=true
+[2026-06-14 11:06:48] INFO     Successful admin login: admin1 from 127.0.0.1
+[2026-06-14 11:06:48] WARNING  Failed login attempt for user 'nonexistent' from 127.0.0.1
+[2026-06-14 11:06:49] WARNING  Failed login attempt for user 'admin2' from 127.0.0.1
+[2026-06-14 11:06:50] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:06:50] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:06:50] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:06:51] WARNING  Login attempt on inactive account 'admin_inactive' from 127.0.0.1
+[2026-06-14 11:06:52] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:06:53] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:06:53] INFO     AUTH_DIAG endpoint=admin_register reason=role_forbidden role=admin allowed_roles=['superadmin'] admin_id=1 member_id=None
+[2026-06-14 11:06:54] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:06:55] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:06:57] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 11:06:58] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 11:06:58] INFO     AUTH_DIAG endpoint=get_members reason=missing_token exp_required=true
+[2026-06-14 11:06:59] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:06:59] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=admin admin_id=1 member_id=None allowed_roles=['admin', 'superadmin', 'finance', 'coordinator', 'communication']
+[2026-06-14 11:07:00] INFO     AUTH_DIAG endpoint=approve_member validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:11:23] INFO     Successful admin login: admin1 from 127.0.0.1
+[2026-06-14 11:11:24] WARNING  Failed login attempt for user 'nonexistent' from 127.0.0.1
+[2026-06-14 11:11:25] WARNING  Failed login attempt for user 'admin2' from 127.0.0.1
+[2026-06-14 11:11:25] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:11:25] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:11:25] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:11:26] WARNING  Login attempt on inactive account 'admin_inactive' from 127.0.0.1
+[2026-06-14 11:11:27] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:11:28] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:11:28] INFO     AUTH_DIAG endpoint=admin_register reason=role_forbidden role=admin allowed_roles=['superadmin'] admin_id=1 member_id=None
+[2026-06-14 11:11:29] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:11:30] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:11:34] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:11:34] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['finance', 'coordinator', 'admin', 'superadmin', 'communication'] category=None
+[2026-06-14 11:11:35] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:11:35] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['finance', 'coordinator', 'admin', 'superadmin', 'communication'] category=None
+[2026-06-14 11:11:35] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:11:35] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['finance', 'coordinator', 'admin', 'superadmin', 'communication'] category=None
+[2026-06-14 11:11:36] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:11:36] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=admin admin_id=1 member_id=None allowed_roles=['finance', 'coordinator', 'admin', 'superadmin', 'communication']
+[2026-06-14 11:11:37] INFO     AUTH_DIAG endpoint=approve_member validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:18:44] INFO     Successful admin login: admin1 from 127.0.0.1
+[2026-06-14 11:18:44] WARNING  Failed login attempt for user 'nonexistent' from 127.0.0.1
+[2026-06-14 11:18:47] WARNING  Failed login attempt for user 'admin2' from 127.0.0.1
+[2026-06-14 11:18:47] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:18:47] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:18:47] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:18:48] WARNING  Login attempt on inactive account 'admin_inactive' from 127.0.0.1
+[2026-06-14 11:18:49] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:18:51] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:18:51] INFO     AUTH_DIAG endpoint=admin_register reason=role_forbidden role=admin allowed_roles=['superadmin'] admin_id=1 member_id=None
+[2026-06-14 11:18:52] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:18:54] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:18:57] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:18:57] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['communication', 'finance', 'superadmin', 'coordinator', 'admin'] category=None
+[2026-06-14 11:18:58] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:18:58] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['communication', 'finance', 'superadmin', 'coordinator', 'admin'] category=None
+[2026-06-14 11:18:59] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:18:59] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['communication', 'finance', 'superadmin', 'coordinator', 'admin'] category=None
+[2026-06-14 11:19:00] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:19:00] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=admin admin_id=1 member_id=None allowed_roles=['communication', 'finance', 'superadmin', 'coordinator', 'admin']
+[2026-06-14 11:19:01] INFO     AUTH_DIAG endpoint=approve_member validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:22:55] INFO     Successful admin login: admin1 from 127.0.0.1
+[2026-06-14 11:22:55] WARNING  Failed login attempt for user 'nonexistent' from 127.0.0.1
+[2026-06-14 11:22:57] WARNING  Failed login attempt for user 'admin2' from 127.0.0.1
+[2026-06-14 11:22:57] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:22:57] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:22:57] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:22:58] WARNING  Login attempt on inactive account 'admin_inactive' from 127.0.0.1
+[2026-06-14 11:22:59] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:23:00] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:23:00] INFO     AUTH_DIAG endpoint=admin_register reason=role_forbidden role=admin allowed_roles=['superadmin'] admin_id=1 member_id=None
+[2026-06-14 11:23:01] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:23:02] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:23:05] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:23:05] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['admin', 'coordinator', 'finance', 'communication', 'superadmin'] category=None
+[2026-06-14 11:23:06] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:23:06] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['admin', 'coordinator', 'finance', 'communication', 'superadmin'] category=None
+[2026-06-14 11:23:07] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:23:07] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['admin', 'coordinator', 'finance', 'communication', 'superadmin'] category=None
+[2026-06-14 11:23:07] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:23:07] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=admin admin_id=1 member_id=None allowed_roles=['admin', 'coordinator', 'finance', 'communication', 'superadmin']
+[2026-06-14 11:23:08] INFO     AUTH_DIAG endpoint=approve_member validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:25:47] INFO     Successful admin login: admin1 from 127.0.0.1
+[2026-06-14 11:25:47] WARNING  Failed login attempt for user 'nonexistent' from 127.0.0.1
+[2026-06-14 11:25:48] WARNING  Failed login attempt for user 'admin2' from 127.0.0.1
+[2026-06-14 11:25:48] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:25:48] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:25:48] WARNING  Login attempt with missing credentials from 127.0.0.1
+[2026-06-14 11:25:49] WARNING  Login attempt on inactive account 'admin_inactive' from 127.0.0.1
+[2026-06-14 11:25:50] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:25:52] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:25:52] INFO     AUTH_DIAG endpoint=admin_register reason=role_forbidden role=admin allowed_roles=['superadmin'] admin_id=1 member_id=None
+[2026-06-14 11:25:53] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:25:54] INFO     AUTH_DIAG endpoint=admin_register validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-14 11:25:57] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:25:57] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['admin', 'coordinator', 'communication', 'superadmin', 'finance'] category=None
+[2026-06-14 11:25:58] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:25:58] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['admin', 'coordinator', 'communication', 'superadmin', 'finance'] category=None
+[2026-06-14 11:25:59] INFO     AUTH_DIAG endpoint=get_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:25:59] INFO     AUTH_DIAG endpoint=/members reason=members role=admin admin_id=1 member_id=None allowed_roles=['admin', 'coordinator', 'communication', 'superadmin', 'finance'] category=None
+[2026-06-14 11:26:00] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=admin admin_id=1 member_id=None
+[2026-06-14 11:26:00] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=admin admin_id=1 member_id=None allowed_roles=['admin', 'coordinator', 'communication', 'superadmin', 'finance']
+[2026-06-14 11:26:01] INFO     AUTH_DIAG endpoint=approve_member validation=ok role=admin admin_id=1 member_id=None
