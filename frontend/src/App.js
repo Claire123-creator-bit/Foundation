@@ -8,15 +8,6 @@ import CompleteGoogleProfile from './components/CompleteGoogleProfile';
 import LandingPage from './components/LandingPage';
 import { getToken, me, setToken, clearNonTokenAuthState } from './utils/auth';
 
-const s = {
-  page: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh'
-  }
-};
-
 function App() {
   const [role, setRole] = useState(null);
   const [admin, setAdmin] = useState(null);
@@ -33,19 +24,13 @@ function App() {
     if (googleToken) {
       setToken(googleToken);
       params.delete('google_token');
-      const newUrl =
-        window.location.pathname +
-        (params.toString() ? `?${params.toString()}` : '');
-      window.history.replaceState({}, document.title, newUrl);
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
 
     if (googlePendingProfile && pendingToken) {
       localStorage.setItem('pending_token', pendingToken);
       params.delete('token');
-      const newUrl =
-        window.location.pathname +
-        (params.toString() ? `?${params.toString()}` : '');
-      window.history.replaceState({}, document.title, newUrl);
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
 
     const token = getToken();
@@ -78,48 +63,36 @@ function App() {
     })();
   }, []);
 
-  const handleAdminLogin = (_name, _username, _role, token) => {
+  const handleAdminLogin = (token) => {
     setToken(token);
-    setRole(null);
-    setAdmin(null);
-    setMember(null);
     setRestoring(true);
 
     (async () => {
       try {
         const data = await me();
-        setRole(data.role || null);
-        setAdmin(data.admin || null);
+        setRole(data.role);
+        setAdmin(data.admin);
         setMember(null);
       } catch {
         setToken(null);
-        setRole(null);
-        setAdmin(null);
-        setMember(null);
       } finally {
         setRestoring(false);
       }
     })();
   };
 
-  const handleMemberLogin = (_memberData, token) => {
+  const handleMemberLogin = (token) => {
     setToken(token);
-    setRole(null);
-    setAdmin(null);
-    setMember(null);
     setRestoring(true);
 
     (async () => {
       try {
         const data = await me();
-        setRole(data.role || null);
-        setMember(data.member || null);
+        setRole(data.role);
+        setMember(data.member);
         setAdmin(null);
       } catch {
         setToken(null);
-        setRole(null);
-        setAdmin(null);
-        setMember(null);
       } finally {
         setRestoring(false);
       }
@@ -136,58 +109,41 @@ function App() {
 
   if (restoring) {
     return (
-      <div style={s.page}>
-        <div style={{ textAlign: 'center', padding: 40, fontWeight: 300 }}>
-          Loading session...
-        </div>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: 16
+      }}>
+        Loading session...
       </div>
     );
   }
 
-  if (role && role !== 'member' && admin)
-    return (
-      <AdminDashboard
-        adminName={admin.full_name || admin.username || 'Admin'}
-        onLogout={handleLogout}
-      />
-    );
+  if (role && role !== 'member' && admin) {
+    return <AdminDashboard adminName={admin.full_name || admin.username} onLogout={handleLogout} />;
+  }
 
-  if (role === 'member' && member)
+  if (role === 'member' && member) {
     return <MemberDashboard member={member} onLogout={handleLogout} />;
+  }
 
   const params = new URLSearchParams(window.location.search);
-  const googlePendingProfile =
-    params.get('google_pending_profile') === '1';
+  const googlePendingProfile = params.get('google_pending_profile') === '1';
 
   if (googlePendingProfile) {
     return (
       <CompleteGoogleProfile
         onBack={() => setPage('home')}
-        onComplete={(jwtToken) => {
-          setToken(jwtToken);
-        }}
+        onComplete={(token) => setToken(token)}
       />
     );
   }
 
-  if (page === 'admin-login')
-    return (
-      <LoginPage
-        onLogin={handleAdminLogin}
-        onBack={() => setPage('home')}
-      />
-    );
-
-  if (page === 'member-login')
-    return (
-      <MemberLogin
-        onLogin={handleMemberLogin}
-        onBack={() => setPage('home')}
-      />
-    );
-
-  if (page === 'member-register')
-    return <MemberRegister onBack={() => setPage('home')} />;
+  if (page === 'admin-login') return <LoginPage onLogin={handleAdminLogin} onBack={() => setPage('home')} />;
+  if (page === 'member-login') return <MemberLogin onLogin={handleMemberLogin} onBack={() => setPage('home')} />;
+  if (page === 'member-register') return <MemberRegister onBack={() => setPage('home')} />;
 
   return (
     <LandingPage
