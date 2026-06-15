@@ -31,6 +31,29 @@ app.config.setdefault("SQLALCHEMY_TRACK_MODIFICATIONS", False)
 db.init_app(app)
 
 
+def init_db():
+    with app.app_context():
+        db.create_all()
+        if not Admin.query.filter_by(role='superadmin').first():
+            superadmin = Admin(
+                username='superadmin',
+                password=generate_password_hash('superadmin123'),
+                full_name='Super Administrator',
+                email='superadmin@mbogofoundation.org',
+                phone='',
+                role='superadmin',
+                is_active=True,
+            )
+            db.session.add(superadmin)
+            db.session.commit()
+            print("[INIT] Superadmin created: superadmin / superadmin123")
+        else:
+            print("[INIT] Superadmin already exists")
+
+
+init_db()
+
+
 def _auth_token() -> str:
     token = request.headers.get("Authorization")
     if not token:
@@ -53,6 +76,7 @@ def _is_api_path() -> bool:
         "/member-login",
         "/admin-register",
         "/media",
+        "/media-upload",
         "/health",
         "/live",
         "/ready",
@@ -245,3 +269,53 @@ def get_media():
     except Exception:
         return jsonify([]), 200
 
+
+@app.route("/media-upload", methods=["POST"])
+def upload_media():
+    token = _auth_token()
+    if not token:
+        return _json_api_error("Missing token", 401)
+
+    try:
+        decoded = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+        admin_id = decoded.get("admin_id")
+        if not admin_id:
+            return _json_api_error("Invalid token", 401)
+    except Exception:
+        return _json_api_error("Invalid token", 401)
+
+    if "file" not in request.files:
+        return _json_api_error("No file provided", 400)
+
+    file = request.files["file"]
+    if file.filename == "":
+        return _json_api_error("No file selected", 400)
+
+    try:
+        from werkzeug.utils import secure_filename
+        import uuid
+
+        filename = secure_filename(file.filename)
+        unique_filename = f"{uuid.uuid4()}_{filename}"
+        file_path = f"uploads/{unique_filename}"
+
+        os.makedirs("uploads", exist_ok=True)
+        file.save(file_path)
+
+        media = Media(
+            title=request.form.get("title", filename),
+            description=request.form.get("description", ""),
+            file_path=file_path,
+            file_type=file.content_type or "unknown",
+            media_type=request.form.get("media_type", "image"),
+            file_size=os.path.getsize(file_path),
+            uploaded_by=admin_id,
+            activity_id=request.form.get("activity_id"),
+            is_active=True,
+        )
+        db.session.add(media)
+        db.session.commit()
+
+        return jsonify({"success": True, "media": media.to_dict()}), 200
+    except Exception as e:
+        return _json_api_error(f"Upload failed: {str(e)}", 500)
