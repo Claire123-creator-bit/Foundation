@@ -32,9 +32,18 @@ db.init_app(app)
 
 
 def init_db():
-    with app.app_context():
-        db.create_all()
-        if not Admin.query.filter_by(role='superadmin').first():
+    try:
+        with app.app_context():
+            print("[INIT] Creating database tables...")
+            db.create_all()
+            print("[INIT] Tables created successfully")
+
+            existing = Admin.query.filter_by(role='superadmin').first()
+            if existing:
+                print("[INIT] Superadmin already exists")
+                return
+
+            print("[INIT] Creating superadmin user...")
             superadmin = Admin(
                 username='superadmin',
                 password=generate_password_hash('superadmin123'),
@@ -47,8 +56,10 @@ def init_db():
             db.session.add(superadmin)
             db.session.commit()
             print("[INIT] Superadmin created: superadmin / superadmin123")
-        else:
-            print("[INIT] Superadmin already exists")
+    except Exception as e:
+        import traceback
+        print(f"[INIT ERROR] Failed to initialize database: {str(e)}")
+        print(traceback.format_exc())
 
 
 init_db()
@@ -150,7 +161,6 @@ def admin_login():
     try:
         admin = Admin.query.filter_by(username=username).first()
         if not admin:
-            # Backward/compat: some clients may send email instead of username
             admin = Admin.query.filter_by(email=username).first()
         if not admin:
             return _json_api_error("Invalid username or password", 401)
@@ -172,7 +182,10 @@ def admin_login():
         )
 
         return jsonify({"success": True, "name": admin.full_name, "username": admin.username, "token": token}), 200
-    except Exception:
+    except Exception as e:
+        import traceback
+        print(f"[ERROR] admin_login failed: {str(e)}")
+        print(traceback.format_exc())
         return _json_api_error("Internal server error", 500)
 
 
