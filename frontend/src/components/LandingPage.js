@@ -45,38 +45,38 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
 
   return (
     <div style={s.page}>
-      <nav style={s.navbar}>
-        <div style={s.navContainer}>
-          <div style={s.logo}>
-            <img
-              src="/mbogo-background.jpeg"
-              alt="Mbogo Foundation"
-              style={s.logoImage}
-            />
-            <span style={s.logoText}>Mbogo Foundation</span>
+      <nav className="landing-navbar">
+        <div className="landing-navbar-desktop">
+          <div className="landing-logo">
+            <img src="/mbogo-background.jpeg" alt="Mbogo Foundation" className="landing-logo-image" />
+            <span className="landing-logo-text">Mbogo Foundation</span>
           </div>
-          
-          <div style={s.navLinks}>
-            <button style={s.navLink} onClick={() => scrollToSection('about')}>About</button>
-            <button style={s.navLink} onClick={() => scrollToSection('what-we-do')}>What We Do</button>
-            <button style={s.navLink} onClick={() => scrollToSection('activities')}>Activities</button>
-            <button style={s.navLink} onClick={() => scrollToSection('media')}>Media</button>
-            <button style={s.navLink} onClick={() => scrollToSection('contact')}>Contact</button>
-            <button style={s.joinButton} onClick={onJoinUs}>Join Us Now</button>
-            
-            <div style={s.menuContainer}>
-              <button style={s.menuButton} onClick={() => setShowMenu(!showMenu)}>
-                {showMenu ? '✕' : '⋮'}
-              </button>
-              
-              {showMenu && (
-                <div style={s.dropdownMenu}>
-                  <button style={s.menuItem} onClick={() => { onAdminLogin(); setShowMenu(false); }}>
-                    Admin Login
-                  </button>
-                </div>
-              )}
-            </div>
+
+          <div className="landing-nav-links">
+            <button className="landing-nav-link" onClick={() => scrollToSection('about')}>About</button>
+            <button className="landing-nav-link" onClick={() => scrollToSection('what-we-do')}>What We Do</button>
+            <button className="landing-nav-link" onClick={() => scrollToSection('activities')}>Activities</button>
+            <button className="landing-nav-link" onClick={() => scrollToSection('media')}>Media</button>
+            <button className="landing-nav-link" onClick={() => scrollToSection('contact')}>Contact</button>
+            <button className="landing-join-button" onClick={onJoinUs}>Join Us Now</button>
+          </div>
+
+          <div className="landing-menu-container">
+            <button className="landing-menu-button" onClick={() => setShowMenu(!showMenu)}>
+              {showMenu ? '✕' : '☰'}
+            </button>
+
+            {showMenu && (
+              <div className="landing-dropdown-menu">
+                <button className="landing-menu-item" onClick={() => { scrollToSection('about'); setShowMenu(false); }}>About</button>
+                <button className="landing-menu-item" onClick={() => { scrollToSection('what-we-do'); setShowMenu(false); }}>What We Do</button>
+                <button className="landing-menu-item" onClick={() => { scrollToSection('activities'); setShowMenu(false); }}>Activities</button>
+                <button className="landing-menu-item" onClick={() => { scrollToSection('media'); setShowMenu(false); }}>Media</button>
+                <button className="landing-menu-item" onClick={() => { scrollToSection('contact'); setShowMenu(false); }}>Contact</button>
+                <button className="landing-menu-item" onClick={() => { onJoinUs(); setShowMenu(false); }}>Join Us Now</button>
+                <button className="landing-menu-item" onClick={() => { onAdminLogin(); setShowMenu(false); }}>Admin Login</button>
+              </div>
+            )}
           </div>
         </div>
       </nav>
