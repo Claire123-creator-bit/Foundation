@@ -77,6 +77,22 @@
   transform: scale(1.05);
 }
 
+.landing-admin-btn {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.5);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.landing-admin-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
 .landing-menu-container {
   position: relative;
   display: none;
@@ -128,7 +144,9 @@
 .landing-hero {
   margin-top: 72px;
   min-height: 90vh;
-  background: linear-gradient(135deg, #0A2463 0%, #1a3a7a 100%);
+  background: linear-gradient(rgba(10,36,99,0.6), rgba(10,36,99,0.6)), url('/mbogo%20foundation.jpeg');
+  background-size: cover;
+  background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;

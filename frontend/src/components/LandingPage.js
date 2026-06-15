@@ -59,6 +59,7 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
             <button className="landing-nav-link" onClick={() => scrollToSection('media')}>Media</button>
             <button className="landing-nav-link" onClick={() => scrollToSection('contact')}>Contact</button>
             <button className="landing-join-button" onClick={onJoinUs}>Join Us Now</button>
+            <button className="landing-admin-btn" onClick={onAdminLogin}>Admin</button>
           </div>
 
           <div className="landing-menu-container">
