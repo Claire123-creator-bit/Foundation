@@ -2,8 +2,36 @@ import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
 import { authHeaders } from '../utils/auth';
 
-
 const categories = ['Church Leader', 'Pastor', 'Village Elder', 'Agent', 'Youth Leader', 'Women Leader', 'Community Member', 'Government Official', 'NGO Representative', 'Volunteer'];
+
+const locations = {
+  'Nairobi': {
+    'Westlands': ['Westlands', 'Karura', 'Kilimani'],
+    'Dagoretti': ['Dagoketti North', 'Dagoketti South', 'Mutuini'],
+    'Embakasi': ['Embakasi East', 'Embakasi North', 'Embakasi South', 'Embakasi West'],
+  },
+  'Mombasa': {
+    'Changamwe': ['Changamwe', 'Kipevu', 'Shimanzi'],
+    'Jomvu': ['Jomvu', 'Kona', 'Likoni'],
+  },
+  'Kwale': {
+    'Mombasa': ['Mombasa', 'Likoni', 'Msambweni'],
+    'Lunga Lunga': ['Lunga Lunga', 'Vanga'],
+  },
+  'Kilifi': {
+    'Malindi': ['Malindi', 'Gede', 'Watamu'],
+    'Lamu': ['Lamu', 'Kiunga'],
+  },
+  'Murang\'a': {
+    'Kangema': ['Ng\'araria', 'Muruka', 'Kagundu-Ini', 'Gaichanjiru', 'Ruchu'],
+    'Mathioya': ['Mathioya', 'Gatitu', 'Kambiti'],
+    'Kiharu': ['Kiharu', 'Kangari', 'Kirwara'],
+    'Kigumo': ['Kigumo', 'Kungu', 'Mbuuri'],
+    'Maragua': ['Maragua', 'Mahiga', 'Kamahuha'],
+    'Kandara': ['Kandara', 'Murera', 'Kipkaren'],
+    'Gatanga': ['Gatanga', 'Thigio', 'Kinyona'],
+  },
+};
 
 function RegisterMember({ onRegistrationSuccess }) {
   const [form, setForm] = useState({ full_names: '', national_id: '', phone_number: '', county: '', constituency: '', ward: '', physical_location: '', category: '' });
@@ -11,7 +39,24 @@ function RegisterMember({ onRegistrationSuccess }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const set = k => e => setForm({ ...form, [k]: e.target.value });
+  const set = k => e => {
+    const value = e.target.value;
+    const newForm = { ...form, [k]: value };
+
+    // Reset dependent dropdowns
+    if (k === 'county') {
+      newForm.constituency = '';
+      newForm.ward = '';
+    } else if (k === 'constituency') {
+      newForm.ward = '';
+    }
+
+    setForm(newForm);
+  };
+
+  const counties = Object.keys(locations);
+  const constituencies = form.county ? Object.keys(locations[form.county]) : [];
+  const wards = form.county && form.constituency ? locations[form.county][form.constituency] : [];
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -50,13 +95,22 @@ function RegisterMember({ onRegistrationSuccess }) {
         <input value={form.phone_number} onChange={set('phone_number')} placeholder="07XXXXXXXX" required />
 
         <label>County</label>
-        <input value={form.county} onChange={set('county')} required />
+        <select value={form.county} onChange={set('county')} required>
+          <option value="">Select County...</option>
+          {counties.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
 
         <label>Constituency</label>
-        <input value={form.constituency} onChange={set('constituency')} required />
+        <select value={form.constituency} onChange={set('constituency')} disabled={!form.county} required>
+          <option value="">Select Constituency...</option>
+          {constituencies.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
 
         <label>Ward</label>
-        <input value={form.ward} onChange={set('ward')} required />
+        <select value={form.ward} onChange={set('ward')} disabled={!form.constituency} required>
+          <option value="">Select Ward...</option>
+          {wards.map(w => <option key={w} value={w}>{w}</option>)}
+        </select>
 
         <label>Physical Location</label>
         <input value={form.physical_location} onChange={set('physical_location')} required />
