@@ -151,22 +151,190 @@ th { background: var(--blue); color: var(--white); padding: 12px; font-size: 13p
 td { padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 13px; color: var(--blue); font-weight: 300; }
 
 /* ── Mobile Responsive ── */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  :root {
+    --space: 12px;
+  }
+
+  html { font-size: 15px; }
+
+  .navbar {
+    height: 56px;
+    padding: 0 12px;
+  }
+
+  .navbar-logo img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .logo-name {
+    font-size: 13px;
+  }
+
+  .logo-tagline {
+    font-size: 9px;
+  }
+
   .navbar-links { display: none; }
   .navbar-right { display: none; }
-  .hamburger    { display: flex; }
+  .hamburger { display: flex; }
 
-  .main-content { padding: 12px; }
+  .main-content {
+    padding: 12px;
+    max-width: 100%;
+  }
 
-  .stat-card  { width: 90px; height: 90px; }
-  .stat-number { font-size: 26px; }
+  .stats-banner {
+    padding: 16px 12px;
+    gap: 8px;
+  }
 
-  h1 { font-size: 18px; }
-  h2 { font-size: 16px; }
+  .stat-card {
+    width: 80px;
+    height: 80px;
+  }
 
-  input, select, textarea { font-size: 16px; padding: 13px; } /* 16px prevents iOS zoom */
+  .stat-number { font-size: 22px; }
+  .stat-label { font-size: 10px; }
 
-  button { height: 52px; font-size: 16px; }
+  h1 { font-size: 16px; }
+  h2 { font-size: 15px; margin-bottom: 12px; }
+  h3 { font-size: 14px; }
+  label { font-size: 14px; }
 
-  .footer-top { flex-direction: column; }
+  input, select, textarea {
+    padding: 13px 12px;
+    font-size: 16px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+  }
+
+  button {
+    height: 48px;
+    font-size: 15px;
+    padding: 0 12px;
+    border-radius: 6px;
+    min-width: 100%;
+  }
+
+  .card {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  th, td {
+    padding: 8px 6px;
+  }
+
+  .footer-top {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .footer-inner {
+    padding: 20px 12px 0;
+  }
+
+  .mobile-menu {
+    width: 100%;
+    right: 0;
+    top: 56px;
+  }
 }
+
+@media (max-width: 480px) {
+  :root {
+    --space: 10px;
+  }
+
+  html { font-size: 14px; }
+
+  .navbar {
+    height: 50px;
+    padding: 0 8px;
+  }
+
+  .navbar-logo img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .logo-name {
+    font-size: 12px;
+  }
+
+  .logo-tagline {
+    font-size: 8px;
+  }
+
+  .main-content {
+    padding: 8px;
+  }
+
+  h1 { font-size: 15px; }
+  h2 { font-size: 14px; }
+  h3 { font-size: 13px; }
+  p { font-size: 13px; }
+  label { font-size: 13px; margin-bottom: 6px; }
+
+  input, select, textarea {
+    padding: 12px 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+  }
+
+  button {
+    height: 44px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+
+  .stats-banner {
+    padding: 12px 8px;
+    gap: 6px;
+  }
+
+  .stat-card {
+    width: 70px;
+    height: 70px;
+  }
+
+  .stat-number { font-size: 18px; }
+  .stat-label { font-size: 9px; }
+
+  .card {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .footer-inner {
+    padding: 16px 8px 0;
+  }
+
+  .mobile-menu {
+    top: 50px;
+  }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) {
+  button:active {
+    opacity: 0.75;
+  }
+
+  button:focus {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: 2px solid var(--blue);
+    outline-offset: 1px;
+  }
+}
+

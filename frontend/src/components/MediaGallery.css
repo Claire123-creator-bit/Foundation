@@ -160,12 +160,117 @@
   font-size: 11px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .media-gallery {
+    padding: 12px;
+  }
+
+  .media-gallery h2 {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .upload-section {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .upload-form input,
+  .upload-form textarea,
+  .upload-form select,
+  .upload-form button {
+    padding: 12px;
+    font-size: 16px;
+  }
+
   .media-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .media-preview {
+    height: 120px;
+  }
+
+  .media-info h4 {
+    font-size: 13px;
+  }
+
+  .media-info p {
+    font-size: 11px;
+  }
+
+  .media-info small {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .media-gallery {
+    padding: 8px;
+  }
+
+  .media-gallery h2 {
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .media-section h3,
+  .upload-section h3 {
+    font-size: 14px;
+  }
+
+  .upload-section {
+    padding: 12px;
+    margin-bottom: 16px;
   }
 
   .upload-form {
     gap: 10px;
+  }
+
+  .upload-form input,
+  .upload-form textarea,
+  .upload-form select,
+  .upload-form button {
+    padding: 11px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+
+  .upload-form button {
+    height: 44px;
+  }
+
+  .media-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+  }
+
+  .media-preview {
+    height: 100px;
+  }
+
+  .media-info {
+    padding: 8px;
+  }
+
+  .media-info h4 {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+
+  .media-info p {
+    font-size: 10px;
+    margin-bottom: 3px;
+  }
+
+  .media-info small {
+    font-size: 9px;
+  }
+
+  .message {
+    font-size: 12px;
+    padding: 8px;
   }
 }

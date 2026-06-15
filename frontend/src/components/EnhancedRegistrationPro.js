@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
 import { authHeaders } from '../utils/auth';
 import { locations } from '../data/kenyanLocations';
+import './EnhancedRegistrationPro.css';
 
 const categories = ['Church Leader', 'Pastor', 'Village Elder', 'Agent', 'Youth Leader', 'Women Leader', 'Community Member', 'Government Official', 'NGO Representative', 'Volunteer'];
 
