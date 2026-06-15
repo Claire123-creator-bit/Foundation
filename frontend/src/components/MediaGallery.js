@@ -32,7 +32,11 @@ function MediaGallery() {
     setSelectedFile(e.target.files[0]);
   };
 
-  const handleUpload = async (e) => {
+  const getImageUrl = (filePath) => {
+    const apiUrl = process.env.REACT_APP_API_URL || 'https://foundation-2.onrender.com';
+    if (filePath.startsWith('http')) return filePath;
+    return `${apiUrl}${filePath.startsWith('/') ? '' : '/'}${filePath}`;
+  };
     e.preventDefault();
     if (!selectedFile) {
       setMessage('Please select a file');
@@ -120,7 +124,7 @@ function MediaGallery() {
               <div key={item.id} className="media-item">
                 <div className="media-preview">
                   {item.media_type === 'image' ? (
-                    <img src={item.file_path} alt={item.title} />
+                    <img src={getImageUrl(item.file_path)} alt={item.title} />
                   ) : (
                     <div className="media-placeholder">{item.file_type}</div>
                   )}

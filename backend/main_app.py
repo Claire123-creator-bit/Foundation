@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 import jwt
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -284,6 +284,17 @@ def get_me():
 
 
 # ---------------- Media ----------------
+@app.route("/uploads/<path:filename>", methods=["GET"])
+def serve_upload(filename):
+    try:
+        file_path = os.path.join("uploads", filename)
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            return send_file(file_path)
+        return _json_api_error("File not found", 404)
+    except Exception:
+        return _json_api_error("Error serving file", 500)
+
+
 @app.route("/media", methods=["GET"])
 def get_media():
     # Always return JSON: [] or list of media objects.
