@@ -37,6 +37,8 @@ function MediaGallery() {
     if (filePath.startsWith('http')) return filePath;
     return `${API_BASE}${filePath.startsWith('/') ? '' : '/'}${filePath}`;
   };
+
+  const handleUpload = async (e) => {
     e.preventDefault();
     if (!selectedFile) {
       setMessage('Please select a file');
