@@ -33,9 +33,27 @@ function MediaGallery() {
     setSelectedFile(e.target.files[0]);
   };
 
-  const getImageUrl = (filePath) => {
-    if (filePath.startsWith('http')) return filePath;
-    return `${API_BASE}${filePath.startsWith('/') ? '' : '/'}${filePath}`;
+  const handleDelete = async (mediaId) => {
+    if (!window.confirm('Delete this media? This cannot be undone.')) return;
+
+    try {
+      const response = await fetch(`${API_BASE}/media/${mediaId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setMessage('Media deleted successfully');
+        await loadMedia();
+      } else {
+        setMessage(`Delete failed: ${data.message || data.error}`);
+      }
+    } catch (e) {
+      setMessage(`Error deleting: ${e.message}`);
+    }
   };
 
   const handleUpload = async (e) => {
@@ -135,6 +153,12 @@ function MediaGallery() {
                   <h4>{item.title}</h4>
                   <p>{item.description || 'No description'}</p>
                   <small>Uploaded: {new Date(item.created_at).toLocaleDateString()}</small>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="media-delete-btn"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             ))}

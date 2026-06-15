@@ -2,12 +2,21 @@ import os
 from datetime import datetime
 
 import jwt
+import cloudinary
+import cloudinary.uploader
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from website_models import Admin, Member, Media, db
+
+# Configure Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
+)
 
 # Single Flask app instance (gunicorn/import-safe)
 app = Flask(__name__)
@@ -295,6 +304,39 @@ def serve_upload(filename):
         return _json_api_error("Error serving file", 500)
 
 
+@app.route("/media/<int:media_id>", methods=["DELETE"])
+def delete_media(media_id):
+    token = _auth_token()
+    if not token:
+        return _json_api_error("Missing token", 401)
+
+    try:
+        decoded = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+        admin_id = decoded.get("admin_id")
+        if not admin_id:
+            return _json_api_error("Invalid token", 401)
+    except Exception:
+        return _json_api_error("Invalid token", 401)
+
+    try:
+        media = Media.query.get(media_id)
+        if not media:
+            return _json_api_error("Media not found", 404)
+
+        # Delete from Cloudinary if it's a cloud URL
+        if "cloudinary" in media.file_path:
+            # Extract public_id from Cloudinary URL
+            public_id = media.file_path.split('/')[-1].split('.')[0]
+            cloudinary.uploader.destroy(f"mbogo_foundation/{public_id}")
+
+        db.session.delete(media)
+        db.session.commit()
+
+        return jsonify({"success": True, "message": "Media deleted"}), 200
+    except Exception as e:
+        return _json_api_error(f"Delete failed: {str(e)}", 500)
+
+
 @app.route("/media", methods=["GET"])
 def get_media():
     # Always return JSON: [] or list of media objects.
@@ -328,23 +370,20 @@ def upload_media():
         return _json_api_error("No file selected", 400)
 
     try:
-        from werkzeug.utils import secure_filename
-        import uuid
-
-        filename = secure_filename(file.filename)
-        unique_filename = f"{uuid.uuid4()}_{filename}"
-        file_path = f"uploads/{unique_filename}"
-
-        os.makedirs("uploads", exist_ok=True)
-        file.save(file_path)
+        # Upload to Cloudinary
+        upload_result = cloudinary.uploader.upload(
+            file,
+            folder="mbogo_foundation",
+            resource_type="auto"
+        )
 
         media = Media(
-            title=request.form.get("title", filename),
+            title=request.form.get("title", file.filename),
             description=request.form.get("description", ""),
-            file_path=file_path,
+            file_path=upload_result["secure_url"],
             file_type=file.content_type or "unknown",
             media_type=request.form.get("media_type", "image"),
-            file_size=os.path.getsize(file_path),
+            file_size=upload_result.get("bytes", 0),
             uploaded_by=admin_id,
             activity_id=request.form.get("activity_id"),
             is_active=True,
