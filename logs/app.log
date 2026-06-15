@@ -4453,3 +4453,4 @@ sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint fail
 [2026-06-14 11:25:59] DEBUG    [foundation] GET /members from 127.0.0.1
 [2026-06-14 11:26:00] DEBUG    [foundation] GET /admin/pending-members from 127.0.0.1
 [2026-06-14 11:26:01] DEBUG    [foundation] POST /admin/approve-member/1 from 127.0.0.1
+[2026-06-14 14:26:32] INFO     [foundation] Starting Foundation application - Debug: False

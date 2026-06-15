@@ -108,6 +108,43 @@ class Meeting(db.Model):
         }
 
 
+class Activity(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False, index=True)
+    description = db.Column(db.Text)
+    date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    location = db.Column(db.String(200))
+    county = db.Column(db.String(50), index=True)
+    constituency = db.Column(db.String(100))
+    ward = db.Column(db.String(100), index=True)
+    organizer = db.Column(db.String(150))
+    created_by = db.Column(db.Integer, db.ForeignKey('admin.id'))
+    is_active = db.Column(db.Boolean, default=True, index=True)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    admin = db.relationship('Admin', backref='activities_created')
+
+    def to_dict(self):
+        media_list = [m.to_dict() for m in self.media] if hasattr(self, 'media') else []
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description or '',
+            'date': self.date.isoformat(),
+            'location': self.location or '',
+            'county': self.county or '',
+            'constituency': self.constituency or '',
+            'ward': self.ward or '',
+            'organizer': self.organizer or '',
+            'created_by': self.created_by,
+            'is_active': self.is_active,
+            'created_date': self.created_date.isoformat(),
+            'updated_date': self.updated_date.isoformat(),
+            'media_count': len(media_list),
+        }
+
+
 class Media(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -117,10 +154,13 @@ class Media(db.Model):
     media_type = db.Column(db.String(20), nullable=False)
     file_size = db.Column(db.Integer)
     uploaded_by = db.Column(db.Integer, db.ForeignKey('admin.id'))
+    activity_id = db.Column(db.Integer, db.ForeignKey('activity.id'), nullable=True)
     is_active = db.Column(db.Boolean, default=True)
+    is_cover = db.Column(db.Boolean, default=False)
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     admin = db.relationship('Admin', backref='media_uploads')
+    activity = db.relationship('Activity', backref='media')
 
     def to_dict(self):
         return {
@@ -132,7 +172,9 @@ class Media(db.Model):
             'media_type': self.media_type,
             'file_size': self.file_size,
             'uploaded_by': self.uploaded_by,
+            'activity_id': self.activity_id,
             'is_active': self.is_active,
+            'is_cover': self.is_cover,
             'created_date': self.created_date.isoformat(),
         }
 
@@ -155,6 +197,33 @@ class MeetingAttendance(db.Model):
             'member_id': self.member_id,
             'attended_at': self.attended_at.isoformat(),
             'registered_by': self.registered_by,
+        }
+
+
+class Organization(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False, unique=True)
+    email = db.Column(db.String(100))
+    phone = db.Column(db.String(20))
+    website = db.Column(db.String(200))
+    address = db.Column(db.Text)
+    description = db.Column(db.Text)
+    logo_path = db.Column(db.String(500))
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email or '',
+            'phone': self.phone or '',
+            'website': self.website or '',
+            'address': self.address or '',
+            'description': self.description or '',
+            'logo_path': self.logo_path or '',
+            'created_date': self.created_date.isoformat(),
+            'updated_date': self.updated_date.isoformat(),
         }
 
 

@@ -1,6 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from website_models import db, Member, Meeting, Admin, Media, MeetingAttendance
+from website_models import db, Member, Meeting, Admin, Media, MeetingAttendance, Activity, Organization
 from werkzeug.utils import secure_filename
 
 from datetime import datetime, timedelta
@@ -35,7 +35,10 @@ from google_auth import (
     create_pending_google_member,
 )
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_BUILD_DIR = os.path.join(BASE_DIR, '..', 'frontend', 'build')
+
+app = Flask(__name__, static_folder=FRONTEND_BUILD_DIR, static_url_path='')
 
 # JWT configuration (fail-fast)
 
@@ -59,7 +62,6 @@ _DARAJA_READY = all((os.environ.get(k, '') or '').strip() for k in _DARAJA_REQUI
 
 
 # Configuration
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 INSTANCE_DIR = os.path.join(BASE_DIR, '..', 'instance')
 DB_PATH = os.path.join(INSTANCE_DIR, 'foundation_complete.db')
 UPLOAD_FOLDER = os.path.join(BASE_DIR, '..', 'uploads')
@@ -211,6 +213,20 @@ def init_database():
             db.session.add(superadmin)
             db.session.commit()
             app_logger.info("Superadmin account created")
+
+        org = Organization.query.first()
+        if not org:
+            org = Organization(
+                name='Mbogo Welfare Empowerment Foundation',
+                email='mbogoempowermentfoundation@gmail.com',
+                phone='0143235490',
+                website='https://www.mbogofoundation.org',
+                address='Murang\'a County, Kenya',
+                description='Mbogo Welfare Empowerment Foundation'
+            )
+            db.session.add(org)
+            db.session.commit()
+            app_logger.info("Organization info initialized")
 
     except Exception as e:
         app_logger.error(f"Database initialization failed: {str(e)}", exc_info=True)
@@ -917,12 +933,385 @@ def delete_media(media_id):
 
 
 
+# ── Activities (Admin only) ──
+
+@app.route('/activities', methods=['GET'])
+def get_activities():
+    try:
+        status = request.args.get('status', 'active')
+        if status == 'active':
+            activities = Activity.query.filter_by(is_active=True).order_by(Activity.date.desc()).all()
+        else:
+            activities = Activity.query.order_by(Activity.date.desc()).all()
+        return jsonify([a.to_dict() for a in activities])
+    except Exception as e:
+        app_logger.error(f"Get activities error: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Failed to fetch activities'}), 500
+
+
+@app.route('/activities/<int:activity_id>', methods=['GET'])
+def get_activity(activity_id):
+    try:
+        activity = Activity.query.get(activity_id)
+        if not activity:
+            return jsonify({'success': False, 'error': 'Activity not found'}), 404
+        data = activity.to_dict()
+        data['media'] = [m.to_dict() for m in activity.media]
+        return jsonify(data)
+    except Exception as e:
+        app_logger.error(f"Get activity error: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Failed to fetch activity'}), 500
+
+
+@app.route('/activities', methods=['POST'])
+@jwt_required(*ADMIN_ROLES)
+def create_activity():
+    try:
+        data = request.json
+        required = ['title', 'county', 'constituency', 'ward']
+        missing = [f for f in required if not data.get(f)]
+        if missing:
+            return jsonify({'success': False, 'error': f'Missing: {", ".join(missing)}'}), 400
+
+        activity = Activity(
+            title=data['title'],
+            description=data.get('description', ''),
+            date=datetime.fromisoformat(data['date']) if data.get('date') else datetime.utcnow(),
+            location=data.get('location', ''),
+            county=data['county'],
+            constituency=data['constituency'],
+            ward=data['ward'],
+            organizer=data.get('organizer', ''),
+            created_by=request.jwt_payload.get('admin_id'),
+            is_active=True
+        )
+
+        db.session.add(activity)
+        db.session.commit()
+
+        app_logger.info(f"Activity created: {activity.title} by admin {request.jwt_payload.get('admin_id')}")
+        return jsonify({'success': True, 'activity': activity.to_dict()})
+
+    except Exception as e:
+        db.session.rollback()
+        app_logger.error(f"Create activity error: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'error': 'Failed to create activity'}), 500
+
+
+@app.route('/activities/<int:activity_id>', methods=['PUT'])
+@jwt_required(*ADMIN_ROLES)
+def update_activity(activity_id):
+    try:
+        activity = Activity.query.get(activity_id)
+        if not activity:
+            return jsonify({'success': False, 'error': 'Activity not found'}), 404
+
+        data = request.json
+        activity.title = data.get('title', activity.title)
+        activity.description = data.get('description', activity.description)
+        if data.get('date'):
+            activity.date = datetime.fromisoformat(data['date'])
+        activity.location = data.get('location', activity.location)
+        activity.county = data.get('county', activity.county)
+        activity.constituency = data.get('constituency', activity.constituency)
+        activity.ward = data.get('ward', activity.ward)
+        activity.organizer = data.get('organizer', activity.organizer)
+        activity.updated_date = datetime.utcnow()
+
+        db.session.commit()
+        app_logger.info(f"Activity updated: {activity_id}")
+        return jsonify({'success': True, 'activity': activity.to_dict()})
+
+    except Exception as e:
+        db.session.rollback()
+        app_logger.error(f"Update activity error: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'error': 'Failed to update activity'}), 500
+
+
+@app.route('/activities/<int:activity_id>', methods=['DELETE'])
+@jwt_required(*ADMIN_ROLES)
+def delete_activity(activity_id):
+    try:
+        activity = Activity.query.get(activity_id)
+        if not activity:
+            return jsonify({'success': False, 'error': 'Activity not found'}), 404
+
+        db.session.delete(activity)
+        db.session.commit()
+
+        app_logger.info(f"Activity deleted: {activity_id}")
+        return jsonify({'success': True, 'message': 'Activity deleted'})
+
+    except Exception as e:
+        db.session.rollback()
+        app_logger.error(f"Delete activity error: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'error': 'Delete failed'}), 500
+
+
+# ── Media Upload with Activity Support ──
+
+@app.route('/admin/media', methods=['POST'])
+@jwt_required(*ADMIN_ROLES)
+def admin_upload_media():
+    try:
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'error': 'No file provided'}), 400
+
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'success': False, 'error': 'No file selected'}), 400
+
+        if not _allowed_media_file(file.filename):
+            return jsonify({'success': False, 'error': 'Invalid file type. Allowed: png, jpg, jpeg, gif, mp4, mov, avi, webm'}), 400
+
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+        file.seek(0)
+
+        if file_size > MAX_FILE_SIZE:
+            return jsonify({'success': False, 'error': 'File too large. Maximum size: 50MB'}), 400
+
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        filename = secure_filename(file.filename)
+        timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+        unique_filename = f"{timestamp}_{filename}"
+        file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+        file.save(file_path)
+
+        title = request.form.get('title', unique_filename)
+        description = request.form.get('description', '')
+        activity_id = request.form.get('activity_id')
+        is_cover = request.form.get('is_cover', 'false').lower() == 'true'
+        media_type = _get_media_type(filename)
+        file_type = filename.rsplit('.', 1)[1].lower()
+        uploaded_by = request.jwt_payload.get('admin_id')
+
+        media = Media(
+            title=title,
+            description=description,
+            file_path=f'/uploads/{unique_filename}',
+            file_type=file_type,
+            media_type=media_type,
+            file_size=file_size,
+            uploaded_by=uploaded_by,
+            activity_id=int(activity_id) if activity_id else None,
+            is_cover=is_cover,
+            is_active=True
+        )
+
+        db.session.add(media)
+        db.session.commit()
+
+        app_logger.info(f"Media uploaded: {unique_filename} (activity_id: {activity_id})")
+        return jsonify({'success': True, 'media': media.to_dict()})
+
+    except Exception as e:
+        db.session.rollback()
+        app_logger.error(f"Media upload error: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'error': 'Upload failed'}), 500
+
+
+@app.route('/admin/media/<int:media_id>', methods=['PUT'])
+@jwt_required(*ADMIN_ROLES)
+def update_media(media_id):
+    try:
+        media = Media.query.get(media_id)
+        if not media:
+            return jsonify({'success': False, 'error': 'Media not found'}), 404
+
+        data = request.json
+        media.title = data.get('title', media.title)
+        media.description = data.get('description', media.description)
+        if 'activity_id' in data:
+            media.activity_id = data['activity_id'] if data['activity_id'] else None
+        if 'is_cover' in data:
+            media.is_cover = data['is_cover']
+
+        db.session.commit()
+        app_logger.info(f"Media updated: {media_id}")
+        return jsonify({'success': True, 'media': media.to_dict()})
+
+    except Exception as e:
+        db.session.rollback()
+        app_logger.error(f"Update media error: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'error': 'Update failed'}), 500
+
+
+# ── Organization Info ──
+
+@app.route('/organization', methods=['GET'])
+def get_organization():
+    try:
+        org = Organization.query.first()
+        if not org:
+            return jsonify({'success': False, 'error': 'Organization not found'}), 404
+        return jsonify({'success': True, 'organization': org.to_dict()})
+    except Exception as e:
+        app_logger.error(f"Get organization error: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Failed to fetch organization'}), 500
+
+
+@app.route('/admin/organization', methods=['POST', 'PUT'])
+@jwt_required('superadmin')
+def save_organization():
+    try:
+        data = request.json
+        org = Organization.query.first()
+        if not org:
+            org = Organization()
+
+        org.name = data.get('name', org.name or 'Mbogo Welfare Empowerment Foundation')
+        org.email = data.get('email', org.email or '')
+        org.phone = data.get('phone', org.phone or '')
+        org.website = data.get('website', org.website or '')
+        org.address = data.get('address', org.address or '')
+        org.description = data.get('description', org.description or '')
+
+        db.session.add(org)
+        db.session.commit()
+
+        app_logger.info(f"Organization info updated")
+        return jsonify({'success': True, 'organization': org.to_dict()})
+
+    except Exception as e:
+        db.session.rollback()
+        app_logger.error(f"Save organization error: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'error': 'Failed to save organization'}), 500
+
+
+# ── Location Dropdowns ──
+
+@app.route('/locations/counties', methods=['GET'])
+def get_counties():
+    counties = {
+        'Murang\'a': ['Kandara', 'Kangema', 'Kigumo', 'Kiharu', 'Maragwa', 'Mathioya', 'Gatanga']
+    }
+    return jsonify(counties)
+
+
+@app.route('/locations/constituencies/<county>', methods=['GET'])
+def get_constituencies(county):
+    constituencies = {
+        'Murang\'a': ['Kandara', 'Kangema', 'Kigumo', 'Kiharu', 'Maragwa', 'Mathioya', 'Gatanga']
+    }
+    return jsonify(constituencies.get(county, []))
+
+
+@app.route('/locations/wards/<constituency>', methods=['GET'])
+def get_wards(constituency):
+    wards = {
+        'Kandara': ['Gaichanjiru', 'Ithiru', 'Muruka', 'Ruchu', 'Kanyenya-ini'],
+        'Kangema': ['Gaichanjiru', 'Ithiru', 'Muruka', 'Ruchu', 'Kanyenya-ini'],
+        'Kigumo': ['Gaichanjiru', 'Ithiru', 'Muruka', 'Ruchu', 'Kanyenya-ini'],
+        'Kiharu': ['Gaichanjiru', 'Ithiru', 'Muruka', 'Ruchu', 'Kanyenya-ini'],
+        'Maragwa': ['Gaichanjiru', 'Ithiru', 'Muruka', 'Ruchu', 'Kanyenya-ini'],
+        'Mathioya': ['Gaichanjiru', 'Ithiru', 'Muruka', 'Ruchu', 'Kanyenya-ini'],
+        'Gatanga': ['Gaichanjiru', 'Ithiru', 'Muruka', 'Ruchu', 'Kanyenya-ini'],
+    }
+    return jsonify(wards.get(constituency, []))
+
+
+# ── Analytics & Reports ──
+
+@app.route('/admin/analytics', methods=['GET'])
+@jwt_required(*ADMIN_ROLES)
+def get_analytics():
+    try:
+        total_members = Member.query.count()
+        approved_members = Member.query.filter_by(status='approved').count()
+        pending_members = Member.query.filter_by(status='pending').count()
+
+        total_activities = Activity.query.filter_by(is_active=True).count()
+        total_media = Media.query.filter_by(is_active=True).count()
+        total_photos = Media.query.filter_by(is_active=True, media_type='image').count()
+        total_videos = Media.query.filter_by(is_active=True, media_type='video').count()
+
+        members_by_county = {}
+        for member in Member.query.filter(Member.status == 'approved').all():
+            county = member.county or 'Unknown'
+            members_by_county[county] = members_by_county.get(county, 0) + 1
+
+        members_by_ward = {}
+        for member in Member.query.filter(Member.status == 'approved').all():
+            ward = member.ward or 'Unknown'
+            members_by_ward[ward] = members_by_ward.get(ward, 0) + 1
+
+        recent_activities = Activity.query.filter_by(is_active=True).order_by(Activity.date.desc()).limit(5).all()
+
+        return jsonify({
+            'success': True,
+            'total_members': total_members,
+            'approved_members': approved_members,
+            'pending_members': pending_members,
+            'total_activities': total_activities,
+            'total_media': total_media,
+            'total_photos': total_photos,
+            'total_videos': total_videos,
+            'members_by_county': members_by_county,
+            'members_by_ward': members_by_ward,
+            'recent_activities': [a.to_dict() for a in recent_activities],
+        })
+
+    except Exception as e:
+        app_logger.error(f"Analytics error: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Failed to fetch analytics'}), 500
+
+
 # ── Global Error Handlers ──
+
+
+@app.route('/index.html')
+def serve_index():
+    try:
+        index_path = os.path.join(FRONTEND_BUILD_DIR, 'index.html')
+        if os.path.exists(index_path):
+            with open(index_path, 'r') as f:
+                return f.read()
+        return jsonify({'error': 'Frontend not found'}), 404
+    except Exception as e:
+        app_logger.error(f"Error serving index.html: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Failed to serve frontend'}), 500
+
+
+@app.route('/<path:path>')
+def serve_static(path):
+    """Serve static files and frontend routes."""
+    file_path = os.path.join(FRONTEND_BUILD_DIR, path)
+
+    if os.path.isfile(file_path):
+        directory = os.path.dirname(file_path)
+        filename = os.path.basename(file_path)
+        return send_from_directory(directory, filename)
+
+    if os.path.isdir(file_path) or path == '':
+        index_path = os.path.join(FRONTEND_BUILD_DIR, 'index.html')
+        if os.path.exists(index_path):
+            return send_from_directory(FRONTEND_BUILD_DIR, 'index.html')
+
+    if path.startswith('api/') or path.startswith('auth/'):
+        return jsonify({'error': 'Endpoint not found'}), 404
+
+    index_path = os.path.join(FRONTEND_BUILD_DIR, 'index.html')
+    if os.path.exists(index_path):
+        return send_from_directory(FRONTEND_BUILD_DIR, 'index.html')
+
+    return jsonify({'error': 'Not found'}), 404
 
 
 @app.errorhandler(404)
 def not_found(error):
-    app_logger.warning(f"404 Not Found: {request.path}")
+    """Handle 404 errors - return JSON for API, HTML for frontend."""
+    path = request.path
+
+    if path.startswith('/api/') or path.startswith('/admin/') or path.startswith('/member'):
+        app_logger.warning(f"404 Not Found: {path}")
+        return jsonify({'error': 'Endpoint not found'}), 404
+
+    index_path = os.path.join(FRONTEND_BUILD_DIR, 'index.html')
+    if os.path.exists(index_path):
+        with open(index_path, 'r') as f:
+            return f.read()
+
     return jsonify({'error': 'Endpoint not found'}), 404
 
 

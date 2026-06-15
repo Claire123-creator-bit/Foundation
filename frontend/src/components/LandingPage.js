@@ -1,23 +1,35 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE from '../utils/apiConfig';
 
 const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const [media, setMedia] = useState([]);
+  const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
-    fetchMedia();
+    fetchData();
   }, []);
 
-  const fetchMedia = async () => {
+  const fetchData = async () => {
     try {
-      const response = await fetch('/media');
-      if (response.ok) {
-        const data = await response.json();
-        setMedia(data);
+      setLoading(true);
+      const [mediaRes, activitiesRes] = await Promise.all([
+        fetch(`${API_BASE}/media`),
+        fetch(`${API_BASE}/activities`)
+      ]);
+
+      if (mediaRes.ok) {
+        const mediaData = await mediaRes.json();
+        setMedia(Array.isArray(mediaData) ? mediaData : []);
+      }
+
+      if (activitiesRes.ok) {
+        const activitiesData = await activitiesRes.json();
+        setActivities(Array.isArray(activitiesData) ? activitiesData : []);
       }
     } catch (error) {
-      console.error('Failed to fetch media:', error);
+      console.error('Failed to fetch data:', error);
     } finally {
       setLoading(false);
     }
@@ -46,6 +58,7 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
           <div style={s.navLinks}>
             <button style={s.navLink} onClick={() => scrollToSection('about')}>About</button>
             <button style={s.navLink} onClick={() => scrollToSection('what-we-do')}>What We Do</button>
+            <button style={s.navLink} onClick={() => scrollToSection('activities')}>Activities</button>
             <button style={s.navLink} onClick={() => scrollToSection('media')}>Media</button>
             <button style={s.navLink} onClick={() => scrollToSection('contact')}>Contact</button>
             <button style={s.joinButton} onClick={onJoinUs}>Join Us Now</button>
@@ -120,7 +133,41 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
         </div>
       </section>
 
-      <section id="media" style={s.section}>
+      <section id="activities" style={s.section}>
+        <div style={s.container}>
+          <h2 style={s.sectionTitle}>Our Activities</h2>
+          {loading ? (
+            <p style={s.text}>Loading activities...</p>
+          ) : activities.length === 0 ? (
+            <p style={s.text}>No activities available yet.</p>
+          ) : (
+            <div style={s.grid}>
+              {activities.map((activity) => (
+                <div key={activity.id} style={s.activityCard}>
+                  <h3 style={s.cardTitle}>{activity.title}</h3>
+                  <p style={s.cardText}>{activity.description}</p>
+                  <p style={s.smallText}>
+                    <strong>Date:</strong> {new Date(activity.date).toLocaleDateString()}
+                  </p>
+                  <p style={s.smallText}>
+                    <strong>Location:</strong> {activity.location || `${activity.ward}, ${activity.constituency}, ${activity.county}`}
+                  </p>
+                  {activity.organizer && (
+                    <p style={s.smallText}>
+                      <strong>Organizer:</strong> {activity.organizer}
+                    </p>
+                  )}
+                  {activity.media_count > 0 && (
+                    <p style={s.smallText}>📷 {activity.media_count} media items</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section id="media" style={s.sectionAlt}>
         <div style={s.container}>
           <h2 style={s.sectionTitle}>Our Work in Action</h2>
           {loading ? (
@@ -160,9 +207,9 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
                 Have questions or want to get involved? We'd love to hear from you.
               </p>
               <div style={s.contactDetails}>
-                <p style={s.contactItem}>📧 info@mbogofoundation.org</p>
-                <p style={s.contactItem}>📱 +254 XXX XXX XXX</p>
-                <p style={s.contactItem}>📍 Nairobi, Kenya</p>
+                <p style={s.contactItem}>📧 mbogoempowermentfoundation@gmail.com</p>
+                <p style={s.contactItem}>📱 0143235490</p>
+                <p style={s.contactItem}>📍 Murang'a County, Kenya</p>
               </div>
             </div>
             <div style={s.contactForm}>
@@ -357,6 +404,18 @@ const s = {
     fontSize: '15px',
     lineHeight: 1.6,
     color: '#666',
+  },
+  activityCard: {
+    background: '#f8f9fa',
+    padding: '24px',
+    borderRadius: '12px',
+    borderLeft: '4px solid #0A2463',
+    transition: 'transform 0.2s',
+  },
+  smallText: {
+    fontSize: '13px',
+    color: '#666',
+    margin: '8px 0',
   },
   mediaGrid: {
     display: 'grid',
