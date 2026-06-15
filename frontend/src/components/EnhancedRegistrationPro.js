@@ -1,37 +1,9 @@
 import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
 import { authHeaders } from '../utils/auth';
+import { locations } from '../data/kenyanLocations';
 
 const categories = ['Church Leader', 'Pastor', 'Village Elder', 'Agent', 'Youth Leader', 'Women Leader', 'Community Member', 'Government Official', 'NGO Representative', 'Volunteer'];
-
-const locations = {
-  'Nairobi': {
-    'Westlands': ['Westlands', 'Karura', 'Kilimani'],
-    'Dagoretti': ['Dagoketti North', 'Dagoketti South', 'Mutuini'],
-    'Embakasi': ['Embakasi East', 'Embakasi North', 'Embakasi South', 'Embakasi West'],
-  },
-  'Mombasa': {
-    'Changamwe': ['Changamwe', 'Kipevu', 'Shimanzi'],
-    'Jomvu': ['Jomvu', 'Kona', 'Likoni'],
-  },
-  'Kwale': {
-    'Mombasa': ['Mombasa', 'Likoni', 'Msambweni'],
-    'Lunga Lunga': ['Lunga Lunga', 'Vanga'],
-  },
-  'Kilifi': {
-    'Malindi': ['Malindi', 'Gede', 'Watamu'],
-    'Lamu': ['Lamu', 'Kiunga'],
-  },
-  'Murang\'a': {
-    'Kangema': ['Ng\'araria', 'Muruka', 'Kagundu-Ini', 'Gaichanjiru', 'Ruchu'],
-    'Mathioya': ['Mathioya', 'Gatitu', 'Kambiti'],
-    'Kiharu': ['Kiharu', 'Kangari', 'Kirwara'],
-    'Kigumo': ['Kigumo', 'Kungu', 'Mbuuri'],
-    'Maragua': ['Maragua', 'Mahiga', 'Kamahuha'],
-    'Kandara': ['Kandara', 'Murera', 'Kipkaren'],
-    'Gatanga': ['Gatanga', 'Thigio', 'Kinyona'],
-  },
-};
 
 function RegisterMember({ onRegistrationSuccess }) {
   const [form, setForm] = useState({ full_names: '', national_id: '', phone_number: '', county: '', constituency: '', ward: '', physical_location: '', category: '' });
