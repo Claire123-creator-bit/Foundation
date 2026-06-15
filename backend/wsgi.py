@@ -1,4 +1,9 @@
-from main_app import app
+"""Gunicorn entrypoint.
 
-# Gunicorn entrypoint; app is exposed as `app`.
+This module must expose a Flask application object as `app`.
+"""
+
+from main_app import app  # main_app.py is in the same directory as wsgi.py
+
+
 
