@@ -196,3 +196,11 @@
 [2026-06-14 11:26:00] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=admin admin_id=1 member_id=None
 [2026-06-14 11:26:00] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=admin admin_id=1 member_id=None allowed_roles=['admin', 'coordinator', 'communication', 'superadmin', 'finance']
 [2026-06-14 11:26:01] INFO     AUTH_DIAG endpoint=approve_member validation=ok role=admin admin_id=1 member_id=None
+[2026-06-15 13:50:13] INFO     Successful admin login: superadmin from 127.0.0.1
+[2026-06-15 13:50:13] INFO     AUTH_DIAG endpoint=me validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 13:50:13] INFO     AUTH_DIAG endpoint=GET /me reason=me role=superadmin admin_id=1 member_id=None
+[2026-06-15 13:51:02] INFO     Successful admin login: superadmin from 127.0.0.1
+[2026-06-15 13:51:03] INFO     AUTH_DIAG endpoint=create_activity validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 13:51:03] INFO     AUTH_DIAG endpoint=admin_upload_media validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 13:52:31] INFO     Successful admin login: superadmin from 127.0.0.1
+[2026-06-15 13:52:31] INFO     AUTH_DIAG endpoint=get_analytics validation=ok role=superadmin admin_id=1 member_id=None

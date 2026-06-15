@@ -4454,3 +4454,108 @@ sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint fail
 [2026-06-14 11:26:00] DEBUG    [foundation] GET /admin/pending-members from 127.0.0.1
 [2026-06-14 11:26:01] DEBUG    [foundation] POST /admin/approve-member/1 from 127.0.0.1
 [2026-06-14 14:26:32] INFO     [foundation] Starting Foundation application - Debug: False
+[2026-06-15 13:49:39] INFO     [foundation] Starting Foundation application - Debug: False
+[2026-06-15 13:49:57] INFO     [foundation] Database tables initialized
+[2026-06-15 13:49:58] INFO     [foundation] Superadmin account created
+[2026-06-15 13:49:58] INFO     [foundation] Organization info initialized
+[2026-06-15 13:49:58] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
+[2026-06-15 13:49:58] DEBUG    [foundation] GET / from 127.0.0.1
+[2026-06-15 13:49:58] DEBUG    [foundation] GET /locations/counties from 127.0.0.1
+[2026-06-15 13:49:58] DEBUG    [foundation] GET /locations/constituencies/Murang'a from 127.0.0.1
+[2026-06-15 13:49:58] DEBUG    [foundation] GET /organization from 127.0.0.1
+[2026-06-15 13:49:58] DEBUG    [foundation] GET /activities from 127.0.0.1
+[2026-06-15 13:49:58] DEBUG    [foundation] GET /media from 127.0.0.1
+[2026-06-15 13:50:12] INFO     [foundation] Database tables initialized
+[2026-06-15 13:50:12] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
+[2026-06-15 13:50:12] DEBUG    [foundation] POST /admin-login from 127.0.0.1
+[2026-06-15 13:50:13] DEBUG    [foundation] GET /me from 127.0.0.1
+[2026-06-15 13:50:30] INFO     [foundation] Database tables initialized
+[2026-06-15 13:50:30] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
+[2026-06-15 13:50:30] DEBUG    [foundation] POST /member-register from 127.0.0.1
+[2026-06-15 13:50:30] INFO     [foundation] New member registration: Test Member (ID: 12345678)
+[2026-06-15 13:50:30] DEBUG    [foundation] POST /member-login from 127.0.0.1
+[2026-06-15 13:51:02] INFO     [foundation] Database tables initialized
+[2026-06-15 13:51:02] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
+[2026-06-15 13:51:02] DEBUG    [foundation] POST /admin-login from 127.0.0.1
+[2026-06-15 13:51:03] DEBUG    [foundation] POST /activities from 127.0.0.1
+[2026-06-15 13:51:03] INFO     [foundation] Activity created: Tree Planting in Murang'a by admin 1
+[2026-06-15 13:51:03] DEBUG    [foundation] GET /activities from 127.0.0.1
+[2026-06-15 13:51:03] DEBUG    [foundation] POST /admin/media from 127.0.0.1
+[2026-06-15 13:51:03] INFO     [foundation] Media uploaded: 20260615_105103_test.jpg (activity_id: 1)
+[2026-06-15 13:52:09] ERROR    [foundation] Request ended with exception: (sqlite3.IntegrityError) UNIQUE constraint failed: member.national_id
+[SQL: INSERT INTO member (full_names, national_id, phone_number, email, gender, county, constituency, ward, physical_location, category, status, created_by, is_verified, registration_date, last_login, last_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('Test Member', '12345678', '254123456789', None, None, "Murang'a", 'Kandara', 'Gaichanjiru', 'Gaichanjiru', 'individual', 'approved', 'self', 0, '2026-06-15 10:52:09.927743', None, None)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+Traceback (most recent call last):
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.IntegrityError: UNIQUE constraint failed: member.national_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<stdin>", line 25, in <module>
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4345, in flush
+    self._flush(objects)
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4480, in _flush
+    with util.safe_reraise():
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4441, in _flush
+    flush_context.execute()
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/claire/.local/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: member.national_id
+[SQL: INSERT INTO member (full_names, national_id, phone_number, email, gender, county, constituency, ward, physical_location, category, status, created_by, is_verified, registration_date, last_login, last_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('Test Member', '12345678', '254123456789', None, None, "Murang'a", 'Kandara', 'Gaichanjiru', 'Gaichanjiru', 'individual', 'approved', 'self', 0, '2026-06-15 10:52:09.927743', None, None)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+[2026-06-15 13:52:30] INFO     [foundation] Database tables initialized
+[2026-06-15 13:52:31] INFO     [foundation] Application started - Database: /home/claire/Foundation/backend/../instance/foundation_complete.db
+[2026-06-15 13:52:31] DEBUG    [foundation] POST /admin-login from 127.0.0.1
+[2026-06-15 13:52:31] DEBUG    [foundation] GET /admin/analytics from 127.0.0.1
