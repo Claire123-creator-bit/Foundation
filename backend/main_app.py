@@ -126,6 +126,9 @@ def admin_login():
     try:
         admin = Admin.query.filter_by(username=username).first()
         if not admin:
+            # Backward/compat: some clients may send email instead of username
+            admin = Admin.query.filter_by(email=username).first()
+        if not admin:
             return _json_api_error("Invalid username or password", 401)
 
         if not check_password_hash(admin.password, password):
