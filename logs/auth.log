@@ -205,3 +205,81 @@
 [2026-06-15 13:52:31] INFO     Successful admin login: superadmin from 127.0.0.1
 [2026-06-15 13:52:31] INFO     AUTH_DIAG endpoint=get_analytics validation=ok role=superadmin admin_id=1 member_id=None
 [2026-06-15 14:12:17] INFO     AUTH_DIAG endpoint=me reason=missing_token exp_required=true
+[2026-06-15 18:40:13] INFO     Successful admin login: superadmin from 127.0.0.1
+[2026-06-15 18:40:13] INFO     AUTH_DIAG endpoint=me validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:13] INFO     AUTH_DIAG endpoint=GET /me reason=me role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:14] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:21] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:21] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:21] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:21] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:22] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:22] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:22] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:22] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:22] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:22] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:22] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:22] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:23] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:23] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:23] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:23] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:24] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:24] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:24] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:24] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:25] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:25] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:25] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:25] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:26] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:26] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:26] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:26] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:27] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:27] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:27] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:27] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:36] INFO     Successful admin login: superadmin from 127.0.0.1
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=me validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=GET /me reason=me role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:40:36] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:49:34] INFO     AUTH_DIAG endpoint=me validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:49:34] INFO     AUTH_DIAG endpoint=GET /me reason=me role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:49:34] INFO     AUTH_DIAG endpoint=me validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:49:34] INFO     AUTH_DIAG endpoint=GET /me reason=me role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=get_pending_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=/admin/pending-members reason=pending_members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin']
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=get_members validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 18:49:35] INFO     AUTH_DIAG endpoint=/members reason=members role=superadmin admin_id=1 member_id=None allowed_roles=['coordinator', 'admin', 'communication', 'finance', 'superadmin'] category=None
