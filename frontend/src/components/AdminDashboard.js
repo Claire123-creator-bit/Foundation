@@ -6,6 +6,7 @@ import MeetingList from './MeetingList';
 import Donate from './Donate';
 import PendingMembers from './PendingMembers';
 import AdminManagement from './AdminManagement';
+import MediaGallery from './MediaGallery';
 import { apiFetch } from '../utils/apiClient';
 
 
@@ -39,6 +40,8 @@ function AdminDashboard({ adminName, onLogout }) {
     { id: 'sms',      label: ' SMS' },
     { id: 'meetings', label: ' Meetings' },
     { id: 'donate',   label: ' Donate' },
+    { id: 'media',    label: ' Media' },
+    { id: 'settings', label: ' Settings' },
   ];
 
   return (
@@ -119,6 +122,7 @@ function AdminDashboard({ adminName, onLogout }) {
         {tab === 'sms'      && <BulkMessaging />}
         {tab === 'meetings' && <MeetingList />}
         {tab === 'donate'   && <Donate />}
+        {tab === 'media'    && <MediaGallery />}
         {tab === 'settings' && <AdminManagement />}
 
 
