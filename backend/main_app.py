@@ -114,16 +114,16 @@ def ready():
 
 
 # ---------------- Auth / API ----------------
-@app.route("/admin-login", methods=["POST"])
+@app.route('/admin-login', methods=['POST'])
 def admin_login():
+    data = request.get_json(silent=True) or {}
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return _json_api_error("Missing credentials", 400)
+
     try:
-        data = request.get_json(silent=True) or {}
-        username = data.get("username")
-        password = data.get("password")
-
-        if not username or not password:
-            return _json_api_error("Missing credentials", 400)
-
         admin = Admin.query.filter_by(username=username).first()
         if not admin:
             return _json_api_error("Invalid username or password", 401)
@@ -138,17 +138,13 @@ def admin_login():
             {
                 "admin_id": admin.id,
                 "role": admin.role,
-                # keep compatible with jwt library expecting numeric exp for consistency
                 "exp": datetime.utcnow().timestamp() + 60 * 60 * 24 * 7,
             },
             app.config["SECRET_KEY"],
             algorithm="HS256",
         )
 
-        return (
-            jsonify({"success": True, "name": admin.full_name, "username": admin.username, "token": token}),
-            200,
-        )
+        return jsonify({"success": True, "name": admin.full_name, "username": admin.username, "token": token}), 200
     except Exception:
         return _json_api_error("Internal server error", 500)
 
