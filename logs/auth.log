@@ -204,3 +204,4 @@
 [2026-06-15 13:51:03] INFO     AUTH_DIAG endpoint=admin_upload_media validation=ok role=superadmin admin_id=1 member_id=None
 [2026-06-15 13:52:31] INFO     Successful admin login: superadmin from 127.0.0.1
 [2026-06-15 13:52:31] INFO     AUTH_DIAG endpoint=get_analytics validation=ok role=superadmin admin_id=1 member_id=None
+[2026-06-15 14:12:17] INFO     AUTH_DIAG endpoint=me reason=missing_token exp_required=true

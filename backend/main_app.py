@@ -1273,44 +1273,30 @@ def serve_index():
         return jsonify({'error': 'Failed to serve frontend'}), 500
 
 
-@app.route('/<path:path>')
-def serve_static(path):
-    """Serve static files and frontend routes."""
-    file_path = os.path.join(FRONTEND_BUILD_DIR, path)
+# ── Serve Frontend Build Files ──
 
-    if os.path.isfile(file_path):
-        directory = os.path.dirname(file_path)
-        filename = os.path.basename(file_path)
-        return send_from_directory(directory, filename)
-
-    if os.path.isdir(file_path) or path == '':
-        index_path = os.path.join(FRONTEND_BUILD_DIR, 'index.html')
-        if os.path.exists(index_path):
-            return send_from_directory(FRONTEND_BUILD_DIR, 'index.html')
-
-    if path.startswith('api/') or path.startswith('auth/'):
-        return jsonify({'error': 'Endpoint not found'}), 404
-
-    index_path = os.path.join(FRONTEND_BUILD_DIR, 'index.html')
-    if os.path.exists(index_path):
-        return send_from_directory(FRONTEND_BUILD_DIR, 'index.html')
-
-    return jsonify({'error': 'Not found'}), 404
+@app.route('/static/<path:filename>')
+def serve_static_files(filename):
+    """Serve static files from React build."""
+    return send_from_directory(os.path.join(FRONTEND_BUILD_DIR, 'static'), filename)
 
 
-@app.errorhandler(404)
+# ── Global Error Handlers ──
 def not_found(error):
     """Handle 404 errors - return JSON for API, HTML for frontend."""
     path = request.path
 
-    if path.startswith('/api/') or path.startswith('/admin/') or path.startswith('/member'):
+    if path.startswith('/api/') or path.startswith('/admin/') or path.startswith('/member') or \
+       path.startswith('/activities') or path.startswith('/media') or path.startswith('/meetings') or \
+       path.startswith('/locations') or path.startswith('/organization') or path.startswith('/health') or \
+       path.startswith('/live') or path.startswith('/ready') or path.startswith('/auth') or \
+       path.startswith('/me') or path.startswith('/send-bulk-sms') or path.startswith('/verify-email'):
         app_logger.warning(f"404 Not Found: {path}")
         return jsonify({'error': 'Endpoint not found'}), 404
 
     index_path = os.path.join(FRONTEND_BUILD_DIR, 'index.html')
     if os.path.exists(index_path):
-        with open(index_path, 'r') as f:
-            return f.read()
+        return send_from_directory(FRONTEND_BUILD_DIR, 'index.html')
 
     return jsonify({'error': 'Endpoint not found'}), 404
 
