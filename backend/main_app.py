@@ -41,7 +41,8 @@ def _auth_token() -> str:
 
 
 def _json_api_error(message: str, status_code: int):
-    return jsonify({"error": message}), status_code
+    # Keep API error shape consistent with frontend/tests.
+    return jsonify({"success": False, "message": message}), status_code
 
 
 def _is_api_path() -> bool:
