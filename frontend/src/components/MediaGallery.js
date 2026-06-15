@@ -33,6 +33,11 @@ function MediaGallery() {
     setSelectedFile(e.target.files[0]);
   };
 
+  const getImageUrl = (filePath) => {
+    if (filePath.startsWith('http')) return filePath;
+    return `${API_BASE}${filePath.startsWith('/') ? '' : '/'}${filePath}`;
+  };
+
   const handleDelete = async (mediaId) => {
     if (!window.confirm('Delete this media? This cannot be undone.')) return;
 
