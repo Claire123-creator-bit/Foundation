@@ -1,4 +1,4 @@
 from main_app import app
 
-if __name__ == "__main__":
-    app.run()
+# Gunicorn entrypoint; app is exposed as `app`.
+
