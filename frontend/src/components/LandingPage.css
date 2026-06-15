@@ -154,6 +154,16 @@
   padding: 32px;
 }
 
+/* Ensure landing background matches the main mbogo asset everywhere */
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+
 .landing-hero-content {
   max-width: 800px;
 }

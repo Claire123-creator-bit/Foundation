@@ -238,7 +238,7 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
 };
 
 const s = {
-  page: { minHeight: '100vh', backgroundColor: '#f8f9fa' },
+  page: { minHeight: '100vh', backgroundImage: 'url(/mbogo foundation.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' },
   navbar: {
     position: 'fixed',
     top: 0,
@@ -320,7 +320,7 @@ const s = {
   },
   hero: {
     height: '90vh',
-    backgroundImage: 'linear-gradient(rgba(10,36,99,0.6), rgba(10,36,99,0.6)), url("mbogo foundation.jpeg")',
+    backgroundImage: 'linear-gradient(rgba(10,36,99,0.6), rgba(10,36,99,0.6)),("mbogo foundation.jpeg")',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     display: 'flex',
@@ -367,8 +367,9 @@ const s = {
     cursor: 'pointer',
     transition: 'background 0.2s',
   },
-  section: { padding: '80px 32px', backgroundColor: '#fff' },
-  sectionAlt: { padding: '80px 32px', backgroundColor: '#f8f9fa' },
+  // Allow the global background image to show through on every section
+  section: { padding: '80px 32px', backgroundColor: 'transparent' },
+  sectionAlt: { padding: '80px 32px', backgroundColor: 'transparent' },
   container: { maxWidth: '1200px', margin: '0 auto' },
   sectionTitle: {
     fontSize: 'clamp(28px, 4vw, 40px)',
