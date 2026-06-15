@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiFetch } from '../utils/apiClient';
+import API_BASE from '../utils/apiConfig';
 import './MediaGallery.css';
 
 function MediaGallery() {
@@ -33,9 +34,8 @@ function MediaGallery() {
   };
 
   const getImageUrl = (filePath) => {
-    const apiUrl = process.env.REACT_APP_API_URL || 'https://foundation-2.onrender.com';
     if (filePath.startsWith('http')) return filePath;
-    return `${apiUrl}${filePath.startsWith('/') ? '' : '/'}${filePath}`;
+    return `${API_BASE}${filePath.startsWith('/') ? '' : '/'}${filePath}`;
   };
     e.preventDefault();
     if (!selectedFile) {
@@ -51,7 +51,7 @@ function MediaGallery() {
       formData.append('description', description);
       formData.append('media_type', mediaType);
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://foundation-2.onrender.com'}/media-upload`, {
+      const response = await fetch(`${API_BASE}/media-upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
