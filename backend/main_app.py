@@ -269,7 +269,18 @@ def get_me():
     except Exception as e:
         return _json_api_error(str(e), 401)
 
-    return jsonify({"success": True, "user": decoded}), 200
+    role = decoded.get("role")
+
+    if role == "member":
+        member = Member.query.get(decoded.get("member_id"))
+        if not member:
+            return _json_api_error("Member not found", 404)
+        return jsonify({"success": True, "role": "member", "member": member.to_dict()}), 200
+    else:
+        admin = Admin.query.get(decoded.get("admin_id"))
+        if not admin:
+            return _json_api_error("Admin not found", 404)
+        return jsonify({"success": True, "role": admin.role, "admin": admin.to_dict()}), 200
 
 
 # ---------------- Media ----------------
