@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API_BASE from '../utils/apiConfig';
+import './LandingPage.css';
 
 const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const [media, setMedia] = useState([]);
