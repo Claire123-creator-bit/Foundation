@@ -319,9 +319,6 @@ const s = {
   },
   hero: {
     height: '90vh',
-    backgroundImage: 'linear-gradient(rgba(10,36,99,0.85), rgba(10,36,99,0.85)), url(/mbogo-background.jpeg)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
