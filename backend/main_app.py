@@ -24,7 +24,8 @@ CORS(
 )
 
 # Render/production should set these env vars; keep local fallback.
-app.config.setdefault("SECRET_KEY", os.getenv("SECRET_KEY", "your-secret"))
+secret_key = os.getenv("SECRET_KEY") or "dev-secret-key-change-in-production"
+app.config["SECRET_KEY"] = secret_key
 app.config.setdefault("SQLALCHEMY_DATABASE_URI", os.getenv("DATABASE_URL", "sqlite:///app.db"))
 app.config.setdefault("SQLALCHEMY_TRACK_MODIFICATIONS", False)
 
