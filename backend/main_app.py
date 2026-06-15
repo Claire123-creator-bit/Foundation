@@ -115,64 +115,70 @@ def ready():
 # ---------------- Auth / API ----------------
 @app.route("/admin-login", methods=["POST"])
 def admin_login():
-    data = request.get_json(silent=True) or {}
-    username = data.get("username")
-    password = data.get("password")
+    try:
+        data = request.get_json(silent=True) or {}
+        username = data.get("username")
+        password = data.get("password")
 
-    if not username or not password:
-        return _json_api_error("Missing credentials", 400)
+        if not username or not password:
+            return _json_api_error("Missing credentials", 400)
 
-    admin = Admin.query.filter_by(username=username).first()
-    if not admin:
-        return _json_api_error("Invalid username or password", 401)
+        admin = Admin.query.filter_by(username=username).first()
+        if not admin:
+            return _json_api_error("Invalid username or password", 401)
 
-    if not check_password_hash(admin.password, password):
-        return _json_api_error("Invalid username or password", 401)
+        if not check_password_hash(admin.password, password):
+            return _json_api_error("Invalid username or password", 401)
 
-    if not getattr(admin, "is_active", True):
-        return _json_api_error("Account deactivated", 401)
+        if not getattr(admin, "is_active", True):
+            return _json_api_error("Account deactivated", 401)
 
-    token = jwt.encode(
-        {
-            "admin_id": admin.id,
-            "role": admin.role,
-            # keep compatible with jwt library expecting numeric exp for consistency
-            "exp": datetime.utcnow().timestamp() + 60 * 60 * 24 * 7,
-        },
-        app.config["SECRET_KEY"],
-        algorithm="HS256",
-    )
+        token = jwt.encode(
+            {
+                "admin_id": admin.id,
+                "role": admin.role,
+                # keep compatible with jwt library expecting numeric exp for consistency
+                "exp": datetime.utcnow().timestamp() + 60 * 60 * 24 * 7,
+            },
+            app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
 
-    return (
-        jsonify({"success": True, "name": admin.full_name, "username": admin.username, "token": token}),
-        200,
-    )
+        return (
+            jsonify({"success": True, "name": admin.full_name, "username": admin.username, "token": token}),
+            200,
+        )
+    except Exception:
+        return _json_api_error("Internal server error", 500)
 
 
 @app.route("/member-login", methods=["POST"])
 def member_login():
-    data = request.get_json(silent=True) or {}
-    national_id = data.get("national_id")
-    phone_number = data.get("phone_number")
+    try:
+        data = request.get_json(silent=True) or {}
+        national_id = data.get("national_id")
+        phone_number = data.get("phone_number")
 
-    if not national_id or not phone_number:
-        return _json_api_error("Missing credentials", 400)
+        if not national_id or not phone_number:
+            return _json_api_error("Missing credentials", 400)
 
-    member = Member.query.filter_by(national_id=national_id, phone_number=phone_number).first()
-    if not member:
-        return jsonify({"success": False, "error": "Member not found"}), 404
+        member = Member.query.filter_by(national_id=national_id, phone_number=phone_number).first()
+        if not member:
+            return jsonify({"success": False, "error": "Member not found"}), 404
 
-    token = jwt.encode(
-        {
-            "member_id": member.id,
-            "role": "member",
-            "exp": datetime.utcnow().timestamp() + 60 * 60 * 24 * 7,
-        },
-        app.config["SECRET_KEY"],
-        algorithm="HS256",
-    )
+        token = jwt.encode(
+            {
+                "member_id": member.id,
+                "role": "member",
+                "exp": datetime.utcnow().timestamp() + 60 * 60 * 24 * 7,
+            },
+            app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
 
-    return jsonify({"success": True, "member": member.to_dict(), "token": token}), 200
+        return jsonify({"success": True, "member": member.to_dict(), "token": token}), 200
+    except Exception:
+        return _json_api_error("Internal server error", 500)
 
 
 @app.route("/admin-register", methods=["POST"])
