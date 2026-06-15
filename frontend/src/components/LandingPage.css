@@ -126,9 +126,7 @@
 .landing-hero {
   margin-top: 72px;
   min-height: 90vh;
-  background: linear-gradient(rgba(10,36,99,0.85), rgba(10,36,99,0.85)), url(/mbogo-background.jpeg);
-  background-size: cover;
-  background-position: center;
+  background: linear-gradient(135deg, #0A2463 0%, #1a3a7a 100%);
   display: flex;
   align-items: center;
   justify-content: center;
