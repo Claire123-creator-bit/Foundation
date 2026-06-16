@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Payment UI removed (M-Pesa integration deleted).
 function Donate() {
   return (
     <div>

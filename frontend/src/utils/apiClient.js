@@ -2,7 +2,6 @@ import API_BASE from './apiConfig';
 import { setToken, clearNonTokenAuthState, authHeaders } from './auth';
 
 function redirectToLogin() {
-  // Hard reload keeps logic simple and avoids stale state.
   window.location.href = '/';
 }
 
@@ -28,7 +27,6 @@ export async function apiFetch(pathOrUrl, options = {}) {
   }
 
   if (res.status === 401) {
-    // token invalid/expired
     setToken(null);
     clearNonTokenAuthState();
     redirectToLogin();

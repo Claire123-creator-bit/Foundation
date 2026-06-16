@@ -9,10 +9,8 @@ from logger import app_logger
 
 AT_SMS_URL = 'https://api.africastalking.com/version1/messaging'
 
-# Optional sender id (Africa's Talking commonly uses 'from')
 AT_SMS_SENDER_ID = os.environ.get('AFRICASTALKING_SENDER_ID', '').strip()
 
-# Lazy init guard to satisfy “initialize once”.
 _init_lock = threading.Lock()
 _initialized = False
 
@@ -33,11 +31,9 @@ def _normalize_phone(phone: str) -> str:
     if not p:
         return ''
 
-    # Convert +254712... -> 254712...
     if p.startswith('+'):
         p = p[1:]
 
-    # Common Kenyan prefixes
     if p.startswith('07') or p.startswith('01'):
         return '254' + p[1:]
     if p.startswith('7') or p.startswith('1'):

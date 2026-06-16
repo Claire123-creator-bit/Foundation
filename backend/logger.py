@@ -3,11 +3,10 @@ import logging.handlers
 import os
 from datetime import datetime
 
-# Create logs directory
 LOGS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'logs')
 os.makedirs(LOGS_DIR, exist_ok=True)
 
-# Log file paths
+
 APP_LOG_FILE = os.path.join(LOGS_DIR, 'app.log')
 ERROR_LOG_FILE = os.path.join(LOGS_DIR, 'errors.log')
 AUTH_LOG_FILE = os.path.join(LOGS_DIR, 'auth.log')
@@ -100,5 +99,4 @@ def setup_logging():
     return app_logger, auth_logger
 
 
-# Initialize loggers
 app_logger, auth_logger = setup_logging()

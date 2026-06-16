@@ -4,7 +4,6 @@ export function getToken() {
   return localStorage.getItem('token');
 }
 
-// Backward compatible alias (required by audit)
 export const setTokenTo = storeToken;
 
 
@@ -13,14 +12,12 @@ export function storeToken(token) {
   else localStorage.setItem('token', token);
 }
 
-// Backward compatible alias
 export function setToken(token) {
   storeToken(token);
 }
 
 
 export function clearNonTokenAuthState() {
-  // kept for backward compatibility with older google flow
   localStorage.removeItem('adminUsername');
   localStorage.removeItem('adminRole');
   localStorage.removeItem('pending_token');

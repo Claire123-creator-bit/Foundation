@@ -16,7 +16,6 @@ function RegisterMember({ onRegistrationSuccess }) {
     const value = e.target.value;
     const newForm = { ...form, [k]: value };
 
-    // Reset dependent dropdowns
     if (k === 'county') {
       newForm.constituency = '';
       newForm.ward = '';

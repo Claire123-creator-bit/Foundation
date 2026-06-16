@@ -78,9 +78,6 @@ def exchange_code_for_tokens(code: str) -> dict:
 
 
 def _verify_id_token(id_token: str) -> dict:
-    # Verify signature and claims using Google's JWKS.
-    # We avoid adding extra dependencies; we decode without verification by fetching JWKS and using PyJWT.
-    # For production, a JWKS client would be ideal, but we keep dependencies minimal.
     from jwt.algorithms import RSAAlgorithm
     import requests
     unverified = pyjwt.get_unverified_header(id_token)
@@ -147,13 +144,7 @@ def create_pending_google_member(*, email: str, full_name: str):
 
     username_name = (full_name or '').strip() or email.split('@')[0]
 
-    # We cannot create a true minimal row due to schema constraints.
-    # So we create an UNAPPROVED profile marker (pending_profile) using
-    # values that must be overwritten at completion.
-    #
-    # IMPORTANT: these values are placeholders only; they will block access
-    # until the profile completion flow fills required fields.
-
+    
     member = Member(
         full_names=username_name,
         national_id=f"PENDING-{email.lower()}",

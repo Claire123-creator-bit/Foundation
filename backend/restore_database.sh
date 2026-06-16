@@ -1,10 +1,7 @@
 #!/bin/bash
 
-# Foundation Application Database Restore Script
-# Usage: ./restore_database.sh <backup_file> [--force]
 
-set -e  # Exit on error
-
+set -e  
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DB_PATH="$SCRIPT_DIR/instance/foundation_complete.db"
 
@@ -30,7 +27,6 @@ if [ ! -f "$BACKUP_FILE" ]; then
     exit 1
 fi
 
-# Check if current database exists
 if [ -f "$DB_PATH" ]; then
     if [ "$FORCE_RESTORE" != "--force" ]; then
         echo "⚠️  Current database will be overwritten!"
@@ -45,14 +41,13 @@ if [ -f "$DB_PATH" ]; then
         fi
     fi
     
-    # Create safety backup before restore
     SAFETY_BACKUP="$SCRIPT_DIR/instance/foundation_complete_pre_restore_$(date +%s).db"
     echo "⏳ Creating safety backup of current database..."
     cp "$DB_PATH" "$SAFETY_BACKUP"
     echo "✅ Safety backup created: $SAFETY_BACKUP"
 fi
 
-# Restore from backup
+
 echo "⏳ Restoring from backup..."
 cp "$BACKUP_FILE" "$DB_PATH"
 
@@ -62,7 +57,6 @@ if [ $? -eq 0 ]; then
     echo "📊 Restored database info:"
     ls -lh "$DB_PATH"
     
-    # Verify database integrity
     echo ""
     echo "⏳ Verifying database integrity..."
     if sqlite3 "$DB_PATH" "PRAGMA integrity_check;" | grep -q "ok"; then

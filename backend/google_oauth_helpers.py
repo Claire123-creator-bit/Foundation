@@ -8,6 +8,5 @@ def google_state_value() -> str:
 
 
 def get_frontend_redirect_base() -> str:
-    # Default frontend origin for OAuth callback handling
     return (request.host_url.split('/')[0] + ('' if request.host_url.endswith('/') else '')).rstrip('/')
 
