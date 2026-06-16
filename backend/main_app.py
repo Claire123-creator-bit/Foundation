@@ -34,13 +34,15 @@ CORS(
     supports_credentials=True,
     allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
     methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    supports_credentials=True,
 )
+
 
 @app.before_request
 def _force_json_cors_and_options():
     if request.method == "OPTIONS":
         return ("", 204)
+
+
 
 
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") or "dev-secret-key-change-in-production"
