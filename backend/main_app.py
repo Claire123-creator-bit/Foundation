@@ -2,8 +2,6 @@ import os
 from datetime import datetime
 
 import jwt
-import cloudinary
-import cloudinary.uploader
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
@@ -11,30 +9,41 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from website_models import Admin, Member, Media, db
 
-# Configure Cloudinary
-cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET")
-)
+CLOUDINARY_AVAILABLE = False
+cloudinary = None
+try:
+    import cloudinary  # type: ignore
+    import cloudinary.uploader  # type: ignore
 
-# Single Flask app instance (gunicorn/import-safe)
+    cloudinary.config(
+        cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+        api_key=os.getenv("CLOUDINARY_API_KEY"),
+        api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    )
+    CLOUDINARY_AVAILABLE = True
+except ModuleNotFoundError:
+    CLOUDINARY_AVAILABLE = False
+except Exception:
+    CLOUDINARY_AVAILABLE = False
+
 app = Flask(__name__)
 
-# --- CORS ---
-# Frontend origin (production): https://www.mbogofoundation.org
-# This unblocks browser preflight (OPTIONS) for cross-origin requests.
 CORS(
     app,
     resources={r"/*": {"origins": "https://www.mbogofoundation.org"}},
     supports_credentials=True,
     allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
     methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    supports_credentials=True,
 )
 
-# Render/production should set these env vars; keep local fallback.
-secret_key = os.getenv("SECRET_KEY") or "dev-secret-key-change-in-production"
-app.config["SECRET_KEY"] = secret_key
+@app.before_request
+def _force_json_cors_and_options():
+    if request.method == "OPTIONS":
+        return ("", 204)
+
+
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") or "dev-secret-key-change-in-production"
 app.config.setdefault("SQLALCHEMY_DATABASE_URI", os.getenv("DATABASE_URL", "sqlite:///app.db"))
 app.config.setdefault("SQLALCHEMY_TRACK_MODIFICATIONS", False)
 
@@ -44,32 +53,23 @@ db.init_app(app)
 def init_db():
     try:
         with app.app_context():
-            print("[INIT] Creating database tables...")
             db.create_all()
-            print("[INIT] Tables created successfully")
-
-            existing = Admin.query.filter_by(role='superadmin').first()
+            existing = Admin.query.filter_by(role="superadmin").first()
             if existing:
-                print("[INIT] Superadmin already exists")
                 return
-
-            print("[INIT] Creating superadmin user...")
             superadmin = Admin(
-                username='superadmin',
-                password=generate_password_hash('superadmin123'),
-                full_name='Super Administrator',
-                email='superadmin@mbogofoundation.org',
-                phone='',
-                role='superadmin',
+                username="superadmin",
+                password=generate_password_hash("superadmin123"),
+                full_name="Super Administrator",
+                email="superadmin@mbogofoundation.org",
+                phone="",
+                role="superadmin",
                 is_active=True,
             )
             db.session.add(superadmin)
             db.session.commit()
-            print("[INIT] Superadmin created: superadmin / superadmin123")
-    except Exception as e:
-        import traceback
-        print(f"[INIT ERROR] Failed to initialize database: {str(e)}")
-        print(traceback.format_exc())
+    except Exception:
+        pass
 
 
 init_db()
@@ -85,12 +85,10 @@ def _auth_token() -> str:
 
 
 def _json_api_error(message: str, status_code: int):
-    # Keep API error shape consistent with frontend/tests.
     return jsonify({"success": False, "message": message}), status_code
 
 
 def _is_api_path() -> bool:
-    # Keep this explicit so we never accidentally return HTML to API calls.
     return request.path in {
         "/me",
         "/admin-login",
@@ -106,7 +104,6 @@ def _is_api_path() -> bool:
 
 @app.errorhandler(HTTPException)
 def handle_http_exception(err: HTTPException):
-    # Always return JSON for API paths; never leak HTML error pages.
     if _is_api_path() or request.accept_mimetypes.best == "application/json":
         return jsonify({"error": err.description or "Request failed"}), getattr(err, "code", 400)
     return jsonify({"error": err.description or "Request failed"}), getattr(err, "code", 400)
@@ -114,17 +111,14 @@ def handle_http_exception(err: HTTPException):
 
 @app.errorhandler(Exception)
 def handle_exception(err: Exception):
-    # Avoid leaking stack traces to clients.
     if _is_api_path() or request.accept_mimetypes.best == "application/json":
         return _json_api_error("Internal server error", 500)
     return _json_api_error("Internal server error", 500)
 
 
-# ---------------- Health ----------------
 @app.route("/health", methods=["GET"])
 def health():
     try:
-        # DB connectivity check (best-effort)
         db.session.execute("SELECT 1")
         database = "connected"
     except Exception:
@@ -158,8 +152,7 @@ def ready():
     return jsonify({"ready": ok, "timestamp": datetime.utcnow().isoformat()}), 200
 
 
-# ---------------- Auth / API ----------------
-@app.route('/admin-login', methods=['POST'])
+@app.route("/admin-login", methods=["POST"])
 def admin_login():
     data = request.get_json(silent=True) or {}
     username = data.get("username")
@@ -191,11 +184,10 @@ def admin_login():
             algorithm="HS256",
         )
 
-        return jsonify({"success": True, "name": admin.full_name, "username": admin.username, "token": token}), 200
-    except Exception as e:
-        import traceback
-        print(f"[ERROR] admin_login failed: {str(e)}")
-        print(traceback.format_exc())
+        return jsonify(
+            {"success": True, "name": admin.full_name, "username": admin.username, "token": token}
+        ), 200
+    except Exception:
         return _json_api_error("Internal server error", 500)
 
 
@@ -230,7 +222,6 @@ def member_login():
 
 @app.route("/admin-register", methods=["POST"])
 def admin_register():
-    # Frontend/tests send superadmin auth token in Authorization header.
     data = request.get_json(silent=True) or {}
 
     token = _auth_token()
@@ -285,14 +276,14 @@ def get_me():
         if not member:
             return _json_api_error("Member not found", 404)
         return jsonify({"success": True, "role": "member", "member": member.to_dict()}), 200
-    else:
-        admin = Admin.query.get(decoded.get("admin_id"))
-        if not admin:
-            return _json_api_error("Admin not found", 404)
-        return jsonify({"success": True, "role": admin.role, "admin": admin.to_dict()}), 200
+
+    admin = Admin.query.get(decoded.get("admin_id"))
+    if not admin:
+        return _json_api_error("Admin not found", 404)
+
+    return jsonify({"success": True, "role": admin.role, "admin": admin.to_dict()}), 200
 
 
-# ---------------- Media ----------------
 @app.route("/uploads/<path:filename>", methods=["GET"])
 def serve_upload(filename):
     try:
@@ -302,6 +293,15 @@ def serve_upload(filename):
         return _json_api_error("File not found", 404)
     except Exception:
         return _json_api_error("Error serving file", 500)
+
+
+@app.route("/media", methods=["GET"])
+def get_media():
+    try:
+        media_items = Media.query.filter_by(is_active=True).all()
+        return jsonify([m.to_dict() for m in media_items]), 200
+    except Exception:
+        return jsonify([]), 200
 
 
 @app.route("/media/<int:media_id>", methods=["DELETE"])
@@ -323,29 +323,15 @@ def delete_media(media_id):
         if not media:
             return _json_api_error("Media not found", 404)
 
-        # Delete from Cloudinary if it's a cloud URL
-        if "cloudinary" in media.file_path:
-            # Extract public_id from Cloudinary URL
-            public_id = media.file_path.split('/')[-1].split('.')[0]
+        if "cloudinary" in (media.file_path or "") and CLOUDINARY_AVAILABLE and cloudinary is not None:
+            public_id = media.file_path.split("/")[-1].split(".")[0]
             cloudinary.uploader.destroy(f"mbogo_foundation/{public_id}")
 
         db.session.delete(media)
         db.session.commit()
-
         return jsonify({"success": True, "message": "Media deleted"}), 200
     except Exception as e:
         return _json_api_error(f"Delete failed: {str(e)}", 500)
-
-
-@app.route("/media", methods=["GET"])
-def get_media():
-    # Always return JSON: [] or list of media objects.
-    # Prevents frontend "Unexpected token '<'" due to HTML error pages.
-    try:
-        media_items = Media.query.filter_by(is_active=True).all()
-        return jsonify([m.to_dict() for m in media_items]), 200
-    except Exception:
-        return jsonify([]), 200
 
 
 @app.route("/media-upload", methods=["POST"])
@@ -370,11 +356,13 @@ def upload_media():
         return _json_api_error("No file selected", 400)
 
     try:
-        # Upload to Cloudinary
+        if not CLOUDINARY_AVAILABLE or cloudinary is None:
+            return _json_api_error("Cloudinary not configured", 500)
+
         upload_result = cloudinary.uploader.upload(
             file,
             folder="mbogo_foundation",
-            resource_type="auto"
+            resource_type="auto",
         )
 
         media = Media(
@@ -394,3 +382,4 @@ def upload_media():
         return jsonify({"success": True, "media": media.to_dict()}), 200
     except Exception as e:
         return _json_api_error(f"Upload failed: {str(e)}", 500)
+
