@@ -7,7 +7,7 @@ from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from website_models import Admin, Member, Media, db
+from website_models import Admin, Member, Media, Meeting, db
 
 CLOUDINARY_AVAILABLE = False
 cloudinary = None
@@ -43,9 +43,7 @@ def _force_json_cors_and_options():
         return ("", 204)
 
 
-
-
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") or "dev-secret-key-change-in-production"
+app.config
 app.config.setdefault("SQLALCHEMY_DATABASE_URI", os.getenv("DATABASE_URL", "sqlite:///app.db"))
 app.config.setdefault("SQLALCHEMY_TRACK_MODIFICATIONS", False)
 
@@ -101,7 +99,11 @@ def _is_api_path() -> bool:
         "/health",
         "/live",
         "/ready",
+        "/members",
+        "/meetings",
+        "/admin/pending-members",
     }
+
 
 
 @app.errorhandler(HTTPException)
@@ -336,6 +338,33 @@ def delete_media(media_id):
         return _json_api_error(f"Delete failed: {str(e)}", 500)
 
 
+@app.route("/members", methods=["GET"])
+def list_members():
+    try:
+        members = Member.query.all()
+        return jsonify([m.to_dict() for m in members]), 200
+    except Exception:
+        return jsonify([]), 200
+
+
+@app.route("/meetings", methods=["GET"])
+def list_meetings():
+    try:
+        meetings = Meeting.query.all()
+        return jsonify([m.to_dict() for m in meetings]), 200
+    except Exception:
+        return jsonify([]), 200
+
+
+@app.route("/admin/pending-members", methods=["GET"])
+def list_pending_members():
+    try:
+        pending = Member.query.filter_by(status="pending").all()
+        return jsonify([m.to_dict() for m in pending]), 200
+    except Exception:
+        return jsonify([]), 200
+
+
 @app.route("/media-upload", methods=["POST"])
 def upload_media():
     token = _auth_token()
@@ -384,4 +413,13 @@ def upload_media():
         return jsonify({"success": True, "media": media.to_dict()}), 200
     except Exception as e:
         return _json_api_error(f"Upload failed: {str(e)}", 500)
+
+
+if __name__ == "__main__":
+    app.run(
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", "5000")),
+        debug=os.getenv("FLASK_DEBUG", "false").lower() == "true",
+    )
+
 
