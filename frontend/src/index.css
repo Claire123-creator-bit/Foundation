@@ -23,7 +23,7 @@ body {
       rgba(244, 246, 251, 0.72),
       rgba(244, 246, 251, 0.72)
     ),
-    url('/mbogo-background.jpeg');
+    url('./components/mbogo%20foundation.jpeg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

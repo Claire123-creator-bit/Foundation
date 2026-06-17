@@ -1,0 +1,158 @@
+from flask import Blueprint, jsonify, request
+from datetime import datetime
+
+from website_models import Member, db
+from utils.responses import json_api_error, json_api_success
+from utils.auth import get_auth_token, decode_token, create_member_token
+
+members_bp = Blueprint("members", __name__)
+
+
+@members_bp.route("/member-login", methods=["POST"])
+def member_login():
+    try:
+        data = request.get_json(silent=True) or {}
+        national_id = data.get("national_id")
+        phone_number = data.get("phone_number")
+
+        if not national_id or not phone_number:
+            return json_api_error("Missing credentials", 400)
+
+        member = Member.query.filter_by(national_id=national_id, phone_number=phone_number).first()
+        if not member:
+            return jsonify({"success": False, "error": "Member not found"}), 404
+
+        token = create_member_token(member.id)
+
+        return jsonify({"success": True, "member": member.to_dict(), "token": token}), 200
+    except Exception:
+        return json_api_error("Internal server error", 500)
+
+
+@members_bp.route("/member-register", methods=["POST"])
+def member_register():
+    """Member self-registration endpoint."""
+    try:
+        data = request.get_json(silent=True) or {}
+        
+        required = [
+            "full_names",
+            "national_id",
+            "phone_number",
+            "county",
+            "constituency",
+            "ward",
+            "physical_location",
+            "category",
+        ]
+        missing = [k for k in required if not data.get(k)]
+        if missing:
+            return json_api_error(f"Missing fields: {', '.join(missing)}", 400)
+
+        if Member.query.filter_by(national_id=data["national_id"]).first():
+            return json_api_error("Member already exists", 400)
+
+        member = Member(
+            full_names=data["full_names"],
+            national_id=data["national_id"],
+            phone_number=data["phone_number"],
+            email=data.get("email", ""),
+            gender=data.get("gender", ""),
+            county=data["county"],
+            constituency=data["constituency"],
+            ward=data["ward"],
+            physical_location=data["physical_location"],
+            category=data["category"],
+            status="pending",
+            created_by="self",
+            is_verified=False,
+        )
+        db.session.add(member)
+        db.session.commit()
+
+        return jsonify({"success": True, "member": member.to_dict()}), 200
+    except Exception as e:
+        return json_api_error(f"Registration failed: {str(e)}", 500)
+
+
+@members_bp.route("/members", methods=["GET"])
+def list_members():
+    try:
+        members = Member.query.all()
+        return jsonify([m.to_dict() for m in members]), 200
+    except Exception:
+        return jsonify([]), 200
+
+
+@members_bp.route("/admin/pending-members", methods=["GET"])
+def list_pending_members():
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+
+    decoded = decode_token(token)
+    if not decoded:
+        return json_api_error("Invalid token", 401)
+
+    try:
+        pending = Member.query.filter_by(status="pending").all()
+        return jsonify([m.to_dict() for m in pending]), 200
+    except Exception:
+        return jsonify([]), 200
+
+
+@members_bp.route("/admin/register-member", methods=["POST"])
+def admin_register_member():
+    """Admin registration of new member."""
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+
+    decoded = decode_token(token)
+    if not decoded:
+        return json_api_error("Invalid token", 401)
+
+    if decoded.get("role") != "superadmin":
+        return json_api_error("Forbidden", 403)
+
+    data = request.get_json(silent=True) or {}
+
+    required = [
+        "full_names",
+        "national_id",
+        "phone_number",
+        "county",
+        "constituency",
+        "ward",
+        "physical_location",
+        "category",
+    ]
+    missing = [k for k in required if not data.get(k)]
+    if missing:
+        return json_api_error(f"Missing fields: {', '.join(missing)}", 400)
+
+    if Member.query.filter_by(national_id=data["national_id"]).first():
+        return json_api_error("Member already exists", 400)
+
+    try:
+        member = Member(
+            full_names=data["full_names"],
+            national_id=data["national_id"],
+            phone_number=data["phone_number"],
+            email=data.get("email", ""),
+            gender=data.get("gender", ""),
+            county=data["county"],
+            constituency=data["constituency"],
+            ward=data["ward"],
+            physical_location=data["physical_location"],
+            category=data["category"],
+            status=data.get("status", "active"),
+            created_by="admin",
+            is_verified=data.get("is_verified", False),
+        )
+        db.session.add(member)
+        db.session.commit()
+
+        return jsonify({"success": True, "member": member.to_dict()}), 200
+    except Exception as e:
+        return json_api_error(f"Registration failed: {str(e)}", 500)
