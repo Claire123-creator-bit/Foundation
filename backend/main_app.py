@@ -7,7 +7,7 @@ from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from website_models import Admin, Member, Media, Meeting, db
+from website_models import Admin, Activity, Member, Media, Meeting, db
 
 CLOUDINARY_AVAILABLE = False
 cloudinary = None
@@ -15,20 +15,39 @@ try:
     import cloudinary  # type: ignore
     import cloudinary.uploader  # type: ignore
 
-    cloudinary.config(
-        cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-        api_key=os.getenv("CLOUDINARY_API_KEY"),
-        api_secret=os.getenv("CLOUDINARY_API_SECRET"),
-    )
-    CLOUDINARY_AVAILABLE = True
+    cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME")
+    api_key = os.getenv("CLOUDINARY_API_KEY")
+    api_secret = os.getenv("CLOUDINARY_API_SECRET")
+
+    if cloud_name and api_key and api_secret:
+        cloudinary.config(
+            cloud_name=cloud_name,
+            api_key=api_key,
+            api_secret=api_secret,
+        )
+        CLOUDINARY_AVAILABLE = True
+    else:
+        CLOUDINARY_AVAILABLE = False
+        cloudinary = None
 except ModuleNotFoundError:
     CLOUDINARY_AVAILABLE = False
+    cloudinary = None
 except Exception:
+    # Never crash startup due to Cloudinary config.
     CLOUDINARY_AVAILABLE = False
+    cloudinary = None
+
 
 app = Flask(__name__)
 
+# Secret key must exist for JWT encode/decode.
+app.config.setdefault(
+    "SECRET_KEY",
+    os.getenv("SECRET_KEY", "change-this-in-production"),
+)
+
 CORS(
+
     app,
     resources={r"/*": {"origins": "https://www.mbogofoundation.org"}},
     supports_credentials=True,
@@ -43,7 +62,6 @@ def _force_json_cors_and_options():
         return ("", 204)
 
 
-app.config
 app.config.setdefault("SQLALCHEMY_DATABASE_URI", os.getenv("DATABASE_URL", "sqlite:///app.db"))
 app.config.setdefault("SQLALCHEMY_TRACK_MODIFICATIONS", False)
 
@@ -106,18 +124,33 @@ def _is_api_path() -> bool:
 
 
 
+@app.errorhandler(404)
+def handle_404(err):
+    return _json_api_error("Resource not found", 404)
+
+
+@app.errorhandler(405)
+def handle_405(err):
+    return _json_api_error("Method not allowed", 405)
+
+
+@app.errorhandler(500)
+def handle_500(err):
+    return _json_api_error("Internal server error", 500)
+
+
 @app.errorhandler(HTTPException)
 def handle_http_exception(err: HTTPException):
+    # Ensure API clients always get JSON.
     if _is_api_path() or request.accept_mimetypes.best == "application/json":
-        return jsonify({"error": err.description or "Request failed"}), getattr(err, "code", 400)
-    return jsonify({"error": err.description or "Request failed"}), getattr(err, "code", 400)
+        return _json_api_error(err.description or "Request failed", getattr(err, "code", 400))
+    return _json_api_error(err.description or "Request failed", getattr(err, "code", 400))
 
 
 @app.errorhandler(Exception)
 def handle_exception(err: Exception):
-    if _is_api_path() or request.accept_mimetypes.best == "application/json":
-        return _json_api_error("Internal server error", 500)
     return _json_api_error("Internal server error", 500)
+
 
 
 @app.route("/health", methods=["GET"])
@@ -327,11 +360,22 @@ def delete_media(media_id):
         if not media:
             return _json_api_error("Media not found", 404)
 
-        if "cloudinary" in (media.file_path or "") and CLOUDINARY_AVAILABLE and cloudinary is not None:
-            public_id = media.file_path.split("/")[-1].split(".")[0]
-            cloudinary.uploader.destroy(f"mbogo_foundation/{public_id}")
+        if (
+            (media.file_path or "")
+            and "cloudinary" in (media.file_path or "")
+            and CLOUDINARY_AVAILABLE
+            and cloudinary is not None
+        ):
+            try:
+                public_id = media.file_path.split("/")[-1].split(".")[0]
+                if public_id:
+                    cloudinary.uploader.destroy(f"mbogo_foundation/{public_id}")
+            except Exception:
+                # If Cloudinary destroy fails, still delete DB record.
+                pass
 
         db.session.delete(media)
+
         db.session.commit()
         return jsonify({"success": True, "message": "Media deleted"}), 200
     except Exception as e:
@@ -396,10 +440,14 @@ def upload_media():
             resource_type="auto",
         )
 
+        secure_url = upload_result.get("secure_url")
+        if not secure_url:
+            return _json_api_error("Upload failed", 500)
+
         media = Media(
             title=request.form.get("title", file.filename),
             description=request.form.get("description", ""),
-            file_path=upload_result["secure_url"],
+            file_path=secure_url,
             file_type=file.content_type or "unknown",
             media_type=request.form.get("media_type", "image"),
             file_size=upload_result.get("bytes", 0),
@@ -411,11 +459,78 @@ def upload_media():
         db.session.commit()
 
         return jsonify({"success": True, "media": media.to_dict()}), 200
-    except Exception as e:
-        return _json_api_error(f"Upload failed: {str(e)}", 500)
+    except Exception:
+        return _json_api_error("Upload failed", 500)
+
+
+@app.route("/activities", methods=["GET"])
+def list_activities():
+    try:
+        activities = Activity.query.filter_by(is_active=True).all()
+        return jsonify([a.to_dict() for a in activities]), 200
+    except Exception:
+        return jsonify([]), 200
+
+
+@app.route("/admin/register-member", methods=["POST"])
+def admin_register_member():
+    token = _auth_token()
+    if not token:
+        return _json_api_error("Missing token", 401)
+
+    try:
+        decoded = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+        if decoded.get("role") != "superadmin":
+            return _json_api_error("Forbidden", 403)
+    except Exception:
+        return _json_api_error("Invalid token", 401)
+
+    data = request.get_json(silent=True) or {}
+
+    # Required fields expected by Member model.
+    required = [
+        "full_names",
+        "national_id",
+        "phone_number",
+        "county",
+        "constituency",
+        "ward",
+        "physical_location",
+        "category",
+    ]
+    missing = [k for k in required if not data.get(k)]
+    if missing:
+        return _json_api_error("Missing fields", 400)
+
+    if Member.query.filter_by(national_id=data.get("national_id")).first():
+        return _json_api_error("Member already exists", 400)
+
+    if Member.query.filter_by(phone_number=data.get("phone_number")).first():
+        return _json_api_error("Phone already exists", 400)
+
+    member = Member(
+        full_names=data["full_names"],
+        national_id=data["national_id"],
+        phone_number=data["phone_number"],
+        email=data.get("email"),
+        gender=data.get("gender"),
+        county=data["county"],
+        constituency=data["constituency"],
+        ward=data["ward"],
+        physical_location=data["physical_location"],
+        category=data["category"],
+        status=data.get("status", "pending"),
+        created_by="admin",
+        is_verified=bool(data.get("is_verified", False)),
+    )
+
+    db.session.add(member)
+    db.session.commit()
+    return jsonify({"success": True, "member": member.to_dict()}), 200
 
 
 if __name__ == "__main__":
+
     app.run(
         host="0.0.0.0",
         port=int(os.getenv("PORT", "5000")),
