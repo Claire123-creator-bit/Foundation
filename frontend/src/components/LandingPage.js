@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import API_BASE from '../utils/apiConfig';
 import './LandingPage.css';
 
-import mbogoBackground from '../../public/mbogo-background.jpeg';
+// Use CRA public asset path to avoid importing files from outside src/
+const mbogoBackground = '/mbogo-background.jpeg';
+
 
 const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const [media, setMedia] = useState([]);
