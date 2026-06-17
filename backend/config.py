@@ -13,5 +13,9 @@ CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
 CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
 CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
 
-# CORS
-CORS_ORIGINS = "https://www.mbogofoundation.org"
+# CORS - allow both production and development
+if os.getenv("FLASK_ENV") == "production":
+    CORS_ORIGINS = "https://www.mbogofoundation.org"
+else:
+    # Development: allow localhost
+    CORS_ORIGINS = ["https://www.mbogofoundation.org", "http://localhost:3000", "http://127.0.0.1:3000"]
