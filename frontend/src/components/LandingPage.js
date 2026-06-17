@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import API_BASE from '../utils/apiConfig';
 import './LandingPage.css';
 
+import mbogoBackground from '../../public/mbogo-background.jpeg';
+
 const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const [media, setMedia] = useState([]);
+
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
@@ -48,7 +51,7 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
       <nav className="landing-navbar">
         <div className="landing-navbar-desktop">
           <div className="landing-logo">
-            <img src="/mbogo-background.jpeg" alt="Mbogo Foundation" className="landing-logo-image" />
+            <img src={mbogoBackground} alt="Mbogo Foundation" className="landing-logo-image" />
             <span className="landing-logo-text">Mbogo Foundation</span>
           </div>
 
@@ -238,7 +241,7 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
 };
 
 const s = {
-page: { minHeight: '100vh', backgroundImage: 'url(/mbogo-background.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' },
+page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' },
   navbar: {
     position: 'fixed',
     top: 0,
