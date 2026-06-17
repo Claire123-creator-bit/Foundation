@@ -9,27 +9,27 @@
 
 * { font-family: 'Inter', sans-serif; box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html { font-size: 16px; }
-body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 
-/* ── Layout ── */
-.layout { display: flex; flex-direction: column; min-height: 100vh; }
-.main-content { flex: 1; padding: var(--space); max-width: 720px; width: 100%; margin: 0 auto; }
-
-/* ── Typography ── */
-h1 { font-size: 20px; font-weight: 700; color: var(--blue); }
-h2 { font-size: 18px; font-weight: 700; color: var(--blue); margin-bottom: var(--space); }
-h3 { font-size: 15px; font-weight: 600; color: var(--blue); margin-bottom: 8px; }
-p  { font-size: 14px; font-weight: 300; color: var(--blue); line-height: 1.6; }
-label { font-size: 15px; font-weight: 600; color: var(--blue); display: block; margin-bottom: 8px; }
-small { font-size: 12px; font-weight: 300; color: var(--blue); }
-
-/* ── Inputs ── */
-input, select, textarea {
-  width: 100%; padding: 14px; font-size: 16px; font-weight: 400;
-  border: 2px solid var(--blue); background: var(--white); color: var(--blue);
-  margin-bottom: var(--space); outline: none; transition: background 0.15s;
-  border-radius: 0; -webkit-appearance: none; appearance: none;
+/* Global background for ALL pages (from CRA public/) */
+html,
+body,
+#root {
+  min-height: 100vh;
 }
+
+body {
+  background-color: var(--bg);
+  background-image: linear-gradient(
+      rgba(244, 246, 251, 0.72),
+      rgba(244, 246, 251, 0.72)
+    ),
+    url('/mbogo-background.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
 input:focus, select:focus, textarea:focus { background: #eef1fa; }
 
 /* ── Buttons ── */
