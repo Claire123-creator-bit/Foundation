@@ -44,59 +44,187 @@ function BulkMessaging() {
   const parts = Math.ceil(message.length / 160) || 1;
 
   return (
-    <div>
-      <h2>Send SMS to Members</h2>
+    <div style={s.page}>
+      <div style={s.card}>
+        <h2 style={s.title}>Send SMS to Members</h2>
 
-      {result !== null && (
-        <div style={s.successBox}>
-          <span style={{ fontSize: 28 }}>✅</span>
-          <div>
-            <p style={s.successTitle}>SMS Sent Successfully</p>
-            <p style={s.successSub}>Queued to <strong>{result}</strong> member{result !== 1 ? 's' : ''}. Messages will arrive on their registered phone numbers shortly.</p>
+        {result !== null && (
+          <div style={s.successBox}>
+            <span style={{ fontSize: 28 }}>✅</span>
+            <div>
+              <p style={s.successTitle}>SMS Sent Successfully</p>
+              <p style={s.successSub}>Queued to <strong>{result}</strong> member{result !== 1 ? 's' : ''}. Messages will arrive on their registered phone numbers shortly.</p>
+            </div>
+            <button style={s.resetBtn} onClick={() => setResult(null)}>Send Another</button>
           </div>
-          <button style={s.resetBtn} onClick={() => setResult(null)}>Send Another</button>
-        </div>
-      )}
+        )}
 
-      {result === null && (
-        <form onSubmit={handleSend}>
-          <label>Send To</label>
-          <select value={category} onChange={e => setCategory(e.target.value)}>
-            <option value=''>All approved members</option>
-            {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+        {result === null && (
+          <form onSubmit={handleSend} style={s.form}>
+            <div style={s.formGroup}>
+              <label style={s.label}>Send To</label>
+              <select 
+                value={category} 
+                onChange={e => setCategory(e.target.value)}
+                style={s.input}
+              >
+                <option value=''>All approved members</option>
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
 
-          <label>Message</label>
-          <textarea
-            value={message}
-            onChange={e => setMessage(e.target.value)}
-            required
-            placeholder='Type your message here...'
-            style={{ height: 140, resize: 'vertical' }}
-            maxLength={1000}
-          />
-          <div style={s.counter}>
-            <small>{message.length} characters</small>
-            <small>{parts} SMS part{parts !== 1 ? 's' : ''} per recipient</small>
-          </div>
+            <div style={s.formGroup}>
+              <label style={s.label}>Message</label>
+              <textarea
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+                required
+                placeholder='Type your message here...'
+                style={{...s.textarea, height: 140, resize: 'vertical'}}
+                maxLength={1000}
+              />
+            </div>
 
-          {error && <p className='msg-error' style={{ marginTop: 8 }}>{error}</p>}
+            <div style={s.counter}>
+              <small>{message.length} characters</small>
+              <small>{parts} SMS part{parts !== 1 ? 's' : ''} per recipient</small>
+            </div>
 
-          <button type='submit' disabled={loading || !message.trim()} style={{ marginTop: 8 }}>
-            {loading ? 'Sending...' : `Send SMS${category ? ` to ${category}s` : ' to All Members'}`}
-          </button>
-        </form>
-      )}
+            {error && <p style={s.error}>{error}</p>}
+
+            <button 
+              type='submit' 
+              disabled={loading || !message.trim()} 
+              style={{...s.button, opacity: loading || !message.trim() ? 0.6 : 1}}
+            >
+              {loading ? 'Sending...' : `Send SMS${category ? ` to ${category}s` : ' to All Members'}`}
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
 
 const s = {
-  successBox:   { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, background: '#fff', border: '2px solid #0A2463', padding: 32, textAlign: 'center', marginBottom: 16 },
-  successTitle: { fontWeight: 700, color: '#0A2463', fontSize: 16, margin: 0 },
-  successSub:   { fontWeight: 300, color: '#444', fontSize: 14, margin: '4px 0 0' },
-  resetBtn:     { width: 'auto', height: 40, padding: '0 24px', background: '#0A2463', color: '#fff', border: 'none', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginTop: 8 },
-  counter:      { display: 'flex', justifyContent: 'space-between', marginBottom: 4 },
+  page: {
+    padding: '32px 20px',
+    minHeight: '100vh',
+    background: '#f5f5f5',
+  },
+  card: {
+    maxWidth: '600px',
+    margin: '0 auto',
+    background: '#fff',
+    border: '2px solid #0A2463',
+    borderRadius: '12px',
+    padding: '40px 32px',
+  },
+  title: {
+    color: '#0A2463',
+    fontSize: '28px',
+    fontWeight: 700,
+    textAlign: 'center',
+    marginBottom: '32px',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+  },
+  formGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+  },
+  label: {
+    fontSize: '16px',
+    fontWeight: 600,
+    color: '#0A2463',
+  },
+  input: {
+    fontSize: '15px',
+    padding: '12px 14px',
+    border: '2px solid #0A2463',
+    borderRadius: '8px',
+    fontFamily: 'inherit',
+    color: '#333',
+    outline: 'none',
+  },
+  textarea: {
+    fontSize: '15px',
+    padding: '12px 14px',
+    border: '2px solid #0A2463',
+    borderRadius: '8px',
+    fontFamily: 'inherit',
+    color: '#333',
+    outline: 'none',
+  },
+  counter: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    fontSize: '13px',
+    color: '#666',
+    marginTop: '-12px',
+  },
+  error: {
+    background: '#ffebee',
+    color: '#b00020',
+    padding: '12px 14px',
+    borderRadius: '8px',
+    fontSize: '14px',
+    fontWeight: 500,
+    margin: 0,
+  },
+  button: {
+    fontSize: '16px',
+    fontWeight: 700,
+    padding: '14px 32px',
+    height: '48px',
+    border: 'none',
+    borderRadius: '8px',
+    background: '#0A2463',
+    color: '#fff',
+    cursor: 'pointer',
+    transition: 'background 0.2s',
+    marginTop: '12px',
+  },
+  successBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '16px',
+    background: '#f0f4ff',
+    border: '2px solid #0A2463',
+    borderRadius: '12px',
+    padding: '32px',
+    textAlign: 'center',
+    marginBottom: '16px',
+  },
+  successTitle: {
+    fontWeight: 700,
+    color: '#0A2463',
+    fontSize: '18px',
+    margin: 0,
+  },
+  successSub: {
+    fontWeight: 300,
+    color: '#444',
+    fontSize: '15px',
+    margin: '8px 0 0',
+  },
+  resetBtn: {
+    width: 'auto',
+    padding: '10px 28px',
+    background: '#0A2463',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '8px',
+    fontSize: '15px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    marginTop: '8px',
+  },
 };
 
 export default BulkMessaging;
