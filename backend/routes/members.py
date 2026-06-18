@@ -160,7 +160,7 @@ def admin_register_member():
 
 @members_bp.route("/admin/approve-member/<int:member_id>", methods=["POST"])
 def approve_member(member_id):
-    """Admin approves a pending member."""
+    """Admin approves or rejects a pending member."""
     token = get_auth_token()
     if not token:
         return json_api_error("Missing token", 401)
@@ -172,15 +172,25 @@ def approve_member(member_id):
     if decoded.get("role") != "superadmin":
         return json_api_error("Forbidden", 403)
 
+    data = request.get_json(silent=True) or {}
+    action = data.get("action", "approve")
+
     try:
         member = Member.query.get(member_id)
         if not member:
             return json_api_error("Member not found", 404)
 
-        member.status = "approved"
-        member.is_verified = True
+        if action == "approve":
+            member.status = "approved"
+            member.is_verified = True
+        elif action == "reject":
+            member.status = "rejected"
+            member.is_verified = False
+        else:
+            return json_api_error("Invalid action", 400)
+
         db.session.commit()
 
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
-        return json_api_error(f"Approval failed: {str(e)}", 500)
+        return json_api_error(f"Action failed: {str(e)}", 500)
