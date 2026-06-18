@@ -142,8 +142,8 @@ function App() {
   }
 
   if (page === 'admin-login') return <LoginPage onLogin={handleAdminLogin} onBack={() => setPage('home')} />;
-  if (page === 'member-login') return <MemberLogin onLogin={handleMemberLogin} onBack={() => setPage('home')} />;
-  if (page === 'member-register') return <MemberRegister onBack={() => setPage('home')} />;
+  if (page === 'member-login') return <MemberLogin onLogin={handleMemberLogin} onBack={() => setPage('home')} onRegister={() => setPage('member-register')} />;
+  if (page === 'member-register') return <MemberRegister onBack={() => setPage('home')} onLogin={() => setPage('member-login')} />;
 
   return (
     <LandingPage

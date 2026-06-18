@@ -4,7 +4,7 @@ import API_BASE from '../utils/apiConfig';
 const categories = ['Church Leader', 'Pastor', 'Village Elder', 'Agent', 'Youth Leader', 'Women Leader', 'Community Member', 'Government Official', 'NGO Representative', 'Volunteer'];
 const counties = ['Nairobi','Mombasa','Kwale','Kilifi','Tana River','Lamu','Taita Taveta','Garissa','Wajir','Mandera','Marsabit','Isiolo','Meru','Tharaka Nithi','Embu','Kitui','Machakos','Makueni','Nyandarua','Nyeri','Kirinyaga',"Murang'a",'Kiambu','Turkana','West Pokot','Samburu','Trans Nzoia','Uasin Gishu','Elgeyo Marakwet','Nandi','Baringo','Laikipia','Nakuru','Narok','Kajiado','Kericho','Bomet','Kakamega','Vihiga','Bungoma','Busia','Siaya','Kisumu','Homa Bay','Migori','Kisii','Nyamira'];
 
-function MemberRegister({ onBack }) {
+function MemberRegister({ onBack, onLogin }) {
   const [form, setForm] = useState({
     full_names: '', national_id: '', phone_number: '', category: '',
     gender: '', county: '', constituency: '', ward: ''
@@ -91,6 +91,14 @@ function MemberRegister({ onBack }) {
             {loading ? 'Please wait...' : 'Register'}
           </button>
         </form>
+
+        <div style={s.divider} />
+        <p style={s.switchText}>
+          Already have an account?{' '}
+          <button type="button" onClick={onLogin} style={s.switchLink}>
+            Sign in here
+          </button>
+        </p>
       </div>
     </div>
   );
@@ -105,7 +113,10 @@ const s = {
   label: { display: 'block', fontSize: 16, fontWeight: 600, color: '#0A2463', marginBottom: 8 },
   input: { width: '100%', padding: '14px', fontSize: 16, border: '2px solid #0A2463', color: '#0A2463', outline: 'none', marginBottom: 20, boxSizing: 'border-box' },
   error: { color: '#b00020', fontSize: 14, fontWeight: 600, marginBottom: 12, textAlign: 'center' },
-  btn:   { width: '100%', height: 56, background: '#0A2463', color: '#fff', border: 'none', fontSize: 18, fontWeight: 700, cursor: 'pointer' },
+  btn:   { width: '100%', height: 56, background: '#0A2463', color: '#fff', border: 'none', fontSize: 18, fontWeight: 700, cursor: 'pointer', marginBottom: 20 },
+  divider: { width: '100%', height: 1, background: '#ddd', margin: '20px 0' },
+  switchText: { color: '#666', fontSize: 14, textAlign: 'center', margin: 0, fontWeight: 400 },
+  switchLink: { background: 'none', border: 'none', color: '#0A2463', cursor: 'pointer', fontWeight: 700, fontSize: 14, textDecoration: 'underline', padding: 0, marginLeft: 4 },
 };
 
 export default MemberRegister;
