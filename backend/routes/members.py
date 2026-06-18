@@ -116,7 +116,9 @@ def admin_register_member():
     if not decoded:
         return json_api_error("Invalid token", 401)
 
-    if decoded.get("role") != "superadmin":
+    # Allow both 'admin' and 'superadmin' roles
+    role = decoded.get("role", "").lower()
+    if role not in ["admin", "superadmin"]:
         return json_api_error("Forbidden", 403)
 
     data = request.get_json(silent=True) or {}
@@ -173,7 +175,9 @@ def approve_member(member_id):
     if not decoded:
         return json_api_error("Invalid token", 401)
 
-    if decoded.get("role") != "superadmin":
+    # Allow both 'admin' and 'superadmin' roles
+    role = decoded.get("role", "").lower()
+    if role not in ["admin", "superadmin"]:
         return json_api_error("Forbidden", 403)
 
     data = request.get_json(silent=True) or {}
