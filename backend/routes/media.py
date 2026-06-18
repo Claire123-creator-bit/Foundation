@@ -67,6 +67,11 @@ def upload_media():
     if not decoded:
         return json_api_error("Invalid token", 401)
 
+    # Check if user is admin
+    role = decoded.get("role", "").lower()
+    if role not in ["admin", "superadmin"]:
+        return json_api_error("Forbidden - Admin only", 403)
+
     admin_id = decoded.get("admin_id")
     if not admin_id:
         return json_api_error("Invalid token", 401)
@@ -81,7 +86,7 @@ def upload_media():
     try:
         secure_url, error = upload_file(file)
         if error or not secure_url:
-            return json_api_error("Upload failed", 500)
+            return json_api_error("Upload failed: " + str(error), 500)
 
         media = Media(
             title=request.form.get("title", file.filename),

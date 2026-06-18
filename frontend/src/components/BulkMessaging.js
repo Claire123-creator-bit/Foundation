@@ -17,6 +17,13 @@ function BulkMessaging() {
 
   const handleSend = (e) => {
     e.preventDefault();
+    
+    // Client-side validation
+    if (!message || !message.trim()) {
+      setError('Message cannot be empty');
+      return;
+    }
+
     setLoading(true); setResult(null); setError('');
     fetch(`${API_BASE}/send-bulk-sms`, {
       method: 'POST',
@@ -24,9 +31,8 @@ function BulkMessaging() {
         'Content-Type': 'application/json',
         ...authHeaders(),
       },
-      body: JSON.stringify({ message, category }),
+      body: JSON.stringify({ message: message.trim(), category: category.trim() }),
     })
-
       .then(res => res.json())
       .then(data => {
         setLoading(false);
@@ -35,10 +41,14 @@ function BulkMessaging() {
           setMessage('');
           setCategory('');
         } else {
-          setError(data.error || 'Failed to send SMS');
+          setError(data.error || data.message || 'Failed to send SMS');
         }
       })
-      .catch(() => { setLoading(false); setError('Cannot connect to server'); });
+      .catch((err) => { 
+        setLoading(false); 
+        console.error('SMS Error:', err);
+        setError('Cannot connect to server'); 
+      });
   };
 
   const parts = Math.ceil(message.length / 160) || 1;

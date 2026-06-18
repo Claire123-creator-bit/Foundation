@@ -222,11 +222,11 @@ def send_sms_to_members():
         return json_api_error("Forbidden", 403)
 
     data = request.get_json(silent=True) or {}
-    message = data.get("message", "").strip()
-    category = data.get("category", "").strip()
+    message = data.get("message", "").strip() if data.get("message") else ""
+    category = data.get("category", "").strip() if data.get("category") else ""
 
-    if not message:
-        return json_api_error("Message is required", 400)
+    if not message or len(message) == 0:
+        return json_api_error("Message is required and cannot be empty", 400)
 
     try:
         # Get members by category or all if no category specified
