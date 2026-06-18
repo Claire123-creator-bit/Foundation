@@ -243,7 +243,7 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
 };
 
 const s = {
-page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' },
+page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', display: 'flex', flexDirection: 'column' },
   navbar: {
     position: 'fixed',
     top: 0,
@@ -342,12 +342,15 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     fontWeight: 700,
     marginBottom: '16px',
     lineHeight: 1.2,
+    textShadow: '0 2px 8px rgba(0,0,0,0.5)',
   },
   heroSubtitle: {
     color: 'rgba(255,255,255,0.9)',
     fontSize: 'clamp(18px, 3vw, 24px)',
     fontWeight: 300,
     marginBottom: '32px',
+    textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+  },
   },
   heroButtons: { display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' },
   primaryButton: {
@@ -373,8 +376,8 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     transition: 'background 0.2s',
   },
   // Allow the global background image to show through on every section
-  section: { padding: '80px 32px', backgroundColor: 'transparent' },
-  sectionAlt: { padding: '80px 32px', backgroundColor: 'transparent' },
+  section: { padding: '80px 32px', backgroundColor: 'transparent', flex: '0 0 auto' },
+  sectionAlt: { padding: '80px 32px', backgroundColor: 'transparent', flex: '0 0 auto' },
   container: { maxWidth: '1200px', margin: '0 auto' },
   sectionTitle: {
     fontSize: 'clamp(28px, 4vw, 40px)',
@@ -382,6 +385,7 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     color: '#0A2463',
     textAlign: 'center',
     marginBottom: '48px',
+    textShadow: '0 2px 4px rgba(255,255,255,0.8)',
   },
   sectionContent: { maxWidth: '800px', margin: '0 auto' },
   text: {
@@ -389,6 +393,7 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     lineHeight: 1.8,
     color: '#333',
     marginBottom: '16px',
+    textShadow: '0 1px 3px rgba(255,255,255,0.6)',
   },
   grid: {
     display: 'grid',
@@ -463,6 +468,7 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     fontWeight: 700,
     color: '#0A2463',
     marginBottom: '16px',
+    textShadow: '0 1px 3px rgba(255,255,255,0.7)',
   },
   contactDetails: { marginTop: '24px' },
   contactItem: {
@@ -472,6 +478,7 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
+    textShadow: '0 1px 2px rgba(255,255,255,0.5)',
   },
   form: { display: 'flex', flexDirection: 'column', gap: '16px' },
   input: {
@@ -504,6 +511,7 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     backgroundColor: '#0A2463',
     padding: '32px',
     textAlign: 'center',
+    marginTop: 'auto',
   },
   footerText: {
     color: 'rgba(255,255,255,0.7)',
