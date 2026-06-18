@@ -108,9 +108,9 @@ function BulkMessaging() {
 
 const s = {
   page: {
-    padding: '32px 20px',
+    padding: '100px 20px 60px',
     minHeight: '100vh',
-    background: '#f5f5f5',
+    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
   },
   card: {
     maxWidth: '600px',
@@ -119,6 +119,7 @@ const s = {
     border: '2px solid #0A2463',
     borderRadius: '12px',
     padding: '40px 32px',
+    boxShadow: '0 8px 24px rgba(10, 36, 99, 0.12)',
   },
   title: {
     color: '#0A2463',
@@ -126,6 +127,7 @@ const s = {
     fontWeight: 700,
     textAlign: 'center',
     marginBottom: '32px',
+    marginTop: 0,
   },
   form: {
     display: 'flex',
@@ -150,6 +152,7 @@ const s = {
     fontFamily: 'inherit',
     color: '#333',
     outline: 'none',
+    backgroundColor: '#fff',
   },
   textarea: {
     fontSize: '15px',
@@ -159,6 +162,7 @@ const s = {
     fontFamily: 'inherit',
     color: '#333',
     outline: 'none',
+    backgroundColor: '#fff',
   },
   counter: {
     display: 'flex',
@@ -175,6 +179,7 @@ const s = {
     fontSize: '14px',
     fontWeight: 500,
     margin: 0,
+    border: '1px solid #ef5350',
   },
   button: {
     fontSize: '16px',
@@ -194,8 +199,8 @@ const s = {
     flexDirection: 'column',
     alignItems: 'center',
     gap: '16px',
-    background: '#f0f4ff',
-    border: '2px solid #0A2463',
+    background: '#e8f5e9',
+    border: '2px solid #4caf50',
     borderRadius: '12px',
     padding: '32px',
     textAlign: 'center',
@@ -203,15 +208,16 @@ const s = {
   },
   successTitle: {
     fontWeight: 700,
-    color: '#0A2463',
+    color: '#2e7d32',
     fontSize: '18px',
     margin: 0,
   },
   successSub: {
     fontWeight: 300,
-    color: '#444',
+    color: '#555',
     fontSize: '15px',
     margin: '8px 0 0',
+    lineHeight: 1.5,
   },
   resetBtn: {
     width: 'auto',
@@ -224,6 +230,7 @@ const s = {
     fontWeight: 600,
     cursor: 'pointer',
     marginTop: '8px',
+    transition: 'background 0.2s',
   },
 };
 
