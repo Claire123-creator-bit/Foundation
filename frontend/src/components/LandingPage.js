@@ -351,7 +351,6 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     marginBottom: '32px',
     textShadow: '0 1px 4px rgba(0,0,0,0.4)',
   },
-  },
   heroButtons: { display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' },
   primaryButton: {
     background: '#fff',
