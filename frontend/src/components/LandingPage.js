@@ -232,7 +232,7 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
       </section>
 
       <footer style={s.footer}>
-        <div style={s.container}>
+        <div style={s.footerContent}>
           <p style={s.footerText}>
             © {new Date().getFullYear()} Mbogo Welfare Empowerment Foundation. All rights reserved.
           </p>
@@ -512,6 +512,11 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     padding: '32px',
     textAlign: 'center',
     marginTop: 'auto',
+    maxWidth: '100%',
+  },
+  footerContent: {
+    maxWidth: '600px',
+    margin: '0 auto',
   },
   footerText: {
     color: 'rgba(255,255,255,0.7)',

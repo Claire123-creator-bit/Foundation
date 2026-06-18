@@ -4,6 +4,7 @@ from datetime import datetime
 from website_models import Member, db
 from utils.responses import json_api_error, json_api_success
 from utils.auth import get_auth_token, decode_token, create_member_token
+from sms_service import send_bulk_sms
 
 members_bp = Blueprint("members", __name__)
 
@@ -202,3 +203,63 @@ def approve_member(member_id):
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
         return json_api_error(f"Action failed: {str(e)}", 500)
+
+
+@members_bp.route("/send-bulk-sms", methods=["POST"])
+def send_sms_to_members():
+    """Send SMS to members by category."""
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+
+    decoded = decode_token(token)
+    if not decoded:
+        return json_api_error("Invalid token", 401)
+
+    # Allow both 'admin' and 'superadmin' roles
+    role = decoded.get("role", "").lower()
+    if role not in ["admin", "superadmin"]:
+        return json_api_error("Forbidden", 403)
+
+    data = request.get_json(silent=True) or {}
+    message = data.get("message", "").strip()
+    category = data.get("category", "").strip()
+
+    if not message:
+        return json_api_error("Message is required", 400)
+
+    try:
+        # Get members by category or all if no category specified
+        if category:
+            members = Member.query.filter_by(category=category, status="approved").all()
+        else:
+            members = Member.query.filter_by(status="approved").all()
+
+        if not members:
+            return jsonify({"success": False, "error": "No approved members found in this category", "recipients": 0}), 404
+
+        # Extract phone numbers
+        phone_numbers = [m.phone_number for m in members if m.phone_number]
+
+        if not phone_numbers:
+            return jsonify({"success": False, "error": "No valid phone numbers found", "recipients": 0}), 404
+
+        # Send SMS
+        result = send_bulk_sms(phone_numbers, message)
+
+        if result.get("success"):
+            return jsonify({
+                "success": True,
+                "recipients": result.get("sent", 0),
+                "total": result.get("total", 0),
+                "message": f"SMS sent to {result.get('sent', 0)} members"
+            }), 200
+        else:
+            return jsonify({
+                "success": False,
+                "error": result.get("reason", "Failed to send SMS"),
+                "recipients": 0
+            }), 400
+
+    except Exception as e:
+        return json_api_error(f"SMS sending failed: {str(e)}", 500)
