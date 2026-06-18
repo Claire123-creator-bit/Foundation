@@ -63,17 +63,6 @@ function MemberLogin({ onLogin, onBack, onRegister }) {
           <button type="submit" style={s.btn} disabled={loading}>
             {loading ? 'Please wait...' : 'Sign In'}
           </button>
-
-          <button
-            type="button"
-            style={s.googleBtn}
-            onClick={() => {
-              window.location.href = `${API_BASE}/auth/google/login`;
-            }}
-            disabled={loading}
-          >
-            Continue with Google
-          </button>
         </form>
 
         <div style={s.divider} />
@@ -99,7 +88,6 @@ const s = {
   label:       { display: 'block', fontSize: 14, fontWeight: 600, color: '#0A2463', marginBottom: 8, width: '100%', textAlign: 'left' },
   input:       { width: '100%', padding: '14px', fontSize: 14, border: '2px solid #0A2463', color: '#0A2463', outline: 'none', marginBottom: 20, boxSizing: 'border-box' },
   btn:         { width: '100%', height: 48, background: '#0A2463', color: '#fff', border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer', marginBottom: 12 },
-  googleBtn:   { width: '100%', height: 48, background: '#fff', color: '#0A2463', border: '2px solid #0A2463', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 20 },
   errorBox:    { background: '#ffebee', padding: 12, marginBottom: 16, borderRadius: 4, border: '1px solid #ef5350' },
   errorText:   { color: '#b00020', margin: 0, fontSize: 14, fontWeight: 500 },
   divider:     { width: '100%', height: 1, background: '#ddd', margin: '20px 0' },

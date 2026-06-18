@@ -22,6 +22,10 @@ def member_login():
         if not member:
             return jsonify({"success": False, "error": "Member not found"}), 404
 
+        # Only approved members can log in
+        if member.status != "approved":
+            return jsonify({"success": False, "error": "Your account is not yet approved. Please wait for admin approval."}), 403
+
         token = create_member_token(member.id)
 
         return jsonify({"success": True, "member": member.to_dict(), "token": token}), 200
