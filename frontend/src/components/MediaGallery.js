@@ -157,7 +157,7 @@ function MediaGallery() {
                 <div className="media-info">
                   <h4>{item.title}</h4>
                   <p>{item.description || 'No description'}</p>
-                  <small>Uploaded: {new Date(item.created_at).toLocaleDateString()}</small>
+                  <small>Uploaded: {new Date(item.created_date).toLocaleDateString()}</small>
                   <button
                     onClick={() => handleDelete(item.id)}
                     className="media-delete-btn"

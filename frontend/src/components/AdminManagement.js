@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import API_BASE from '../utils/apiConfig';
-import { authHeaders } from '../utils/auth';
+import { apiFetch } from '../utils/apiClient';
 
 function AdminManagement() {
   const [admins, setAdmins] = useState([]);
@@ -10,13 +9,8 @@ function AdminManagement() {
   const [msg, setMsg] = useState('');
   const [error, setError] = useState('');
 
-  const getHeaders = () => authHeaders();
-
-
-
   const fetchAdmins = useCallback(() => {
-    fetch(`${API_BASE}/admin/list-admins`, { headers: getHeaders() })
-      .then(r => r.json())
+    apiFetch('/admin/list-admins')
       .then(d => { setAdmins(Array.isArray(d) ? d : []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
@@ -27,23 +21,21 @@ function AdminManagement() {
 
     e.preventDefault();
     setMsg(''); setError('');
-    fetch(`${API_BASE}/admin-register`, {
-      method: 'POST', headers: getHeaders(),
-      body: JSON.stringify(form)
+    apiFetch('/admin-register', {
+      method: 'POST', body: JSON.stringify(form)
     })
       .then(r => r.json())
       .then(d => {
         if (d.success) { setMsg('Admin created successfully'); setShowForm(false); setForm({ full_name: '', username: '', email: '', phone: '', password: '', role: 'admin' }); fetchAdmins(); }
-        else setError(d.message);
+        else setError(d.message || d.error || 'Failed');
       })
       .catch(() => setError('Cannot connect to server'));
   };
 
   const handleDelete = (id, name) => {
     if (!window.confirm(`Remove admin "${name}"?`)) return;
-    fetch(`${API_BASE}/admin/delete-admin/${id}`, { method: 'DELETE', headers: getHeaders() })
-      .then(r => r.json())
-      .then(d => { if (d.success) { setMsg('Admin removed'); fetchAdmins(); } else setError(d.error); })
+    apiFetch(`/admin/delete-admin/${id}`, { method: 'DELETE' })
+      .then(d => { if (d.success) { setMsg('Admin removed'); fetchAdmins(); } else setError(d.error || 'Failed'); })
       .catch(() => setError('Cannot connect to server'));
   };
 

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import API_BASE from '../utils/apiConfig';
-import { authHeaders } from '../utils/auth';
+import { apiFetch } from '../utils/apiClient';
 
 
 const CATEGORIES = [
@@ -25,15 +24,10 @@ function BulkMessaging() {
     }
 
     setLoading(true); setResult(null); setError('');
-    fetch(`${API_BASE}/send-bulk-sms`, {
+    apiFetch('/send-bulk-sms', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders(),
-      },
       body: JSON.stringify({ message: message.trim(), category: category.trim() }),
     })
-      .then(res => res.json())
       .then(data => {
         setLoading(false);
         if (data.success) {
@@ -44,11 +38,7 @@ function BulkMessaging() {
           setError(data.error || data.message || 'Failed to send SMS');
         }
       })
-      .catch((err) => { 
-        setLoading(false); 
-        console.error('SMS Error:', err);
-        setError('Cannot connect to server'); 
-      });
+      .catch(() => { setLoading(false); setError('Cannot connect to server'); });
   };
 
   const parts = Math.ceil(message.length / 160) || 1;

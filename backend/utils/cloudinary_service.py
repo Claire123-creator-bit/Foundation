@@ -27,10 +27,8 @@ except Exception:
 
 
 def upload_file(file, folder="mbogo_foundation"):
-    """Upload file to Cloudinary."""
     if not CLOUDINARY_AVAILABLE or cloudinary is None:
         return None, "Cloudinary not configured"
-    
     try:
         result = cloudinary.uploader.upload(
             file,
@@ -43,10 +41,8 @@ def upload_file(file, folder="mbogo_foundation"):
 
 
 def delete_file(file_path):
-    """Delete file from Cloudinary."""
     if not CLOUDINARY_AVAILABLE or cloudinary is None:
         return True
-    
     try:
         if "cloudinary" in file_path:
             public_id = file_path.split("/")[-1].split(".")[0]
@@ -54,5 +50,4 @@ def delete_file(file_path):
                 cloudinary.uploader.destroy(f"mbogo_foundation/{public_id}")
     except Exception:
         pass
-    
     return True

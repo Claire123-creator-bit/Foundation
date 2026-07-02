@@ -133,7 +133,7 @@ function HomeTab({ member, meetings, setTab }) {
           </span>
         </div>
         <div className="stat-card" style={{ background: '#fff', border: '2px solid #0A2463' }}>
-          <span className="stat-number" />
+          <span className="stat-number" style={{ color: '#0A2463' }}>✓</span>
           <span className="stat-label">Approved</span>
         </div>
       </div>

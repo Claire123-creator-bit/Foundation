@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import API_BASE from '../utils/apiConfig';
-import { authHeaders } from '../utils/auth';
+import { apiFetch } from '../utils/apiClient';
 import { locations } from '../data/kenyanLocations';
 import './EnhancedRegistrationPro.css';
 
@@ -33,22 +32,16 @@ function RegisterMember({ onRegistrationSuccess }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true); setMsg(''); setError('');
-    fetch(`${API_BASE}/admin/register-member`, {
+    apiFetch('/admin/register-member', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders(),
-      },
       body: JSON.stringify(form)
     })
-      .then(res => res.json().then(data => ({ ok: res.ok, data })))
-      .then(({ ok, data }) => {
-
+      .then(data => {
         setLoading(false);
-        if (ok) {
+        if (data.success) {
           setMsg('Member registered successfully!');
           setForm({ full_names: '', national_id: '', phone_number: '', county: '', constituency: '', ward: '', physical_location: '', category: '' });
-        } else setError(data.error || 'Registration failed');
+        } else setError(data.error || data.message || 'Registration failed');
       })
       .catch(() => { setLoading(false); setError('Cannot connect to server'); });
   };

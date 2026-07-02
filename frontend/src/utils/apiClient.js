@@ -9,22 +9,17 @@ export async function apiFetch(pathOrUrl, options = {}) {
   const url = pathOrUrl.startsWith('http') ? pathOrUrl : `${API_BASE}${pathOrUrl}`;
 
   const headers = {
+    ...(options.body && typeof options.body === 'string' ? { 'Content-Type': 'application/json' } : {}),
     ...(options.headers || {}),
     ...authHeaders(),
   };
 
-  const opts = {
-    ...options,
-    headers,
-  };
+  const res = await fetch(url, { ...options, headers });
 
-  const res = await fetch(url, opts);
   let data = null;
   try {
     data = await res.json();
-  } catch (_) {
-    // ignore non-json
-  }
+  } catch (_) {}
 
   if (res.status === 401) {
     setToken(null);
@@ -35,4 +30,3 @@ export async function apiFetch(pathOrUrl, options = {}) {
 
   return data ?? {};
 }
-

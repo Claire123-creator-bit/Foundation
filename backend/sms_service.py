@@ -9,8 +9,6 @@ from logger import app_logger
 
 AT_SMS_URL = 'https://api.africastalking.com/version1/messaging'
 
-AT_SMS_SENDER_ID = os.environ.get('AFRICASTALKING_SENDER_ID', '').strip()
-
 _init_lock = threading.Lock()
 _initialized = False
 
@@ -46,16 +44,10 @@ def _is_valid_phone(p: str) -> bool:
     return p.isdigit() and 9 <= len(p) <= 15
 
 
-def _get_credentials() -> Dict[str, str]:
+def _send_http(to_list: List[str], message: str) -> Dict[str, Any]:
     username = os.environ.get('AFRICASTALKING_USERNAME', '').strip()
     api_key = os.environ.get('AFRICASTALKING_API_KEY', '').strip()
-    return {'username': username, 'api_key': api_key}
-
-
-def _send_http(to_list: List[str], message: str) -> Dict[str, Any]:
-    creds = _get_credentials()
-    username = creds['username']
-    api_key = creds['api_key']
+    sender_id = os.environ.get('AFRICASTALKING_SENDER_ID', '').strip()
 
     if not username or not api_key:
         raise RuntimeError("Africa's Talking credentials not configured")
@@ -65,8 +57,8 @@ def _send_http(to_list: List[str], message: str) -> Dict[str, Any]:
         'to': ','.join(to_list),
         'message': message,
     }
-    if AT_SMS_SENDER_ID:
-        payload['from'] = AT_SMS_SENDER_ID
+    if sender_id:
+        payload['from'] = sender_id
 
     data = urllib.parse.urlencode(payload).encode('utf-8')
     req = urllib.request.Request(
@@ -86,10 +78,6 @@ def _send_http(to_list: List[str], message: str) -> Dict[str, Any]:
 
 
 def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
-    """Send SMS to multiple recipients.
-
-    Safe fallback: never raises; returns dict {success, sent, total, reason}.
-    """
     _ensure_initialized()
 
     try:
@@ -102,7 +90,6 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
             if p2 and _is_valid_phone(p2):
                 normalized.append(p2)
 
-        # de-duplicate while preserving order
         normalized = list(dict.fromkeys(normalized))
 
         total = len(normalized)
@@ -155,10 +142,6 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
 
 
 def send_sms(phone: str, message: str) -> Dict[str, Any]:
-    """Send SMS to a single recipient.
-
-    Safe fallback: never raises; returns dict.
-    """
     _ensure_initialized()
 
     try:
@@ -168,7 +151,6 @@ def send_sms(phone: str, message: str) -> Dict[str, Any]:
             return {'success': False, 'reason': 'Invalid phone number', 'sent': 0, 'total': 1}
 
         result = send_bulk_sms([normalized], message)
-        # Ensure shape consistent for callers
         return {
             'success': bool(result.get('success')),
             'reason': result.get('reason'),

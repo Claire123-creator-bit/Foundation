@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request
-from datetime import datetime
 
 from website_models import Member, db
-from utils.responses import json_api_error, json_api_success
+from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token, create_member_token
 from sms_service import send_bulk_sms
 
@@ -11,52 +10,40 @@ members_bp = Blueprint("members", __name__)
 
 @members_bp.route("/member-login", methods=["POST"])
 def member_login():
-    try:
-        data = request.get_json(silent=True) or {}
-        national_id = data.get("national_id")
-        phone_number = data.get("phone_number")
+    data = request.get_json(silent=True) or {}
+    national_id = data.get("national_id")
+    phone_number = data.get("phone_number")
 
-        if not national_id or not phone_number:
-            return json_api_error("Missing credentials", 400)
+    if not national_id or not phone_number:
+        return json_api_error("Missing credentials", 400)
 
-        member = Member.query.filter_by(national_id=national_id, phone_number=phone_number).first()
-        if not member:
-            return jsonify({"success": False, "error": "Member not found"}), 404
+    member = Member.query.filter_by(national_id=national_id, phone_number=phone_number).first()
+    if not member:
+        return json_api_error("Member not found", 404)
 
-        # Only approved members can log in
-        if member.status != "approved":
-            return jsonify({"success": False, "error": "Your account is not yet approved. Please wait for admin approval."}), 403
+    if member.status != "approved":
+        return json_api_error("Your account is not yet approved. Please wait for admin approval.", 403)
 
-        token = create_member_token(member.id)
-
-        return jsonify({"success": True, "member": member.to_dict(), "token": token}), 200
-    except Exception:
-        return json_api_error("Internal server error", 500)
+    token = create_member_token(member.id)
+    return jsonify({"success": True, "member": member.to_dict(), "token": token}), 200
 
 
 @members_bp.route("/member-register", methods=["POST"])
 def member_register():
-    """Member self-registration endpoint."""
+    data = request.get_json(silent=True) or {}
+
+    required = ["full_names", "national_id", "phone_number", "county",
+                "constituency", "ward", "physical_location", "category"]
+    missing = [k for k in required if not data.get(k)]
+    if missing:
+        return json_api_error(f"Missing fields: {', '.join(missing)}", 400)
+
+    if Member.query.filter_by(national_id=data["national_id"]).first():
+        return json_api_error("National ID already registered", 400)
+    if Member.query.filter_by(phone_number=data["phone_number"]).first():
+        return json_api_error("Phone number already registered", 400)
+
     try:
-        data = request.get_json(silent=True) or {}
-        
-        required = [
-            "full_names",
-            "national_id",
-            "phone_number",
-            "county",
-            "constituency",
-            "ward",
-            "physical_location",
-            "category",
-        ]
-        missing = [k for k in required if not data.get(k)]
-        if missing:
-            return json_api_error(f"Missing fields: {', '.join(missing)}", 400)
-
-        if Member.query.filter_by(national_id=data["national_id"]).first():
-            return json_api_error("Member already exists", 400)
-
         member = Member(
             full_names=data["full_names"],
             national_id=data["national_id"],
@@ -74,9 +61,9 @@ def member_register():
         )
         db.session.add(member)
         db.session.commit()
-
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
+        db.session.rollback()
         return json_api_error(f"Registration failed: {str(e)}", 500)
 
 
@@ -94,11 +81,9 @@ def list_pending_members():
     token = get_auth_token()
     if not token:
         return json_api_error("Missing token", 401)
-
     decoded = decode_token(token)
     if not decoded:
         return json_api_error("Invalid token", 401)
-
     try:
         pending = Member.query.filter_by(status="pending").all()
         return jsonify([m.to_dict() for m in pending]), 200
@@ -108,38 +93,26 @@ def list_pending_members():
 
 @members_bp.route("/admin/register-member", methods=["POST"])
 def admin_register_member():
-    """Admin registration of new member."""
     token = get_auth_token()
     if not token:
         return json_api_error("Missing token", 401)
-
     decoded = decode_token(token)
     if not decoded:
         return json_api_error("Invalid token", 401)
-
-    # Allow both 'admin' and 'superadmin' roles
-    role = decoded.get("role", "").lower()
-    if role not in ["admin", "superadmin"]:
+    if decoded.get("role", "").lower() not in ["admin", "superadmin"]:
         return json_api_error("Forbidden", 403)
 
     data = request.get_json(silent=True) or {}
-
-    required = [
-        "full_names",
-        "national_id",
-        "phone_number",
-        "county",
-        "constituency",
-        "ward",
-        "physical_location",
-        "category",
-    ]
+    required = ["full_names", "national_id", "phone_number", "county",
+                "constituency", "ward", "physical_location", "category"]
     missing = [k for k in required if not data.get(k)]
     if missing:
         return json_api_error(f"Missing fields: {', '.join(missing)}", 400)
 
     if Member.query.filter_by(national_id=data["national_id"]).first():
-        return json_api_error("Member already exists", 400)
+        return json_api_error("National ID already registered", 400)
+    if Member.query.filter_by(phone_number=data["phone_number"]).first():
+        return json_api_error("Phone number already registered", 400)
 
     try:
         member = Member(
@@ -159,92 +132,78 @@ def admin_register_member():
         )
         db.session.add(member)
         db.session.commit()
-
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
+        db.session.rollback()
         return json_api_error(f"Registration failed: {str(e)}", 500)
 
 
 @members_bp.route("/admin/approve-member/<int:member_id>", methods=["POST"])
 def approve_member(member_id):
-    """Admin approves or rejects a pending member."""
     token = get_auth_token()
     if not token:
         return json_api_error("Missing token", 401)
-
     decoded = decode_token(token)
     if not decoded:
         return json_api_error("Invalid token", 401)
-
-    # Allow both 'admin' and 'superadmin' roles
-    role = decoded.get("role", "").lower()
-    if role not in ["admin", "superadmin"]:
+    if decoded.get("role", "").lower() not in ["admin", "superadmin"]:
         return json_api_error("Forbidden", 403)
 
     data = request.get_json(silent=True) or {}
     action = data.get("action", "approve")
 
+    member = Member.query.get(member_id)
+    if not member:
+        return json_api_error("Member not found", 404)
+
+    if action == "approve":
+        member.status = "approved"
+        member.is_verified = True
+    elif action == "reject":
+        member.status = "rejected"
+        member.is_verified = False
+    else:
+        return json_api_error("Invalid action", 400)
+
     try:
-        member = Member.query.get(member_id)
-        if not member:
-            return json_api_error("Member not found", 404)
-
-        if action == "approve":
-            member.status = "approved"
-            member.is_verified = True
-        elif action == "reject":
-            member.status = "rejected"
-            member.is_verified = False
-        else:
-            return json_api_error("Invalid action", 400)
-
         db.session.commit()
-
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
+        db.session.rollback()
         return json_api_error(f"Action failed: {str(e)}", 500)
 
 
 @members_bp.route("/send-bulk-sms", methods=["POST"])
 def send_sms_to_members():
-    """Send SMS to members by category."""
     token = get_auth_token()
     if not token:
         return json_api_error("Missing token", 401)
-
     decoded = decode_token(token)
     if not decoded:
         return json_api_error("Invalid token", 401)
-
-    # Allow both 'admin' and 'superadmin' roles
-    role = decoded.get("role", "").lower()
-    if role not in ["admin", "superadmin"]:
+    if decoded.get("role", "").lower() not in ["admin", "superadmin"]:
         return json_api_error("Forbidden", 403)
 
     data = request.get_json(silent=True) or {}
-    message = data.get("message", "").strip() if data.get("message") else ""
-    category = data.get("category", "").strip() if data.get("category") else ""
+    message = (data.get("message") or "").strip()
+    category = (data.get("category") or "").strip()
 
-    if not message or len(message) == 0:
-        return json_api_error("Message is required and cannot be empty", 400)
+    if not message:
+        return json_api_error("Message is required", 400)
 
     try:
-        # Get members by category or all if no category specified
+        query = Member.query.filter_by(status="approved")
         if category:
-            members = Member.query.filter_by(category=category, status="approved").all()
-        else:
-            members = Member.query.filter_by(status="approved").all()
+            query = query.filter_by(category=category)
+        members = query.all()
 
         if not members:
-            return jsonify({"success": False, "error": "No approved members found in this category", "recipients": 0}), 404
+            return json_api_error("No approved members found", 404)
 
-        # Extract phone numbers
         phone_numbers = [m.phone_number for m in members if m.phone_number]
-
         if not phone_numbers:
-            return jsonify({"success": False, "error": "No valid phone numbers found", "recipients": 0}), 404
+            return json_api_error("No valid phone numbers found", 404)
 
-        # Send SMS
         result = send_bulk_sms(phone_numbers, message)
 
         if result.get("success"):
@@ -254,12 +213,8 @@ def send_sms_to_members():
                 "total": result.get("total", 0),
                 "message": f"SMS sent to {result.get('sent', 0)} members"
             }), 200
-        else:
-            return jsonify({
-                "success": False,
-                "error": result.get("reason", "Failed to send SMS"),
-                "recipients": 0
-            }), 400
+
+        return json_api_error(result.get("reason", "Failed to send SMS"), 400)
 
     except Exception as e:
         return json_api_error(f"SMS sending failed: {str(e)}", 500)

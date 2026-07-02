@@ -1,10 +1,8 @@
 from flask import Blueprint, jsonify, request
-from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
-import jwt
 
 from website_models import Admin, db
-from utils.responses import json_api_error, json_api_success
+from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token, create_admin_token
 
 auth_bp = Blueprint("auth", __name__)
@@ -19,26 +17,19 @@ def admin_login():
     if not username or not password:
         return json_api_error("Missing credentials", 400)
 
-    try:
-        admin = Admin.query.filter_by(username=username).first()
-        if not admin:
-            admin = Admin.query.filter_by(email=username).first()
-        if not admin:
-            return json_api_error("Invalid username or password", 401)
+    admin = Admin.query.filter_by(username=username).first()
+    if not admin:
+        admin = Admin.query.filter_by(email=username).first()
+    if not admin or not check_password_hash(admin.password, password):
+        return json_api_error("Invalid username or password", 401)
 
-        if not check_password_hash(admin.password, password):
-            return json_api_error("Invalid username or password", 401)
+    if not admin.is_active:
+        return json_api_error("Account deactivated", 401)
 
-        if not getattr(admin, "is_active", True):
-            return json_api_error("Account deactivated", 401)
-
-        token = create_admin_token(admin.id, admin.role)
-
-        return jsonify(
-            {"success": True, "name": admin.full_name, "username": admin.username, "token": token}
-        ), 200
-    except Exception:
-        return json_api_error("Internal server error", 500)
+    token = create_admin_token(admin.id, admin.role)
+    return jsonify(
+        {"success": True, "name": admin.full_name, "username": admin.username, "token": token}
+    ), 200
 
 
 @auth_bp.route("/admin-register", methods=["POST"])
@@ -66,6 +57,8 @@ def admin_register():
     username = data["username"]
     if Admin.query.filter_by(username=username).first():
         return json_api_error("Admin already exists", 400)
+    if Admin.query.filter_by(email=data["email"]).first():
+        return json_api_error("Email already in use", 400)
 
     admin = Admin(
         username=username,
@@ -78,5 +71,34 @@ def admin_register():
     )
     db.session.add(admin)
     db.session.commit()
-
     return jsonify({"success": True, "admin": admin.to_dict()}), 200
+
+
+@auth_bp.route("/admin/list-admins", methods=["GET"])
+def list_admins():
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded or decoded.get("role") != "superadmin":
+        return json_api_error("Forbidden", 403)
+    admins = Admin.query.all()
+    return jsonify([a.to_dict() for a in admins]), 200
+
+
+@auth_bp.route("/admin/delete-admin/<int:admin_id>", methods=["DELETE"])
+def delete_admin(admin_id):
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded or decoded.get("role") != "superadmin":
+        return json_api_error("Forbidden", 403)
+    admin = Admin.query.get(admin_id)
+    if not admin:
+        return json_api_error("Admin not found", 404)
+    if admin.role == "superadmin":
+        return json_api_error("Cannot delete superadmin", 403)
+    db.session.delete(admin)
+    db.session.commit()
+    return jsonify({"success": True}), 200

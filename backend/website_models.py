@@ -126,7 +126,7 @@ class Activity(db.Model):
     admin = db.relationship('Admin', backref='activities_created')
 
     def to_dict(self):
-        media_list = [m.to_dict() for m in self.media] if hasattr(self, 'media') else []
+        media_count = len(self.media) if self.media else 0
         return {
             'id': self.id,
             'title': self.title,
@@ -141,7 +141,7 @@ class Activity(db.Model):
             'is_active': self.is_active,
             'created_date': self.created_date.isoformat(),
             'updated_date': self.updated_date.isoformat(),
-            'media_count': len(media_list),
+            'media_count': media_count,
         }
 
 
@@ -225,9 +225,5 @@ class Organization(db.Model):
             'created_date': self.created_date.isoformat(),
             'updated_date': self.updated_date.isoformat(),
         }
-
-
-
-# Payments removed completely (Mpesa/Daraja).
 
 

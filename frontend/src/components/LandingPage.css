@@ -40,7 +40,7 @@
 .landing-nav-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 4px;
   flex: 1;
   justify-content: center;
 }
@@ -49,16 +49,17 @@
   background: none;
   border: none;
   color: #fff;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background 0.2s;
+  padding: 8px 10px;
+  border-radius: 20px;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
 }
 
 .landing-nav-link:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.15);
 }
 
 .landing-join-button {
@@ -154,16 +155,6 @@
   padding: 32px;
 }
 
-/* Ensure landing background matches the main mbogo asset everywhere */
-html, body, #root {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-}
-
-
 .landing-hero-content {
   max-width: 800px;
 }
@@ -236,7 +227,7 @@ body {
 }
 
 /* Tablet */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .landing-navbar-desktop {
     padding: 12px 16px;
   }
@@ -398,4 +389,3 @@ body {
     font-size: 13px;
   }
 }
-/* Rebuild trigger Tue 16 Jun 2026 12:00:34 AM EAT */

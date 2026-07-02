@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import API_BASE from '../utils/apiConfig';
-import { authHeaders } from '../utils/auth';
-
-
+import { apiFetch } from '../utils/apiClient';
 
 function PendingMembers() {
   const [members, setMembers] = useState([]);
@@ -10,8 +7,7 @@ function PendingMembers() {
   const [processing, setProcessing] = useState(null);
 
   const fetchPending = () => {
-    fetch(`${API_BASE}/admin/pending-members`, { headers: authHeaders() })
-      .then(r => r.json())
+    apiFetch('/admin/pending-members')
       .then(d => { setMembers(Array.isArray(d) ? d : []); setLoading(false); })
       .catch(() => setLoading(false));
   };
@@ -21,16 +17,12 @@ function PendingMembers() {
 
   const handleAction = (id, action) => {
     setProcessing(id);
-    fetch(`${API_BASE}/admin/approve-member/${id}`, {
+    apiFetch(`/admin/approve-member/${id}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ action })
     })
-      .then(r => r.json())
-
       .then(d => { setProcessing(null); if (d.success) fetchPending(); })
       .catch(() => setProcessing(null));
-
   };
 
   if (loading) return <p style={{ padding: 40, textAlign: 'center', fontWeight: 300 }}>Loading...</p>;

@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -16,14 +15,12 @@ from routes.misc import misc_bp
 
 app = Flask(__name__)
 
-# Configuration
 app.config.update(
     SECRET_KEY=config.SECRET_KEY,
     SQLALCHEMY_DATABASE_URI=config.SQLALCHEMY_DATABASE_URI,
     SQLALCHEMY_TRACK_MODIFICATIONS=config.SQLALCHEMY_TRACK_MODIFICATIONS,
 )
 
-# CORS
 CORS(
     app,
     resources={r"/*": {"origins": config.CORS_ORIGINS}},
@@ -66,13 +63,10 @@ def init_db():
 
 init_db()
 
-
-# Register Blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(members_bp)
 app.register_blueprint(media_bp)
 app.register_blueprint(misc_bp)
-
 
 
 @app.errorhandler(404)
@@ -106,6 +100,3 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", "5000")),
         debug=os.getenv("FLASK_DEBUG", "false").lower() == "true",
     )
-
-
-

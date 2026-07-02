@@ -1,23 +1,22 @@
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, jsonify, request, send_from_directory
 import os
 
 from website_models import Media, db
-from utils.responses import json_api_error, json_api_success
+from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token
 from utils.cloudinary_service import upload_file, delete_file
 
 media_bp = Blueprint("media", __name__)
 
+UPLOADS_DIR = os.path.abspath("uploads")
+
 
 @media_bp.route("/uploads/<path:filename>", methods=["GET"])
 def serve_upload(filename):
     try:
-        file_path = os.path.join("uploads", filename)
-        if os.path.exists(file_path) and os.path.isfile(file_path):
-            return send_file(file_path)
-        return json_api_error("File not found", 404)
+        return send_from_directory(UPLOADS_DIR, filename)
     except Exception:
-        return json_api_error("Error serving file", 500)
+        return json_api_error("File not found", 404)
 
 
 @media_bp.route("/media", methods=["GET"])
@@ -34,26 +33,21 @@ def delete_media(media_id):
     token = get_auth_token()
     if not token:
         return json_api_error("Missing token", 401)
-
     decoded = decode_token(token)
-    if not decoded:
+    if not decoded or not decoded.get("admin_id"):
         return json_api_error("Invalid token", 401)
 
-    admin_id = decoded.get("admin_id")
-    if not admin_id:
-        return json_api_error("Invalid token", 401)
+    media = Media.query.get(media_id)
+    if not media:
+        return json_api_error("Media not found", 404)
 
     try:
-        media = Media.query.get(media_id)
-        if not media:
-            return json_api_error("Media not found", 404)
-
         delete_file(media.file_path or "")
-
         db.session.delete(media)
         db.session.commit()
-        return jsonify({"success": True, "message": "Media deleted"}), 200
+        return jsonify({"success": True}), 200
     except Exception as e:
+        db.session.rollback()
         return json_api_error(f"Delete failed: {str(e)}", 500)
 
 
@@ -62,15 +56,11 @@ def upload_media():
     token = get_auth_token()
     if not token:
         return json_api_error("Missing token", 401)
-
     decoded = decode_token(token)
     if not decoded:
         return json_api_error("Invalid token", 401)
-
-    # Check if user is admin
-    role = decoded.get("role", "").lower()
-    if role not in ["admin", "superadmin"]:
-        return json_api_error("Forbidden - Admin only", 403)
+    if decoded.get("role", "").lower() not in ["admin", "superadmin"]:
+        return json_api_error("Forbidden", 403)
 
     admin_id = decoded.get("admin_id")
     if not admin_id:
@@ -78,15 +68,14 @@ def upload_media():
 
     if "file" not in request.files:
         return json_api_error("No file provided", 400)
-
     file = request.files["file"]
-    if file.filename == "":
+    if not file.filename:
         return json_api_error("No file selected", 400)
 
     try:
         secure_url, error = upload_file(file)
         if error or not secure_url:
-            return json_api_error("Upload failed: " + str(error), 500)
+            return json_api_error(f"Upload failed: {error}", 500)
 
         media = Media(
             title=request.form.get("title", file.filename),
@@ -101,7 +90,7 @@ def upload_media():
         )
         db.session.add(media)
         db.session.commit()
-
         return jsonify({"success": True, "media": media.to_dict()}), 200
-    except Exception:
-        return json_api_error("Upload failed", 500)
+    except Exception as e:
+        db.session.rollback()
+        return json_api_error(f"Upload failed: {str(e)}", 500)

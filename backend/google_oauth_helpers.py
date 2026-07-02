@@ -3,7 +3,6 @@ import secrets
 
 
 def google_state_value() -> str:
-    """Generate state value for OAuth redirect."""
     return secrets.token_urlsafe(32)
 
 

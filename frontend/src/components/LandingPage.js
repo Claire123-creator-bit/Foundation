@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import API_BASE from '../utils/apiConfig';
 import './LandingPage.css';
 
-// Use CRA public asset path to avoid importing files from outside src/
 const mbogoBackground = '/mbogo-background.jpeg';
 
 
@@ -244,85 +243,6 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
 
 const s = {
 page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', display: 'flex', flexDirection: 'column' },
-  navbar: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#0A2463',
-    padding: '16px 32px',
-    zIndex: 1000,
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-  },
-  navContainer: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  logo: { display: 'flex', alignItems: 'center', gap: '12px' },
-  logoImage: { width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' },
-  logoText: { color: '#fff', fontSize: '18px', fontWeight: 700 },
-  navLinks: { display: 'flex', alignItems: 'center', gap: '24px' },
-  navLink: {
-    background: 'none',
-    border: 'none',
-    color: '#fff',
-    fontSize: '14px',
-    fontWeight: 500,
-    cursor: 'pointer',
-    padding: '8px 12px',
-    borderRadius: '4px',
-    transition: 'background 0.2s',
-  },
-  joinButton: {
-    background: '#fff',
-    color: '#0A2463',
-    border: 'none',
-    padding: '10px 24px',
-    borderRadius: '24px',
-    fontSize: '14px',
-    fontWeight: 700,
-    cursor: 'pointer',
-  },
-  menuContainer: { position: 'relative' },
-  menuButton: {
-    background: 'rgba(255,255,255,0.1)',
-    border: 'none',
-    color: '#fff',
-    fontSize: '20px',
-    width: '36px',
-    height: '36px',
-    borderRadius: '50%',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dropdownMenu: {
-    position: 'absolute',
-    top: '100%',
-    right: 0,
-    marginTop: '8px',
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-    minWidth: '160px',
-    overflow: 'hidden',
-  },
-  menuItem: {
-    display: 'block',
-    width: '100%',
-    padding: '12px 16px',
-    background: 'none',
-    border: 'none',
-    textAlign: 'left',
-    fontSize: '14px',
-    color: '#0A2463',
-    cursor: 'pointer',
-    transition: 'background 0.2s',
-  },
   hero: {
     height: '90vh',
     backgroundImage: 'linear-gradient(rgba(10,36,99,0.6), rgba(10,36,99,0.6)),(url("/mbogo-background.jpeg"))',

@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 
 # Database
 SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///app.db")
