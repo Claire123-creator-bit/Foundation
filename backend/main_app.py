@@ -23,7 +23,7 @@ app.config.update(
 
 CORS(
     app,
-    resources={r"/*": {"origins": config.CORS_ORIGINS}},
+    origins=["https://foundation-drab-eta.vercel.app", "https://www.mbogofoundation.org", "http://localhost:3000", "http://127.0.0.1:3000"],
     supports_credentials=True,
     allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
     methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
