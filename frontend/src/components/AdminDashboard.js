@@ -132,25 +132,8 @@ function AdminDashboard({ adminName, onLogout }) {
 
       {/* ── Footer ── */}
       <footer className="footer">
-        <div className="footer-inner">
-          <div className="footer-top">
-            <div className="footer-brand">
-              <img src="/mbogo-background.jpeg" alt="logo" style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: '50%', border: '3px solid rgba(255,255,255,0.4)', flexShrink: 0 }} />
-              <div>
-                <div className="footer-name">Mbogo Welfare Empowerment Foundation</div>
-                <div className="footer-tagline">Empowering Communities Through Unity</div>
-              </div>
-            </div>
-            <div className="footer-links">
-              <p className="footer-links-title">Quick Links</p>
-              {tabs.map(t => (
-              <button key={t.id} className="footer-link" onClick={() => setTab(t.id)}>{t.label}</button>
-              ))}
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <p className="footer-copy">© {new Date().getFullYear()} Mbogo Welfare Empowerment Foundation. All rights reserved.</p>
-          </div>
+        <div className="footer-bottom">
+          <p className="footer-copy">© {new Date().getFullYear()} Mbogo Welfare Empowerment Foundation. All rights reserved.</p>
         </div>
       </footer>
 
