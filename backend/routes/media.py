@@ -5,8 +5,10 @@ from website_models import Media, db
 from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token
 from utils.cloudinary_service import upload_file, delete_file
+from logger import app_logger
 
 media_bp = Blueprint("media", __name__)
+
 
 UPLOADS_DIR = os.path.abspath("uploads")
 
@@ -42,13 +44,22 @@ def delete_media(media_id):
         return json_api_error("Media not found", 404)
 
     try:
-        delete_file(media.file_path or "")
+        # First commit DB change, then best-effort delete remote media.
         db.session.delete(media)
         db.session.commit()
+
+        try:
+            delete_file(media.file_path or "")
+        except Exception:
+            # DB row is already gone; just log the remote deletion failure.
+            app_logger.exception("Remote media deletion failed after DB delete")
+
         return jsonify({"success": True}), 200
     except Exception as e:
         db.session.rollback()
+        app_logger.exception("Delete media failed")
         return json_api_error(f"Delete failed: {str(e)}", 500)
+
 
 
 @media_bp.route("/media-upload", methods=["POST"])
@@ -77,20 +88,32 @@ def upload_media():
         if error or not secure_url:
             return json_api_error(f"Upload failed: {error}", 500)
 
-        media = Media(
-            title=request.form.get("title", file.filename),
-            description=request.form.get("description", ""),
-            file_path=secure_url,
-            file_type=file.content_type or "unknown",
-            media_type=request.form.get("media_type", "image"),
-            file_size=0,
-            uploaded_by=admin_id,
-            activity_id=request.form.get("activity_id"),
-            is_active=True,
-        )
-        db.session.add(media)
-        db.session.commit()
-        return jsonify({"success": True, "media": media.to_dict()}), 200
+        try:
+            media = Media(
+                title=request.form.get("title", file.filename),
+                description=request.form.get("description", ""),
+                file_path=secure_url,
+                file_type=file.content_type or "unknown",
+                media_type=request.form.get("media_type", "image"),
+                file_size=0,
+                uploaded_by=admin_id,
+                activity_id=request.form.get("activity_id"),
+                is_active=True,
+            )
+            db.session.add(media)
+            db.session.commit()
+            return jsonify({"success": True, "media": media.to_dict()}), 200
+        except Exception as db_err:
+            # Upload succeeded but DB write failed; best-effort cleanup to avoid orphan media.
+            try:
+                delete_file(secure_url)
+            except Exception:
+                pass
+            db.session.rollback()
+            app_logger.exception("Media DB commit failed after successful upload")
+            return json_api_error(f"Upload failed (db error): {str(db_err)}", 500)
     except Exception as e:
         db.session.rollback()
+        app_logger.exception("Media upload failed")
         return json_api_error(f"Upload failed: {str(e)}", 500)
+

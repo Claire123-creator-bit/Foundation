@@ -7,6 +7,8 @@ from werkzeug.security import generate_password_hash
 
 import config
 from website_models import Admin, db
+from logger import app_logger
+
 from utils.responses import json_api_error
 from routes.auth import auth_bp
 from routes.members import members_bp
@@ -40,23 +42,28 @@ db.init_app(app)
 
 
 def init_db():
+    app_logger.info(f"Using DATABASE_URL={app.config.get('SQLALCHEMY_DATABASE_URI')}")
+
     try:
         with app.app_context():
             db.create_all()
-            existing = Admin.query.filter_by(role="superadmin").first()
-            if existing:
-                return
-            superadmin = Admin(
-                username="superadmin",
-                password=generate_password_hash("superadmin123"),
-                full_name="Super Administrator",
-                email="superadmin@mbogofoundation.org",
-                phone="",
-                role="superadmin",
-                is_active=True,
-            )
-            db.session.add(superadmin)
-            db.session.commit()
+            superadmin = Admin.query.filter_by(username="superadmin").first()
+            if superadmin:
+                # Always ensure superadmin is active with correct password
+                superadmin.password = generate_password_hash("superadmin123")
+                superadmin.is_active = True
+                db.session.commit()
+            else:
+                db.session.add(Admin(
+                    username="superadmin",
+                    password=generate_password_hash("superadmin123"),
+                    full_name="Super Administrator",
+                    email="superadmin@mbogofoundation.org",
+                    phone="",
+                    role="superadmin",
+                    is_active=True,
+                ))
+                db.session.commit()
     except Exception:
         pass
 

@@ -1,5 +1,5 @@
 import API_BASE from './apiConfig';
-import { setToken, clearNonTokenAuthState, authHeaders } from './auth';
+import { setToken, clearNonTokenAuthState, authHeaders, authHeadersNoContentType } from './auth';
 
 function redirectToLogin() {
   window.location.href = '/';
@@ -8,10 +8,10 @@ function redirectToLogin() {
 export async function apiFetch(pathOrUrl, options = {}) {
   const url = pathOrUrl.startsWith('http') ? pathOrUrl : `${API_BASE}${pathOrUrl}`;
 
+  const isFormData = options.body instanceof FormData;
   const headers = {
-    ...(options.body && typeof options.body === 'string' ? { 'Content-Type': 'application/json' } : {}),
+    ...(isFormData ? authHeadersNoContentType() : authHeaders()),
     ...(options.headers || {}),
-    ...authHeaders(),
   };
 
   const res = await fetch(url, { ...options, headers });

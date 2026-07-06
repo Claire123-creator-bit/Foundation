@@ -45,9 +45,18 @@ def delete_file(file_path):
         return True
     try:
         if "cloudinary" in file_path:
-            public_id = file_path.split("/")[-1].split(".")[0]
-            if public_id:
-                cloudinary.uploader.destroy(f"mbogo_foundation/{public_id}")
+            # Extract public_id including folder, strip version and extension
+            # URL format: .../upload/v123456/folder/filename.ext
+            parts = file_path.split("/upload/")
+            if len(parts) == 2:
+                public_id_with_ext = parts[1]
+                # Remove version segment (v123456/)
+                segments = public_id_with_ext.split("/")
+                if segments[0].startswith("v") and segments[0][1:].isdigit():
+                    segments = segments[1:]
+                public_id = "/".join(segments).rsplit(".", 1)[0]
+                if public_id:
+                    cloudinary.uploader.destroy(public_id)
     except Exception:
         pass
     return True

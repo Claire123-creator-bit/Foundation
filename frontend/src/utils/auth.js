@@ -23,6 +23,11 @@ export function authHeaders() {
   };
 }
 
+export function authHeadersNoContentType() {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export async function me() {
   const res = await fetch(`${API_BASE}/me`, {
     headers: getToken() ? { Authorization: `Bearer ${getToken()}` } : {},
