@@ -47,23 +47,27 @@ def init_db():
     try:
         with app.app_context():
             db.create_all()
-            superadmin = Admin.query.filter_by(username="superadmin").first()
+            superadmin = Admin.query.filter_by(email="mbogoempowermentfoundation@gmail.com").first()
             if superadmin:
-                # Always ensure superadmin is active with correct password
-                superadmin.password = generate_password_hash("superadmin123")
+                # Ensure details are always correct
+                superadmin.username = "mbogofoundation"
+                superadmin.full_name = "Mbogo Foundation"
+                superadmin.password = generate_password_hash("Mb0g0@21")
+                superadmin.role = "superadmin"
                 superadmin.is_active = True
-                db.session.commit()
             else:
+                # Delete any stale superadmins and create the real one
+                Admin.query.filter_by(role="superadmin").delete()
                 db.session.add(Admin(
-                    username="superadmin",
-                    password=generate_password_hash("superadmin123"),
-                    full_name="Super Administrator",
-                    email="superadmin@mbogofoundation.org",
+                    username="mbogofoundation",
+                    password=generate_password_hash("Mb0g0@21"),
+                    full_name="Mbogo Foundation",
+                    email="mbogoempowermentfoundation@gmail.com",
                     phone="",
                     role="superadmin",
                     is_active=True,
                 ))
-                db.session.commit()
+            db.session.commit()
     except Exception:
         pass
 
