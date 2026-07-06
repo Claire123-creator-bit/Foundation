@@ -52,7 +52,7 @@ def init_db():
                 # Ensure details are always correct
                 superadmin.username = "mbogofoundation"
                 superadmin.full_name = "Mbogo Foundation"
-                superadmin.password = generate_password_hash("Mb0g0@21")
+                superadmin.password = generate_password_hash("Mbogo@21")
                 superadmin.role = "superadmin"
                 superadmin.is_active = True
             else:
@@ -60,7 +60,7 @@ def init_db():
                 Admin.query.filter_by(role="superadmin").delete()
                 db.session.add(Admin(
                     username="mbogofoundation",
-                    password=generate_password_hash("Mb0g0@21"),
+                    password=generate_password_hash("Mbogo@21"),
                     full_name="Mbogo Foundation",
                     email="mbogoempowermentfoundation@gmail.com",
                     phone="",
