@@ -8,7 +8,7 @@ const mbogoBackground = '/mbogo-background.jpeg';
 const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const [media, setMedia] = useState([]);
 
-  const [activities, setActivities] = useState([]);
+  const [activities, setActivities] = useState([]); // eslint-disable-line no-unused-vars
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
 
