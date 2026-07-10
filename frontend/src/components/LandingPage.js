@@ -8,7 +8,7 @@ const mbogoBackground = '/mbogo-background.jpeg';
 const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const [media, setMedia] = useState([]);
 
-  const [activities, setActivities] = useState([]); // eslint-disable-line no-unused-vars
+  const [activities, setActivities] = useState([]); // eslint-disable-line no-unused-vars // eslint-disable-line no-unused-vars
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
 
@@ -19,7 +19,7 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [mediaRes, activitiesRes] = await Promise.all([
+      const [mediaRes] = await Promise.all([
         fetch(`${API_BASE}/media`),
         fetch(`${API_BASE}/activities`)
       ]);
@@ -27,11 +27,6 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
       if (mediaRes.ok) {
         const mediaData = await mediaRes.json();
         setMedia(Array.isArray(mediaData) ? mediaData : []);
-      }
-
-      if (activitiesRes.ok) {
-        const activitiesData = await activitiesRes.json();
-        setActivities(Array.isArray(activitiesData) ? activitiesData : []);
       }
     } catch (error) {
       console.error('Failed to fetch data:', error);
