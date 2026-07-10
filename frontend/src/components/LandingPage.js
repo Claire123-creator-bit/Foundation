@@ -139,39 +139,7 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
         </div>
       </section>
 
-      <section id="activities" style={s.section}>
-        <div style={s.container}>
-          <h2 style={s.sectionTitle}>Our Activities</h2>
-          {loading ? (
-            <p style={s.text}>Loading activities...</p>
-          ) : activities.length === 0 ? (
-            <p style={s.text}>No activities available yet.</p>
-          ) : (
-            <div style={s.grid}>
-              {activities.map((activity) => (
-                <div key={activity.id} style={s.activityCard}>
-                  <h3 style={s.cardTitle}>{activity.title}</h3>
-                  <p style={s.cardText}>{activity.description}</p>
-                  <p style={s.smallText}>
-                    <strong>Date:</strong> {new Date(activity.date).toLocaleDateString()}
-                  </p>
-                  <p style={s.smallText}>
-                    <strong>Location:</strong> {activity.location || `${activity.ward}, ${activity.constituency}, ${activity.county}`}
-                  </p>
-                  {activity.organizer && (
-                    <p style={s.smallText}>
-                      <strong>Organizer:</strong> {activity.organizer}
-                    </p>
-                  )}
-                  {activity.media_count > 0 && (
-                    <p style={s.smallText}>📷 {activity.media_count} media items</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+
 
       <section id="media" style={s.sectionAlt}>
         <div style={s.container}>
