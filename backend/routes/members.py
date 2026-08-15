@@ -192,7 +192,7 @@ def send_sms_to_members():
         return json_api_error("Message is required", 400)
 
     try:
-        query = Member.query.filter_by(status="approved")
+        query = Member.query.filter(Member.status.in_(["approved", "active"]))
         if category:
             query = query.filter_by(category=category)
         members = query.all()
