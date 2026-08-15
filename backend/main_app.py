@@ -102,7 +102,8 @@ def handle_http_exception(err: HTTPException):
 
 @app.errorhandler(Exception)
 def handle_exception(err: Exception):
-    return json_api_error("Internal server error", 500)
+    app_logger.error(f"Unhandled exception: {str(err)}", exc_info=True)
+    return json_api_error(f"Internal server error: {str(err)}", 500)
 
 
 if __name__ == "__main__":
