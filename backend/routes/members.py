@@ -21,7 +21,7 @@ def member_login():
     if not member:
         return json_api_error("Member not found", 404)
 
-    if member.status != "approved":
+    if member.status not in ["approved", "active"]:
         return json_api_error("Your account is not yet approved. Please wait for admin approval.", 403)
 
     token = create_member_token(member.id)
@@ -126,7 +126,7 @@ def admin_register_member():
             ward=data["ward"],
             physical_location=data["physical_location"],
             category=data["category"],
-            status=data.get("status", "active"),
+            status=data.get("status", "approved"),
             created_by="admin",
             is_verified=data.get("is_verified", False),
         )
