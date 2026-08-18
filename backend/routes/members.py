@@ -26,9 +26,10 @@ def member_login():
 
     if member.status not in ["approved", "active"]:
         if ADMIN_PHONE:
+            name = member.full_names.strip().title()
             send_sms(
                 ADMIN_PHONE,
-                f"Mbogo Foundation Alert: {member.full_names} ({member.phone_number}) "
+                f"Mbogo Foundation Alert: {name} ({member.phone_number}) "
                 f"logged in and is awaiting your approval."
             )
         return json_api_error("Your account is not yet approved. Please wait for admin approval.", 403)
@@ -72,9 +73,10 @@ def member_register():
         db.session.commit()
 
         if ADMIN_PHONE:
+            name = member.full_names.strip().title()
             send_sms(
                 ADMIN_PHONE,
-                f"Mbogo Foundation Alert: {member.full_names} ({member.phone_number}) "
+                f"Mbogo Foundation Alert: {name} ({member.phone_number}) "
                 f"has registered and is awaiting your approval."
             )
 
@@ -185,15 +187,40 @@ def approve_member(member_id):
     try:
         db.session.commit()
         if action == "approve" and member.phone_number:
+            name = member.full_names.strip().title()
             send_sms(
                 member.phone_number,
-                f"Karibu Mbogo Foundation, {member.full_names}! Your membership has been "
+                f"Karibu Mbogo Foundation, {name}! Your membership has been "
                 f"officially approved. You can now sign in to your member portal anytime."
             )
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
         db.session.rollback()
         return json_api_error(f"Action failed: {str(e)}", 500)
+
+
+@members_bp.route("/admin/delete-member/<int:member_id>", methods=["DELETE"])
+def delete_member(member_id):
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded:
+        return json_api_error("Invalid token", 401)
+    if decoded.get("role", "").lower() not in ["admin", "superadmin"]:
+        return json_api_error("Forbidden", 403)
+
+    member = Member.query.get(member_id)
+    if not member:
+        return json_api_error("Member not found", 404)
+
+    try:
+        db.session.delete(member)
+        db.session.commit()
+        return jsonify({"success": True}), 200
+    except Exception as e:
+        db.session.rollback()
+        return json_api_error(f"Delete failed: {str(e)}", 500)
 
 
 @members_bp.route("/send-bulk-sms", methods=["POST"])
