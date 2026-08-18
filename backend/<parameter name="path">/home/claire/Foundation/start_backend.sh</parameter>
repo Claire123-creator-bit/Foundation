@@ -1,0 +1,23 @@
+<parameter name="content">#!/bin/bash
+# Start script for Mbogo Foundation Backend
+
+echo "Starting Mbogo Welfare Empowerment Foundation Backend..."
+
+# Create virtual environment if it doesn't exist
+if [ ! -d "venv" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv venv
+fi
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install dependencies
+echo "Installing dependencies..."
+pip install flask flask-cors flask-sqlalchemy
+
+# Start the backend server
+echo "Starting Flask server on port 8080..."
+cd backend
+python main_app.py
+</parameter>

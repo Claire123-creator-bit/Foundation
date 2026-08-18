@@ -1,0 +1,98 @@
+import React, { useState } from 'react';
+import { apiFetch } from '../utils/apiClient';
+import { locations } from '../data/kenyanLocations';
+import './EnhancedRegistrationPro.css';
+
+const categories = ['Church Leader', 'Pastor', 'Village Elder', 'Agent', 'Youth Leader', 'Women Leader', 'Community Member', 'Government Official', 'NGO Representative', 'Volunteer'];
+
+function RegisterMember({ onRegistrationSuccess }) {
+  const [form, setForm] = useState({ full_names: '', national_id: '', phone_number: '', county: '', constituency: '', ward: '', physical_location: '', category: '' });
+  const [msg, setMsg] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const set = k => e => {
+    const value = e.target.value;
+    const newForm = { ...form, [k]: value };
+
+    if (k === 'county') {
+      newForm.constituency = '';
+      newForm.ward = '';
+    } else if (k === 'constituency') {
+      newForm.ward = '';
+    }
+
+    setForm(newForm);
+  };
+
+  const counties = Object.keys(locations);
+  const constituencies = form.county ? Object.keys(locations[form.county]) : [];
+  const wards = form.county && form.constituency ? locations[form.county][form.constituency] : [];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true); setMsg(''); setError('');
+    apiFetch('/admin/register-member', {
+      method: 'POST',
+      body: JSON.stringify(form)
+    })
+      .then(data => {
+        setLoading(false);
+        if (data.success) {
+          setMsg('Member registered successfully!');
+          setForm({ full_names: '', national_id: '', phone_number: '', county: '', constituency: '', ward: '', physical_location: '', category: '' });
+        } else setError(data.error || data.message || 'Registration failed');
+      })
+      .catch(() => { setLoading(false); setError('Cannot connect to server'); });
+  };
+
+  return (
+    <div>
+      <h2>Register Member</h2>
+      <form onSubmit={handleSubmit}>
+        <label>Full Name</label>
+        <input value={form.full_names} onChange={set('full_names')} required />
+
+        <label>National ID Number</label>
+        <input value={form.national_id} onChange={set('national_id')} required />
+
+        <label>Phone Number</label>
+        <input value={form.phone_number} onChange={set('phone_number')} placeholder="07XXXXXXXX" required />
+
+        <label>County</label>
+        <select value={form.county} onChange={set('county')} required>
+          <option value="">Select County...</option>
+          {counties.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+
+        <label>Constituency</label>
+        <select value={form.constituency} onChange={set('constituency')} disabled={!form.county} required>
+          <option value="">Select Constituency...</option>
+          {constituencies.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+
+        <label>Ward</label>
+        <select value={form.ward} onChange={set('ward')} disabled={!form.constituency} required>
+          <option value="">Select Ward...</option>
+          {wards.map(w => <option key={w} value={w}>{w}</option>)}
+        </select>
+
+        <label>Physical Location</label>
+        <input value={form.physical_location} onChange={set('physical_location')} required />
+
+        <label>Member Category</label>
+        <select value={form.category} onChange={set('category')} required>
+          <option value="">Select category...</option>
+          {categories.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+
+        {msg   && <p className="msg-success"> {msg}</p>}
+        {error && <p className="msg-error"> {error}</p>}
+
+        <button type="submit" disabled={loading}>{loading ? 'Registering...' : 'Register Member'}</button>
+      </form>
+    </div>
+  );
+}
+
+export default RegisterMember;
