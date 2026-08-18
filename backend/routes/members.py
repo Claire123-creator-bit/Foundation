@@ -1,11 +1,14 @@
+import os
 from flask import Blueprint, jsonify, request
 
 from website_models import Member, db
 from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token, create_member_token
-from sms_service import send_bulk_sms
+from sms_service import send_bulk_sms, send_sms
 
 members_bp = Blueprint("members", __name__)
+
+ADMIN_PHONE = os.environ.get("ADMIN_PHONE", "")
 
 
 @members_bp.route("/member-login", methods=["POST"])
@@ -22,6 +25,12 @@ def member_login():
         return json_api_error("Member not found", 404)
 
     if member.status not in ["approved", "active"]:
+        if ADMIN_PHONE:
+            send_sms(
+                ADMIN_PHONE,
+                f"Mbogo Foundation Alert: {member.full_names} ({member.phone_number}) "
+                f"logged in and is awaiting your approval."
+            )
         return json_api_error("Your account is not yet approved. Please wait for admin approval.", 403)
 
     token = create_member_token(member.id)
@@ -61,6 +70,14 @@ def member_register():
         )
         db.session.add(member)
         db.session.commit()
+
+        if ADMIN_PHONE:
+            send_sms(
+                ADMIN_PHONE,
+                f"Mbogo Foundation Alert: {member.full_names} ({member.phone_number}) "
+                f"has registered and is awaiting your approval."
+            )
+
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
         db.session.rollback()
@@ -167,6 +184,12 @@ def approve_member(member_id):
 
     try:
         db.session.commit()
+        if action == "approve" and member.phone_number:
+            send_sms(
+                member.phone_number,
+                f"Karibu Mbogo Foundation, {member.full_names}! Your membership has been "
+                f"officially approved. You can now sign in to your member portal anytime."
+            )
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
         db.session.rollback()

@@ -61,7 +61,12 @@ def get_me():
         member = Member.query.get(decoded.get("member_id"))
         if not member:
             return json_api_error("Member not found", 404)
-        return jsonify({"success": True, "role": "member", "member": member.to_dict()}), 200
+        return jsonify({
+            "success": True,
+            "role": "member",
+            "status": member.status,
+            "member": member.to_dict()
+        }), 200
 
     admin = Admin.query.get(decoded.get("admin_id"))
     if not admin:

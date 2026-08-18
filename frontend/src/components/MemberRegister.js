@@ -18,7 +18,7 @@ function toE164(v) {
   return d.startsWith('0') && d.length === 10 ? '+254' + d.slice(1) : v;
 }
 
-function MemberRegister({ onBack, onLogin }) {
+function MemberRegister({ onBack, onLogin, onRegistered }) {
   const [form, setForm] = useState({
     full_names: '', national_id: '', phone: '',
     gender: '', county: '', constituency: '', ward: '', category: '',
@@ -78,7 +78,15 @@ function MemberRegister({ onBack, onLogin }) {
       }),
     })
       .then(r => r.json())
-      .then(d => { setLoading(false); if (d.success) setDone(true); else setApiError(d.error || 'Registration failed. Try again.'); })
+      .then(d => {
+        setLoading(false);
+        if (d.success) {
+          if (onRegistered) onRegistered(null, d.member);
+          else setDone(true);
+        } else {
+          setApiError(d.error || 'Registration failed. Try again.');
+        }
+      })
       .catch(() => { setLoading(false); setApiError('No connection. Try again.'); });
   };
 

@@ -5,13 +5,15 @@ import MemberLogin from './components/MemberLogin';
 import MemberDashboard from './components/MemberDashboard';
 import MemberRegister from './components/MemberRegister';
 import LandingPage from './components/LandingPage';
+import AwaitingApproval from './components/AwaitingApproval';
 import { getToken, me, setToken, clearNonTokenAuthState } from './utils/auth';
 
 function App() {
-  const [role, setRole] = useState(null);
-  const [admin, setAdmin] = useState(null);
-  const [member, setMember] = useState(null);
-  const [page, setPage] = useState('home');
+  const [role, setRole]       = useState(null);
+  const [status, setStatus]   = useState(null);
+  const [admin, setAdmin]     = useState(null);
+  const [member, setMember]   = useState(null);
+  const [page, setPage]       = useState('home');
   const [restoring, setRestoring] = useState(true);
 
   useEffect(() => {
@@ -22,12 +24,22 @@ function App() {
       try {
         const data = await me();
         setRole(data.role || null);
-        if (data.role === 'member') { setMember(data.member || null); setAdmin(null); }
-        else { setAdmin(data.admin || null); setMember(null); }
+        if (data.role === 'member') {
+          setMember(data.member || null);
+          setStatus(data.status || data.member?.status || null);
+          setAdmin(null);
+        } else {
+          setAdmin(data.admin || null);
+          setMember(null);
+          setStatus(null);
+        }
       } catch {
-        setToken(null); clearNonTokenAuthState();
-        setRole(null); setAdmin(null); setMember(null);
-      } finally { setRestoring(false); }
+        setToken(null);
+        clearNonTokenAuthState();
+        setRole(null); setAdmin(null); setMember(null); setStatus(null);
+      } finally {
+        setRestoring(false);
+      }
     })();
   }, []);
 
@@ -36,7 +48,7 @@ function App() {
     (async () => {
       try {
         const data = await me();
-        setRole(data.role); setAdmin(data.admin); setMember(null);
+        setRole(data.role); setAdmin(data.admin); setMember(null); setStatus(null);
       } catch { setToken(null); }
       finally { setRestoring(false); }
     })();
@@ -47,14 +59,30 @@ function App() {
     (async () => {
       try {
         const data = await me();
-        setRole(data.role); setMember(data.member); setAdmin(null);
+        setRole(data.role);
+        setMember(data.member);
+        setStatus(data.status || data.member?.status || null);
+        setAdmin(null);
       } catch { setToken(null); }
       finally { setRestoring(false); }
     })();
   };
 
+  // Called after successful registration — store a pending token so the
+  // awaiting screen persists across refreshes
+  const handleMemberRegistered = (token, memberData) => {
+    setToken(token);
+    setRole('member');
+    setStatus('pending');
+    setMember(memberData);
+    setAdmin(null);
+  };
+
   const handleLogout = () => {
-    setToken(null); setRole(null); setAdmin(null); setMember(null); setPage('home');
+    setToken(null);
+    clearNonTokenAuthState();
+    setRole(null); setAdmin(null); setMember(null); setStatus(null);
+    setPage('home');
   };
 
   if (restoring) return (
@@ -63,15 +91,27 @@ function App() {
     </div>
   );
 
+  // Admin dashboards
   if (role && role !== 'member' && admin)
     return <AdminDashboard adminName={admin.full_name || admin.username} onLogout={handleLogout} />;
 
-  if (role === 'member' && member)
+  // Approved member
+  if (role === 'member' && member && status === 'approved')
     return <MemberDashboard member={member} onLogout={handleLogout} />;
 
-  if (page === 'admin-login') return <LoginPage onLogin={handleAdminLogin} onBack={() => setPage('home')} />;
-  if (page === 'member-login') return <MemberLogin onLogin={handleMemberLogin} onBack={() => setPage('home')} onRegister={() => setPage('member-register')} />;
-  if (page === 'member-register') return <MemberRegister onBack={() => setPage('home')} onLogin={() => setPage('member-login')} />;
+  // Pending member — show awaiting screen
+  if (role === 'member' && member && status === 'pending')
+    return <AwaitingApproval member={member} onLogout={handleLogout} />;
+
+  // Unauthenticated pages
+  if (page === 'admin-login')
+    return <LoginPage onLogin={handleAdminLogin} onBack={() => setPage('home')} />;
+
+  if (page === 'member-login')
+    return <MemberLogin onLogin={handleMemberLogin} onBack={() => setPage('home')} onRegister={() => setPage('member-register')} />;
+
+  if (page === 'member-register')
+    return <MemberRegister onBack={() => setPage('home')} onLogin={() => setPage('member-login')} onRegistered={handleMemberRegistered} />;
 
   return <LandingPage onJoinUs={() => setPage('member-register')} onAdminLogin={() => setPage('admin-login')} />;
 }
