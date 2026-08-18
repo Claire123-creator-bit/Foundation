@@ -24,11 +24,9 @@ function MemberRegister({ onBack, onLogin, onRegistered }) {
     gender: '', county: '', constituency: '', ward: '', category: '',
   });
   const [errors, setErrors] = useState({});
-  const [consent, setConsent] = useState(false);
   const [apiError, setApiError] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
-  const [showPrivacy, setShowPrivacy] = useState(false);
 
   const counties       = Object.keys(locations);
   const constituencies = form.county ? Object.keys(locations[form.county] || {}) : [];
@@ -53,7 +51,6 @@ function MemberRegister({ onBack, onLogin, onRegistered }) {
     if (!form.constituency) e.constituency = 'Required';
     if (!form.ward) e.ward = 'Required';
     if (!form.category) e.category = 'Required';
-    if (!consent) e.consent = 'Please accept to continue';
     return e;
   };
 
@@ -103,17 +100,6 @@ function MemberRegister({ onBack, onLogin, onRegistered }) {
 
   return (
     <div style={s.page}>
-      {showPrivacy && (
-        <div style={s.overlay} onClick={() => setShowPrivacy(false)}>
-          <div style={s.modal} onClick={e => e.stopPropagation()}>
-            <button style={s.modalClose} onClick={() => setShowPrivacy(false)}>×</button>
-            <h3 style={{ color: '#0A2463', marginBottom: 12 }}>Privacy Policy</h3>
-            <p style={s.modalText}>Your data is collected and processed in compliance with the <strong>Kenya Data Protection Act, 2019</strong>.</p>
-            <p style={s.modalText}><strong>National ID</strong> is required by law for welfare organisation registration and to prevent duplicate memberships. It is stored securely and never shared.</p>
-            <p style={s.modalText}>You may request access to or deletion of your data at any time by emailing <strong>mbogoempowermentfoundation@gmail.com</strong>.</p>
-          </div>
-        </div>
-      )}
 
       <div style={s.card}>
         <button style={s.back} onClick={onBack}>← Back</button>
@@ -175,16 +161,6 @@ function MemberRegister({ onBack, onLogin, onRegistered }) {
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}
             </select>
           </Field>
-
-          <div style={s.consentRow}>
-            <input type="checkbox" id="consent" checked={consent} onChange={e => { setConsent(e.target.checked); setErrors(p => { const n={...p}; delete n.consent; return n; }); }} style={{ marginTop: 2, accentColor: '#0A2463' }} />
-            <label htmlFor="consent" style={s.consentLabel}>
-              I agree to the{' '}
-              <button type="button" style={s.link} onClick={() => setShowPrivacy(true)}>Privacy Policy</button>
-              {' '}and consent to my data being processed under the Kenya Data Protection Act, 2019.
-            </label>
-          </div>
-          {errors.consent && <p style={s.err}>{errors.consent}</p>}
 
           {apiError && <p style={s.err}>{apiError}</p>}
 
