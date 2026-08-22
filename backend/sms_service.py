@@ -165,11 +165,28 @@ def send_sms(phone: str, message: str) -> Dict[str, Any]:
 
 def build_meeting_alert_message(title: str, date: str, time: str, venue: str) -> str:
     venue_clean = venue if venue else 'TBD'
+    try:
+        from datetime import datetime
+        d = datetime.strptime(date, '%Y-%m-%d')
+        day_name = d.strftime('%A')
+        date_fmt = d.strftime('%-d %B %Y')
+    except Exception:
+        day_name = ''
+        date_fmt = date
+    try:
+        from datetime import datetime as dt
+        t = dt.strptime(time, '%H:%M')
+        time_fmt = t.strftime('%I:%M %p').lstrip('0')
+    except Exception:
+        time_fmt = time
     return (
-        'FOUNDATION ALERT\n'
-        f'Title: {title}\n'
-        f'Date: {date}\n'
-        f'Time: {time}\n'
-        f'Venue: {venue_clean}\n'
+        'MBOGO FOUNDATION MEETING ALERT\n'
+        f'Dear Member, you are invited to:\n\n'
+        f'Meeting: {title}\n'
+        f'Date: {day_name}, {date_fmt}\n'
+        f'Time: {time_fmt}\n'
+        f'Venue: {venue_clean}\n\n'
+        'Please make an effort to attend.\n'
+        'Mbogo Welfare Empowerment Foundation'
     )
 
