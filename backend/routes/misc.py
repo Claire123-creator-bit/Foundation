@@ -1,10 +1,12 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime
 from sqlalchemy import text
+import threading
 
 from website_models import Activity, Meeting, Admin, Member, db
 from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token
+from sms_service import send_bulk_sms, build_meeting_alert_message
 
 misc_bp = Blueprint("misc", __name__)
 
@@ -109,7 +111,15 @@ def create_meeting():
         )
         db.session.add(meeting)
         db.session.commit()
-        return jsonify({"success": True, "meeting": meeting.to_dict()}), 200
+        meeting_dict = meeting.to_dict()
+
+        # Send SMS to all approved members in background
+        phones = [m.phone_number for m in Member.query.filter_by(status='approved').all() if m.phone_number]
+        if phones:
+            msg = build_meeting_alert_message(data["title"], data["date"], data["time"], data.get("venue", ""))
+            threading.Thread(target=send_bulk_sms, args=(phones, msg), daemon=True).start()
+
+        return jsonify({"success": True, "meeting": meeting_dict}), 200
     except Exception as e:
         db.session.rollback()
         return json_api_error(f"Failed: {str(e)}", 500)
