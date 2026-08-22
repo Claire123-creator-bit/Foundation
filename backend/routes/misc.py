@@ -7,6 +7,7 @@ from website_models import Activity, Meeting, Admin, Member, db
 from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token
 from sms_service import send_bulk_sms, build_meeting_alert_message
+from logger import app_logger
 
 misc_bp = Blueprint("misc", __name__)
 
@@ -146,11 +147,12 @@ def create_activity():
     if not data.get("title"):
         return json_api_error("title is required", 400)
     try:
+        admin_id = decoded.get("admin_id")
         activity = Activity(
             title=data["title"],
             description=data.get("description", ""),
             location=data.get("location", ""),
-            created_by=decoded.get("admin_id"),
+            created_by=int(admin_id) if admin_id else None,
             is_active=True,
         )
         db.session.add(activity)
@@ -158,6 +160,7 @@ def create_activity():
         return jsonify({"success": True, "activity": activity.to_dict()}), 200
     except Exception as e:
         db.session.rollback()
+        app_logger.exception("Create activity failed")
         return json_api_error(f"Failed: {str(e)}", 500)
 
 
