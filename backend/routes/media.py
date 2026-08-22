@@ -30,6 +30,33 @@ def get_media():
         return jsonify([]), 200
 
 
+@media_bp.route("/media/<int:media_id>", methods=["PUT"])
+def update_media(media_id):
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded or not decoded.get("admin_id"):
+        return json_api_error("Invalid token", 401)
+
+    media = Media.query.get(media_id)
+    if not media:
+        return json_api_error("Media not found", 404)
+
+    data = request.get_json() or {}
+    if "title" in data:
+        media.title = data["title"]
+    if "description" in data:
+        media.description = data["description"]
+
+    try:
+        db.session.commit()
+        return jsonify({"success": True, "media": media.to_dict()}), 200
+    except Exception as e:
+        db.session.rollback()
+        return json_api_error(f"Update failed: {str(e)}", 500)
+
+
 @media_bp.route("/media/<int:media_id>", methods=["DELETE"])
 def delete_media(media_id):
     token = get_auth_token()

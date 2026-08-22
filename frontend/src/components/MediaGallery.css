@@ -164,6 +164,78 @@
   background: #8b0018;
 }
 
+.media-edit-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #0A2463;
+  color: #fff;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  height: 32px;
+}
+
+.media-edit-btn:hover {
+  background: #07194a;
+}
+
+.media-save-btn {
+  flex: 1;
+  padding: 6px;
+  background: #1a7a1a;
+  color: #fff;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  height: 32px;
+}
+
+.media-cancel-btn {
+  flex: 1;
+  padding: 6px;
+  background: #888;
+  color: #fff;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  height: 32px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #0A2463;
+  font-size: 13px;
+  margin-bottom: 6px;
+  box-sizing: border-box;
+}
+
+.edit-textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #0A2463;
+  font-size: 13px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.bulk-info {
+  font-size: 13px;
+  color: #0A2463;
+  font-weight: 600;
+  margin: 0;
+}
+
 @media (max-width: 768px) {
   .media-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
