@@ -283,7 +283,6 @@ function MediaCard({ item, editingId, editTitle, editDescription, setEditingId, 
           </>
         ) : (
           <>
-            <h4>{item.title}</h4>
             <p>{item.description || 'No description'}</p>
             <small>Uploaded: {new Date(item.created_date).toLocaleDateString()}</small>
             <div className="edit-actions">
