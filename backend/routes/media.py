@@ -24,7 +24,7 @@ def serve_upload(filename):
 @media_bp.route("/media", methods=["GET"])
 def get_media():
     try:
-        media_items = Media.query.filter_by(is_active=True).all()
+        media_items = Media.query.filter_by(is_active=True).order_by(Media.activity_id.asc(), Media.created_date.asc()).all()
         return jsonify([m.to_dict() for m in media_items]), 200
     except Exception:
         return jsonify([]), 200

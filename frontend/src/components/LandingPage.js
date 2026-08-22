@@ -7,7 +7,7 @@ const mbogoBackground = '/mbogo-background.jpeg';
 
 const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const [media, setMedia] = useState([]);
-
+  const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
 
@@ -18,15 +18,12 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [mediaRes] = await Promise.all([
+      const [mediaRes, sectionsRes] = await Promise.all([
         fetch(`${API_BASE}/media`),
-        fetch(`${API_BASE}/activities`)
+        fetch(`${API_BASE}/activities`),
       ]);
-
-      if (mediaRes.ok) {
-        const mediaData = await mediaRes.json();
-        setMedia(Array.isArray(mediaData) ? mediaData : []);
-      }
+      if (mediaRes.ok) { const d = await mediaRes.json(); setMedia(Array.isArray(d) ? d : []); }
+      if (sectionsRes.ok) { const d = await sectionsRes.json(); setSections(Array.isArray(d) ? d : []); }
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
@@ -142,26 +139,52 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
             <p style={s.text}>Loading media...</p>
           ) : media.length === 0 ? (
             <p style={s.text}>No media available yet.</p>
-          ) : (
-            <div style={s.mediaGrid}>
-              {media.map((item) => (
-                <div key={item.id} style={s.mediaItem}>
-                  {item.media_type === 'video' ? (
-                    <video controls style={s.mediaContent}>
-                      <source src={item.file_path} type={`video/${item.file_type}`} />
-                      Your browser does not support the video tag.
-                    </video>
-                  ) : (
-                    <img src={item.file_path} alt={item.title} style={s.mediaContent} />
-                  )}
-                  <div style={s.mediaInfo}>
-                    <h4 style={s.mediaTitle}>{item.title}</h4>
-                    {item.description && <p style={s.mediaDescription}>{item.description}</p>}
+          ) : (() => {
+            const grouped = {};
+            const unsectioned = [];
+            media.forEach(item => {
+              if (item.activity_id) {
+                if (!grouped[item.activity_id]) grouped[item.activity_id] = [];
+                grouped[item.activity_id].push(item);
+              } else { unsectioned.push(item); }
+            });
+            const renderGrid = (items) => (
+              <div style={s.mediaGrid}>
+                {items.map(item => (
+                  <div key={item.id} style={s.mediaItem}>
+                    {item.media_type === 'video' ? (
+                      <video controls style={s.mediaContent}>
+                        <source src={item.file_path} type={`video/${item.file_type}`} />
+                      </video>
+                    ) : (
+                      <img src={item.file_path} alt={item.title} style={s.mediaContent} />
+                    )}
+                    <div style={s.mediaInfo}>
+                      <h4 style={s.mediaTitle}>{item.title}</h4>
+                      {item.description && <p style={s.mediaDescription}>{item.description}</p>}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            );
+            return (
+              <>
+                {sections.map(sec => (grouped[sec.id] || []).length > 0 && (
+                  <div key={sec.id} style={{ marginBottom: 48 }}>
+                    <h3 style={s.sectionSubTitle}>{sec.title}</h3>
+                    {sec.description && <p style={{ ...s.text, marginBottom: 16 }}>{sec.description}</p>}
+                    {renderGrid(grouped[sec.id])}
+                  </div>
+                ))}
+                {unsectioned.length > 0 && (
+                  <div style={{ marginBottom: 48 }}>
+                    <h3 style={s.sectionSubTitle}>General</h3>
+                    {renderGrid(unsectioned)}
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       </section>
 
@@ -310,6 +333,16 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     fontSize: '13px',
     color: '#666',
     margin: '8px 0',
+  },
+  sectionSubTitle: {
+    fontSize: 'clamp(20px, 3vw, 28px)',
+    fontWeight: 700,
+    color: '#0A2463',
+    marginBottom: '20px',
+    paddingBottom: '8px',
+    borderBottom: '3px solid #0A2463',
+    textTransform: 'capitalize',
+    textShadow: '0 1px 3px rgba(255,255,255,0.7)',
   },
   mediaGrid: {
     display: 'grid',

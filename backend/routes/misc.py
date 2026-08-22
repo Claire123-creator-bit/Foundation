@@ -128,7 +128,54 @@ def create_meeting():
 @misc_bp.route("/activities", methods=["GET"])
 def list_activities():
     try:
-        activities = Activity.query.filter_by(is_active=True).all()
+        activities = Activity.query.filter_by(is_active=True).order_by(Activity.created_date.asc()).all()
         return jsonify([a.to_dict() for a in activities]), 200
     except Exception:
         return jsonify([]), 200
+
+
+@misc_bp.route("/activities", methods=["POST"])
+def create_activity():
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded or decoded.get("role", "").lower() not in ["admin", "superadmin"]:
+        return json_api_error("Forbidden", 403)
+    data = request.get_json(silent=True) or {}
+    if not data.get("title"):
+        return json_api_error("title is required", 400)
+    try:
+        activity = Activity(
+            title=data["title"],
+            description=data.get("description", ""),
+            location=data.get("location", ""),
+            created_by=decoded.get("admin_id"),
+            is_active=True,
+        )
+        db.session.add(activity)
+        db.session.commit()
+        return jsonify({"success": True, "activity": activity.to_dict()}), 200
+    except Exception as e:
+        db.session.rollback()
+        return json_api_error(f"Failed: {str(e)}", 500)
+
+
+@misc_bp.route("/activities/<int:activity_id>", methods=["DELETE"])
+def delete_activity(activity_id):
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded or decoded.get("role", "").lower() not in ["admin", "superadmin"]:
+        return json_api_error("Forbidden", 403)
+    activity = Activity.query.get(activity_id)
+    if not activity:
+        return json_api_error("Section not found", 404)
+    try:
+        activity.is_active = False
+        db.session.commit()
+        return jsonify({"success": True}), 200
+    except Exception as e:
+        db.session.rollback()
+        return json_api_error(f"Failed: {str(e)}", 500)
