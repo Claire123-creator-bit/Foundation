@@ -160,7 +160,6 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
                       <img src={item.file_path} alt={item.title} style={s.mediaContent} />
                     )}
                     <div style={s.mediaInfo}>
-                      <h4 style={s.mediaTitle}>{item.title}</h4>
                       {item.description && <p style={s.mediaDescription}>{item.description}</p>}
                     </div>
                   </div>
