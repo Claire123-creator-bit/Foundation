@@ -5162,3 +5162,5 @@ sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) unable to open datab
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.37.140:5000
 [2026-08-22 22:13:57] INFO     [werkzeug] [33mPress CTRL+C to quit[0m
+[2026-08-23 23:01:04] INFO     [foundation] Using DATABASE_URL=sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db
+[2026-08-23 23:01:04] INFO     [foundation] Using DATABASE_URL=sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db

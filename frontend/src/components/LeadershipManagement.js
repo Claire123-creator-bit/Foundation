@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { apiFetch } from '../utils/apiClient';
 
 const emptyForm = {
@@ -17,21 +17,35 @@ function LeadershipManagement() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    loadProfiles();
-  }, []);
+  const getFriendlyApiMessage = (error) => {
+    const status = error?.status || error?.response?.status;
+    if (status === 404) {
+      return 'Leadership service is unavailable. Please refresh or redeploy the backend to load this feature.';
+    }
+    if (status === 401) {
+      return 'Please log in again as an admin to manage leadership profiles.';
+    }
+    if (status === 403) {
+      return 'You do not have permission to manage leadership profiles.';
+    }
+    return error?.message || 'Unable to load leadership profiles';
+  };
 
-  const loadProfiles = async () => {
+  const loadProfiles = useCallback(async () => {
     try {
       setLoading(true);
       const data = await apiFetch('/leadership');
       setProfiles(Array.isArray(data) ? data : []);
     } catch (error) {
-      setMessage(error.message || 'Unable to load leadership profiles');
+      setMessage(getFriendlyApiMessage(error));
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadProfiles();
+  }, [loadProfiles]);
 
   const resetForm = () => {
     setForm(emptyForm);
@@ -76,7 +90,7 @@ function LeadershipManagement() {
       resetForm();
       await loadProfiles();
     } catch (error) {
-      setMessage(error.message || 'Unable to save leadership profile.');
+      setMessage(getFriendlyApiMessage(error));
     } finally {
       setSaving(false);
     }
@@ -107,7 +121,7 @@ function LeadershipManagement() {
       if (editingId === id) resetForm();
       await loadProfiles();
     } catch (error) {
-      setMessage(error.message || 'Unable to delete leadership profile.');
+      setMessage(getFriendlyApiMessage(error));
     }
   };
 
