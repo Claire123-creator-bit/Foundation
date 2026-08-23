@@ -7,6 +7,7 @@ const mbogoBackground = '/mbogo-background.jpeg';
 
 const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const [media, setMedia] = useState([]);
+  const [leadership, setLeadership] = useState([]);
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
@@ -18,12 +19,14 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [mediaRes, sectionsRes] = await Promise.all([
+      const [mediaRes, sectionsRes, leadershipRes] = await Promise.all([
         fetch(`${API_BASE}/media`),
         fetch(`${API_BASE}/activities`),
+        fetch(`${API_BASE}/leadership`),
       ]);
       if (mediaRes.ok) { const d = await mediaRes.json(); setMedia(Array.isArray(d) ? d : []); }
       if (sectionsRes.ok) { const d = await sectionsRes.json(); setSections(Array.isArray(d) ? d : []); }
+      if (leadershipRes.ok) { const d = await leadershipRes.json(); setLeadership(Array.isArray(d) ? d : []); }
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
@@ -131,6 +134,28 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
       </section>
 
 
+
+      {leadership.length > 0 && (
+        <section id="leadership" style={s.section}>
+          <div style={s.container}>
+            <h2 style={s.sectionTitle}>Meet Our Leadership</h2>
+            <div style={{ ...s.grid, marginTop: 12 }}>
+              {leadership.map((person) => (
+                <div key={person.id} style={{ ...s.card, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                  <img
+                    src={person.photo_url || '/mbogo-background.jpeg'}
+                    alt={person.full_name}
+                    style={{ width: 180, height: 180, objectFit: 'cover', borderRadius: '50%', marginBottom: 16, border: '4px solid #dbeafe' }}
+                  />
+                  <h3 style={{ ...s.cardTitle, marginBottom: 4 }}>{person.full_name}</h3>
+                  <p style={{ ...s.cardText, marginBottom: 10, fontWeight: 700, color: '#0f3d73' }}>{person.position}</p>
+                  <p style={{ ...s.cardText, margin: 0 }}>{person.bio}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section id="media" style={s.sectionAlt}>
         <div style={s.container}>

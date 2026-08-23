@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, send_from_directory
 import os
 
-from website_models import Media, db
+from website_models import Media, LeadershipProfile, db
 from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token
 from utils.cloudinary_service import upload_file, delete_file
@@ -87,6 +87,135 @@ def delete_media(media_id):
         app_logger.exception("Delete media failed")
         return json_api_error(f"Delete failed: {str(e)}", 500)
 
+
+
+@media_bp.route("/leadership", methods=["GET"])
+def get_leadership_profiles():
+    try:
+        profiles = LeadershipProfile.query.filter_by(is_active=True).order_by(LeadershipProfile.sort_order.asc(), LeadershipProfile.id.asc()).all()
+        return jsonify([profile.to_dict() for profile in profiles]), 200
+    except Exception:
+        return jsonify([]), 200
+
+
+@media_bp.route("/leadership", methods=["POST"])
+def create_leadership_profile():
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded or not decoded.get("admin_id"):
+        return json_api_error("Invalid token", 401)
+    if decoded.get("role", "").lower() not in ["admin", "superadmin"]:
+        return json_api_error("Forbidden", 403)
+
+    full_name = (request.form.get("full_name") or "").strip()
+    position = (request.form.get("position") or "").strip()
+    bio = (request.form.get("bio") or "").strip()
+    if not full_name or not position or not bio:
+        return json_api_error("Name, position, and biography are required", 400)
+
+    photo_file = request.files.get("photo")
+    photo_url = request.form.get("photo_url") or None
+    if photo_file and photo_file.filename:
+        photo_url, error = upload_file(photo_file)
+        if error or not photo_url:
+            return json_api_error(f"Photo upload failed: {error}", 500)
+    if not photo_url:
+        return json_api_error("A profile photo is required", 400)
+
+    try:
+        sort_order = request.form.get("sort_order", "0")
+        profile = LeadershipProfile(
+            full_name=full_name,
+            position=position,
+            bio=bio,
+            photo_url=photo_url,
+            sort_order=int(sort_order) if str(sort_order).strip() else 0,
+            is_active=True,
+        )
+        db.session.add(profile)
+        db.session.commit()
+        return jsonify({"success": True, "profile": profile.to_dict()}), 200
+    except Exception as exc:
+        db.session.rollback()
+        app_logger.exception("Leadership profile creation failed")
+        return json_api_error(f"Create failed: {str(exc)}", 500)
+
+
+@media_bp.route("/leadership/<int:profile_id>", methods=["PUT"])
+def update_leadership_profile(profile_id):
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded or not decoded.get("admin_id"):
+        return json_api_error("Invalid token", 401)
+    if decoded.get("role", "").lower() not in ["admin", "superadmin"]:
+        return json_api_error("Forbidden", 403)
+
+    profile = LeadershipProfile.query.get(profile_id)
+    if not profile:
+        return json_api_error("Leadership profile not found", 404)
+
+    if "full_name" in request.form:
+        profile.full_name = (request.form.get("full_name") or "").strip()
+    if "position" in request.form:
+        profile.position = (request.form.get("position") or "").strip()
+    if "bio" in request.form:
+        profile.bio = (request.form.get("bio") or "").strip()
+    if "sort_order" in request.form:
+        value = (request.form.get("sort_order") or "0").strip()
+        profile.sort_order = int(value) if value else 0
+
+    photo_file = request.files.get("photo")
+    if photo_file and photo_file.filename:
+        if profile.photo_url:
+            try: delete_file(profile.photo_url)
+            except Exception: pass
+        new_url, error = upload_file(photo_file)
+        if error or not new_url:
+            return json_api_error(f"Photo upload failed: {error}", 500)
+        profile.photo_url = new_url
+
+    if not profile.full_name or not profile.position or not profile.bio:
+        return json_api_error("Name, position, and biography are required", 400)
+
+    try:
+        db.session.commit()
+        return jsonify({"success": True, "profile": profile.to_dict()}), 200
+    except Exception as exc:
+        db.session.rollback()
+        app_logger.exception("Leadership profile update failed")
+        return json_api_error(f"Update failed: {str(exc)}", 500)
+
+
+@media_bp.route("/leadership/<int:profile_id>", methods=["DELETE"])
+def delete_leadership_profile(profile_id):
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded or not decoded.get("admin_id"):
+        return json_api_error("Invalid token", 401)
+    if decoded.get("role", "").lower() not in ["admin", "superadmin"]:
+        return json_api_error("Forbidden", 403)
+
+    profile = LeadershipProfile.query.get(profile_id)
+    if not profile:
+        return json_api_error("Leadership profile not found", 404)
+
+    try:
+        if profile.photo_url:
+            try: delete_file(profile.photo_url)
+            except Exception: pass
+        db.session.delete(profile)
+        db.session.commit()
+        return jsonify({"success": True}), 200
+    except Exception as exc:
+        db.session.rollback()
+        app_logger.exception("Leadership profile delete failed")
+        return json_api_error(f"Delete failed: {str(exc)}", 500)
 
 
 @media_bp.route("/media-upload", methods=["POST"])

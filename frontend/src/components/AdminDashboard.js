@@ -7,6 +7,7 @@ import Donate from './Donate';
 import PendingMembers from './PendingMembers';
 import AdminManagement from './AdminManagement';
 import MediaGallery from './MediaGallery';
+import LeadershipManagement from './LeadershipManagement';
 import { apiFetch } from '../utils/apiClient';
 
 
@@ -41,6 +42,7 @@ function AdminDashboard({ adminName, onLogout }) {
     { id: 'meetings', label: ' Meetings' },
     { id: 'donate',   label: ' Donate' },
     { id: 'media',    label: ' Media' },
+    { id: 'leadership', label: ' Leadership' },
     { id: 'settings', label: ' Settings' },
   ];
 
@@ -123,6 +125,7 @@ function AdminDashboard({ adminName, onLogout }) {
         {tab === 'meetings' && <MeetingList />}
         {tab === 'donate'   && <Donate />}
         {tab === 'media'    && <MediaGallery />}
+        {tab === 'leadership' && <LeadershipManagement />}
         {tab === 'settings' && <AdminManagement />}
 
 
