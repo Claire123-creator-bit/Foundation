@@ -6,6 +6,7 @@ import MemberDashboard from './components/MemberDashboard';
 import MemberRegister from './components/MemberRegister';
 import LandingPage from './components/LandingPage';
 import AwaitingApproval from './components/AwaitingApproval';
+import JoinChoice from './components/JoinChoice';
 import { getToken, me, setToken, clearNonTokenAuthState } from './utils/auth';
 
 function App() {
@@ -113,61 +114,18 @@ function App() {
   if (page === 'member-register')
     return <MemberRegister onBack={() => setPage('home')} onLogin={() => setPage('member-login')} onRegistered={handleMemberRegistered} />;
 
-  // Default: render landing page. When page === 'join-choice' show a Register / Sign In choice card overlay
-  return (
-    <>
-      <LandingPage onJoinUs={() => setPage('join-choice')} onAdminLogin={() => setPage('admin-login')} />
+  // Default: render landing page. When page === 'join-choice' show a dedicated JoinChoice page
+  if (page === 'join-choice')
+    return (
+      <JoinChoice
+        onBack={() => setPage('home')}
+        onRegister={() => setPage('member-register')}
+        onSignIn={() => setPage('member-login')}
+        onAdminLogin={() => setPage('admin-login')}
+      />
+    );
 
-      {page === 'join-choice' && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.45)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 2000,
-            padding: 20,
-          }}
-          onClick={() => setPage('home')}
-        >
-          <div
-            className="landing-card"
-            style={{
-              maxWidth: 420,
-              width: '100%',
-              padding: 28,
-              textAlign: 'center',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 style={{ marginTop: 0, color: '#0A2463' }}>Welcome to Mbogo Welfare Empowerment Foundation</h2>
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 20 }}>
-              <button
-                className="landing-join-button"
-                onClick={() => setPage('member-register')}
-                style={{ padding: '10px 28px' }}
-              >
-                Register
-              </button>
-
-              <button
-                className="landing-admin-btn"
-                onClick={() => setPage('member-login')}
-                style={{ padding: '10px 28px' }}
-              >
-                Sign In
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
+  return <LandingPage onJoinUs={() => setPage('join-choice')} onAdminLogin={() => setPage('admin-login')} />;
 }
 
 export default App;
