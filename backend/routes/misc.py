@@ -128,6 +128,70 @@ def create_meeting():
         return json_api_error(f"Failed: {str(e)}", 500)
 
 
+@misc_bp.route("/meetings/<int:meeting_id>", methods=["PUT"])
+def update_meeting(meeting_id):
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded:
+        return json_api_error("Invalid token", 401)
+    if decoded.get("role", "").lower() not in ["admin", "superadmin"]:
+        return json_api_error("Forbidden", 403)
+
+    meeting = Meeting.query.get(meeting_id)
+    if not meeting:
+        return json_api_error("Meeting not found", 404)
+
+    data = request.get_json(silent=True) or {}
+    if not data:
+        return json_api_error("No changes provided", 400)
+
+    if "title" in data and data["title"]:
+        meeting.title = data["title"]
+    if "date" in data and data["date"]:
+        meeting.date = data["date"]
+    if "time" in data and data["time"]:
+        meeting.time = data["time"]
+    if "venue" in data:
+        meeting.venue = data.get("venue", "")
+    if "agenda" in data:
+        meeting.agenda = data.get("agenda", "")
+    if "meeting_type" in data:
+        meeting.meeting_type = data.get("meeting_type", "physical")
+
+    try:
+        db.session.commit()
+        return jsonify({"success": True, "meeting": meeting.to_dict()}), 200
+    except Exception as e:
+        db.session.rollback()
+        return json_api_error(f"Update failed: {str(e)}", 500)
+
+
+@misc_bp.route("/meetings/<int:meeting_id>", methods=["DELETE"])
+def delete_meeting(meeting_id):
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded:
+        return json_api_error("Invalid token", 401)
+    if decoded.get("role", "").lower() not in ["admin", "superadmin"]:
+        return json_api_error("Forbidden", 403)
+
+    meeting = Meeting.query.get(meeting_id)
+    if not meeting:
+        return json_api_error("Meeting not found", 404)
+
+    try:
+        db.session.delete(meeting)
+        db.session.commit()
+        return jsonify({"success": True}), 200
+    except Exception as e:
+        db.session.rollback()
+        return json_api_error(f"Delete failed: {str(e)}", 500)
+
+
 @misc_bp.route("/activities", methods=["GET"])
 def list_activities():
     try:
