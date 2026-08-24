@@ -53,9 +53,13 @@ def _send_http(to_list: List[str], message: str) -> Dict[str, Any]:
     if not username or not api_key:
         raise RuntimeError("Africa's Talking credentials not configured")
 
+    provider_numbers = [
+        number if number.startswith('+') else f'+{number}'
+        for number in to_list
+    ]
     payload: Dict[str, str] = {
         'username': username,
-        'to': ','.join(to_list),
+        'to': ','.join(provider_numbers),
         'message': message,
     }
     if sender_id:
