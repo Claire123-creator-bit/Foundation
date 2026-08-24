@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
+import { toE164 } from '../utils/phone';
 
 
 function MemberLogin({ onLogin, onBack, onRegister }) {
@@ -14,7 +15,7 @@ function MemberLogin({ onLogin, onBack, onRegister }) {
     fetch(`${API_BASE}/member-login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone_number: phone, national_id: national_id })
+      body: JSON.stringify({ phone_number: toE164(phone), national_id: national_id })
     })
       .then(r => r.json())
       .then(d => { setLoading(false); if (d.success) { onLogin(d.token); } else setError(d.error || d.message); })
