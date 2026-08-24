@@ -120,6 +120,8 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
         sent_total = 0
         failed_any = False
         first_error: Optional[str] = None
+        provider_messages: List[str] = []
+        provider_failures = []
 
         for i in range(0, total, batch_size):
             batch = normalized[i:i + batch_size]
@@ -129,23 +131,32 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
                 sms_data = response.get('SMSMessageData', {}) if isinstance(response, dict) else {}
                 recipients = sms_data.get('Recipients', []) if isinstance(sms_data, dict) else []
                 provider_message = sms_data.get('Message') if isinstance(sms_data, dict) else None
+                if provider_message:
+                    provider_messages.append(str(provider_message))
 
                 batch_sent = 0
-                provider_failures = []
+                batch_failures = []
                 accepted_statuses = {'success', 'sent', 'queued'}
+                accepted_codes = {100, 101, 102}
                 if isinstance(recipients, list):
                     for recipient in recipients:
                         if not isinstance(recipient, dict):
                             continue
                         status = str(recipient.get('status', '')).strip().lower()
-                        if status in accepted_statuses:
+                        try:
+                            status_code = int(recipient.get('statusCode'))
+                        except (TypeError, ValueError):
+                            status_code = None
+                        if status in accepted_statuses or status_code in accepted_codes:
                             batch_sent += 1
                         else:
-                            provider_failures.append({
+                            batch_failures.append({
                                 'number': recipient.get('number'),
                                 'status': recipient.get('status'),
+                                'statusCode': recipient.get('statusCode'),
                                 'message': recipient.get('message'),
                             })
+                provider_failures.extend(batch_failures)
 
                 sent_total += batch_sent
 
@@ -156,7 +167,7 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
                         'sent': batch_sent,
                         'total_in_batch': len(batch),
                         'provider_message': provider_message,
-                        'provider_failures': provider_failures[:5],
+                        'provider_failures': batch_failures[:5],
                     },
                 )
 
@@ -172,7 +183,11 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
         if sent_total == 0:
             return {
                 'success': False,
-                'reason': first_error or "Africa's Talking accepted no recipients; check provider response in logs",
+                'reason': (
+                    first_error
+                    or provider_messages[-1]
+                    or f"Africa's Talking rejected all {len(provider_failures) or total} recipients"
+                ),
                 'sent': 0,
                 'total': total,
             }
