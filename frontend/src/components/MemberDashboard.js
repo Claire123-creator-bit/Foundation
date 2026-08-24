@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiFetch } from '../utils/apiClient';
+import { displayLocalNumber } from '../utils/phone';
 
 function MemberDashboard({ member, onLogout }) {
   const [tab, setTab] = useState('home');
@@ -204,7 +205,7 @@ function ProfileTab({ member }) {
         </div>
 
         {[
-          ['Phone', member.phone_number],
+          ['Phone', displayLocalNumber(member.phone_number)],
           ['National ID', member.national_id],
           ['County', member.county || '—'],
           ['Constituency', member.constituency || '—'],

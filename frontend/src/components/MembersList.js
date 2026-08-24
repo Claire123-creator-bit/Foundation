@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { apiFetch } from '../utils/apiClient';
+import { displayLocalNumber } from '../utils/phone';
 
 function MembersList() {
   const [members, setMembers] = useState([]);
@@ -37,7 +38,7 @@ function MembersList() {
         <div key={m.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
           <div>
             <h3 style={{ marginBottom: 4 }}>{m.full_names}</h3>
-            <p style={{ margin: '2px 0' }}>{m.phone_number}</p>
+            <p style={{ margin: '2px 0' }}>{displayLocalNumber(m.phone_number)}</p>
             <p style={{ margin: '2px 0' }}>{m.ward}, {m.constituency}, {m.county}</p>
             <p style={{ margin: '2px 0' }}>{m.category}</p>
             <p style={{ margin: '4px 0 0', fontSize: 12, color: m.status === 'approved' ? '#059669' : '#b00020', fontWeight: 600, textTransform: 'uppercase' }}>{m.status}</p>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { apiFetch } from '../utils/apiClient';
+import { displayLocalNumber } from '../utils/phone';
 
 function PendingMembers() {
   const [members, setMembers] = useState([]);
@@ -41,7 +42,7 @@ function PendingMembers() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
             <div>
               <h3 style={{ marginBottom: 6 }}>{m.full_names}</h3>
-              <p>{m.phone_number}</p>
+              <p>{displayLocalNumber(m.phone_number)}</p>
               <p>ID: {m.national_id}</p>
               <p>{m.ward}, {m.constituency}, {m.county}</p>
               <p>{m.category}</p>

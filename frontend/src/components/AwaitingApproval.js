@@ -1,4 +1,5 @@
 import React from 'react';
+import { displayLocalNumber } from '../utils/phone';
 
 function AwaitingApproval({ member, onLogout }) {
   return (
@@ -11,7 +12,7 @@ function AwaitingApproval({ member, onLogout }) {
           has been received. An administrator will review and approve your account shortly.
         </p>
         <p style={s.text}>
-          You will receive an SMS on <strong>{member?.phone_number}</strong> once your
+          You will receive an SMS on <strong>{displayLocalNumber(member?.phone_number)}</strong> once your
           account is approved.
         </p>
         <button style={s.btn} onClick={onLogout}>Back to Home</button>

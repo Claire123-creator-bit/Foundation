@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { apiFetch } from '../utils/apiClient';
+import { displayLocalNumber } from '../utils/phone';
 
 function AdminManagement() {
   const [admins, setAdmins] = useState([]);
@@ -149,7 +150,7 @@ function AdminManagement() {
             <h3 style={{ marginBottom: 4 }}>{a.full_name}</h3>
             <p> @{a.username}</p>
             <p> {a.email}</p>
-            {a.phone && <p> {a.phone}</p>}
+            {a.phone && <p>{displayLocalNumber(a.phone)}</p>}
             <p> <span style={{ background: a.role === 'superadmin' ? '#0A2463' : '#eef1fa', color: a.role === 'superadmin' ? '#fff' : '#0A2463', padding: '2px 10px', fontSize: 12, fontWeight: 600 }}>{a.role}</span></p>
             <p style={{ fontSize: 12, color: '#999', marginTop: 4 }}>Last login: {a.last_login ? new Date(a.last_login).toLocaleString() : 'Never'}</p>
           </div>
