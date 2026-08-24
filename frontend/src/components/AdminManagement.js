@@ -18,16 +18,21 @@ function AdminManagement() {
   useEffect(() => { fetchAdmins(); }, [fetchAdmins]);
 
   const handleCreate = (e) => {
-
     e.preventDefault();
     setMsg(''); setError('');
     apiFetch('/admin-register', {
-      method: 'POST', body: JSON.stringify(form)
+      method: 'POST',
+      body: JSON.stringify(form),
     })
-      .then(r => r.json())
       .then(d => {
-        if (d.success) { setMsg('Admin created successfully'); setShowForm(false); setForm({ full_name: '', username: '', email: '', phone: '', password: '', role: 'admin' }); fetchAdmins(); }
-        else setError(d.message || d.error || 'Failed');
+        if (d.success) {
+          setMsg('Admin created successfully');
+          setShowForm(false);
+          setForm({ full_name: '', username: '', email: '', phone: '', password: '', role: 'admin' });
+          fetchAdmins();
+        } else {
+          setError(d.message || d.error || 'Failed');
+        }
       })
       .catch(() => setError('Cannot connect to server'));
   };
