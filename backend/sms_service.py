@@ -119,16 +119,32 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
                 recipients = sms_data.get('Recipients', []) if isinstance(sms_data, dict) else []
 
                 batch_sent = 0
+                provider_failures = []
+                accepted_statuses = {'success', 'sent', 'queued'}
                 if isinstance(recipients, list):
-                    for r in recipients:
-                        if isinstance(r, dict) and r.get('status') == 'Success':
+                    for recipient in recipients:
+                        if not isinstance(recipient, dict):
+                            continue
+                        status = str(recipient.get('status', '')).strip().lower()
+                        if status in accepted_statuses:
                             batch_sent += 1
+                        else:
+                            provider_failures.append({
+                                'number': recipient.get('number'),
+                                'status': recipient.get('status'),
+                                'message': recipient.get('message'),
+                            })
 
                 sent_total += batch_sent
 
                 app_logger.info(
                     "Africa's Talking SMS batch result",
-                    extra={'batch_index': (i // batch_size) + 1, 'sent': batch_sent, 'total_in_batch': len(batch)},
+                    extra={
+                        'batch_index': (i // batch_size) + 1,
+                        'sent': batch_sent,
+                        'total_in_batch': len(batch),
+                        'provider_failures': provider_failures[:5],
+                    },
                 )
 
             except Exception as e:
@@ -140,8 +156,13 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
                     exc_info=True,
                 )
 
-        if failed_any and sent_total == 0:
-            return {'success': False, 'reason': first_error or 'SMS sending failed', 'sent': 0, 'total': total}
+        if sent_total == 0:
+            return {
+                'success': False,
+                'reason': first_error or 'Africa\'s Talking accepted no recipients',
+                'sent': 0,
+                'total': total,
+            }
 
         return {'success': True, 'sent': sent_total, 'total': total}
 
