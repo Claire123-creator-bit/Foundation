@@ -120,7 +120,18 @@ def create_meeting():
         recipients = list(dict.fromkeys(member_phones + admin_phones))
         if recipients:
             msg = build_meeting_alert_message(data["title"], data["date"], data["time"], data.get("venue", ""))
-            threading.Thread(target=send_bulk_sms, args=(recipients, msg), daemon=True).start()
+
+            def _send_and_log(recipients_list, message_text):
+                try:
+                    # Log recipients count and a small sample to help debugging
+                    sample = recipients_list[:10]
+                    app_logger.info("Initiating meeting SMS send", extra={"recipient_count": len(recipients_list), "sample": sample})
+                    result = send_bulk_sms(recipients_list, message_text)
+                    app_logger.info("Meeting SMS send result", extra={"result": result})
+                except Exception:
+                    app_logger.exception("Meeting SMS send encountered an exception")
+
+            threading.Thread(target=_send_and_log, args=(recipients, msg), daemon=True).start()
 
         return jsonify({"success": True, "meeting": meeting_dict}), 200
     except Exception as e:
