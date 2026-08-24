@@ -30,11 +30,16 @@ function BulkMessaging() {
     })
       .then(data => {
         setLoading(false);
-        if (data.success) {
+        if (data.success && data.recipients > 0) {
+          // SMS was sent to at least one recipient
           setResult(data.recipients);
           setMessage('');
           setCategory('');
+        } else if (data.success && data.recipients === 0) {
+          // No recipients found
+          setError(data.error || 'No eligible members found');
         } else {
+          // Request failed
           setError(data.error || data.message || 'Failed to send SMS');
         }
       })

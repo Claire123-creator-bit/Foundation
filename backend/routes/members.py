@@ -5,6 +5,7 @@ from website_models import Member, db
 from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token, create_member_token
 from sms_service import send_bulk_sms, send_sms, send_member_approval_sms
+from logger import app_logger
 
 members_bp = Blueprint("members", __name__)
 
@@ -72,8 +73,17 @@ def member_register():
         db.session.add(member)
         db.session.commit()
 
+        # Send confirmation SMS to the member
+        name = member.full_names.strip().title()
+        send_sms(
+            member.phone_number,
+            f"Welcome to Mbogo Welfare Empowerment Foundation! Dear {name}, "
+            f"your registration has been received and is pending admin approval. "
+            f"You will receive a welcome message once approved. Thank you!"
+        )
+        
+        # Also notify admin
         if ADMIN_PHONE:
-            name = member.full_names.strip().title()
             send_sms(
                 ADMIN_PHONE,
                 f"Mbogo Foundation Alert: {name} ({member.phone_number}) "
@@ -151,6 +161,12 @@ def admin_register_member():
         )
         db.session.add(member)
         db.session.commit()
+        
+        # Send welcome SMS to member if created with approved status
+        if member.status == "approved" and member.phone_number:
+            name = member.full_names.strip().title()
+            send_member_approval_sms(name, member.phone_number)
+        
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
         db.session.rollback()
@@ -240,29 +256,78 @@ def send_sms_to_members():
         return json_api_error("Message is required", 400)
 
     try:
+        # Query for eligible members
         query = Member.query.filter(Member.status.in_(["approved", "active"]))
         if category:
             query = query.filter_by(category=category)
         members = query.all()
+        member_count = len(members)
 
         if not members:
-            return json_api_error("No approved members found", 404)
-
-        phone_numbers = [m.phone_number for m in members if m.phone_number]
-        if not phone_numbers:
-            return json_api_error("No valid phone numbers found", 404)
-
-        result = send_bulk_sms(phone_numbers, message)
-
-        if result.get("success"):
             return jsonify({
-                "success": True,
-                "recipients": result.get("sent", 0),
-                "total": result.get("total", 0),
-                "message": f"SMS sent to {result.get('sent', 0)} members"
+                "success": False,
+                "error": "No approved members found",
+                "recipients": 0,
+                "total": 0
             }), 200
 
-        return json_api_error(result.get("reason", "Failed to send SMS"), 400)
+        # Extract phone numbers from members
+        phone_numbers = [m.phone_number for m in members if m.phone_number]
+        valid_phone_count = len(phone_numbers)
+        
+        app_logger.info(
+            "Bulk SMS request initiated",
+            extra={
+                "total_eligible_members": member_count,
+                "members_with_phone": valid_phone_count,
+                "category_filter": category or "all"
+            }
+        )
+
+        if not phone_numbers:
+            return jsonify({
+                "success": False,
+                "error": f"No valid phone numbers found ({member_count} members have no phone number)",
+                "recipients": 0,
+                "total": 0
+            }), 200
+
+        # Send SMS
+        result = send_bulk_sms(phone_numbers, message)
+        
+        app_logger.info(
+            "Bulk SMS result",
+            extra={
+                "success": result.get("success"),
+                "sent": result.get("sent", 0),
+                "total": result.get("total", 0),
+                "reason": result.get("reason")
+            }
+        )
+
+        if result.get("success"):
+            sent_count = result.get("sent", 0)
+            total_count = result.get("total", 0)
+            return jsonify({
+                "success": True,
+                "recipients": sent_count,
+                "total": total_count,
+                "message": f"Queued to {sent_count} member{'' if sent_count == 1 else 's'}" if sent_count > 0 else "No messages sent"
+            }), 200
+
+        # SMS send failed
+        return jsonify({
+            "success": False,
+            "error": result.get("reason", "Failed to send SMS"),
+            "recipients": 0,
+            "total": 0
+        }), 200
 
     except Exception as e:
-        return json_api_error(f"SMS sending failed: {str(e)}", 500)
+        app_logger.error(f"Bulk SMS send exception: {str(e)}", exc_info=True)
+        return jsonify({
+            "success": False,
+            "error": f"SMS sending failed: {str(e)}",
+            "recipients": 0,
+            "total": 0
+        }), 200

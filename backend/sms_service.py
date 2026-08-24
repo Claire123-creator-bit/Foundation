@@ -82,19 +82,28 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
 
     try:
         if not phone_list:
-            return {'success': True, 'sent': 0, 'total': 0}
+            return {'success': False, 'reason': 'No phone numbers provided', 'sent': 0, 'total': 0}
 
         normalized: List[str] = []
+        failed_normalizations = []
         for p in phone_list:
             p2 = _normalize_phone(p)
             if p2 and _is_valid_phone(p2):
                 normalized.append(p2)
+            else:
+                failed_normalizations.append({'original': p, 'normalized': p2, 'valid': _is_valid_phone(p2) if p2 else False})
 
         normalized = list(dict.fromkeys(normalized))
 
+        if failed_normalizations:
+            app_logger.warning(
+                "Phone number normalization failures",
+                extra={'failed_count': len(failed_normalizations), 'samples': failed_normalizations[:5]}
+            )
+
         total = len(normalized)
         if total == 0:
-            return {'success': False, 'reason': 'No valid phone numbers', 'sent': 0, 'total': 0}
+            return {'success': False, 'reason': f'No valid phone numbers after normalization ({len(phone_list)} input numbers)', 'sent': 0, 'total': 0}
 
         batch_size = 1000
         sent_total = 0
