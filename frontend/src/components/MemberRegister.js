@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
-import { locations } from '../data/kenyanLocations';
 
 const CATEGORIES = [
   'Church Leader', 'Pastor', 'Village Elder', 'Agent', 'Youth Leader',
@@ -28,15 +27,9 @@ function MemberRegister({ onBack, onLogin, onRegistered }) {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
-  const counties       = Object.keys(locations);
-  const constituencies = form.county ? Object.keys(locations[form.county] || {}) : [];
-  const wards          = form.county && form.constituency ? (locations[form.county]?.[form.constituency] || []) : [];
-
   const set = k => e => {
     const v = e.target.value;
     const next = { ...form, [k]: v };
-    if (k === 'county') { next.constituency = ''; next.ward = ''; }
-    if (k === 'constituency') next.ward = '';
     setForm(next);
     setErrors(prev => { const n = { ...prev }; delete n[k]; return n; });
   };
@@ -44,7 +37,7 @@ function MemberRegister({ onBack, onLogin, onRegistered }) {
   const validate = () => {
     const e = {};
     if (!form.full_names.trim()) e.full_names = 'Required';
-    if (!/^\d{7,8}$/.test(form.national_id.trim())) e.national_id = 'Enter a valid 7–8 digit ID';
+    if (!/^\d+$/.test(form.national_id.trim())) e.national_id = 'Enter a valid ID number';
     if (!/^(07|01)\d{8}$/.test(form.phone)) e.phone = 'Enter a valid number e.g. 0712345678';
     if (!form.gender) e.gender = 'Required';
     if (!form.county) e.county = 'Required';
@@ -114,7 +107,7 @@ function MemberRegister({ onBack, onLogin, onRegistered }) {
           </Field>
 
           <Field label="National ID Number" error={errors.national_id}>
-            <input style={inp(errors.national_id)} value={form.national_id} onChange={set('national_id')} placeholder="e.g. 12345678" inputMode="numeric" maxLength={8} />
+            <input style={inp(errors.national_id)} value={form.national_id} onChange={set('national_id')} placeholder="Enter your National ID Number" inputMode="numeric" />
           </Field>
 
           <Field label="Phone Number" error={errors.phone}>
@@ -129,30 +122,15 @@ function MemberRegister({ onBack, onLogin, onRegistered }) {
           </Field>
 
           <Field label="County" error={errors.county}>
-            <select style={inp(errors.county)} value={form.county} onChange={set('county')}>
-              <option value="">Select County…</option>
-              {counties.map(c => <option key={c}>{c}</option>)}
-            </select>
+            <input style={inp(errors.county)} value={form.county} onChange={set('county')} placeholder="Type your county" />
           </Field>
 
           <Field label="Constituency" error={errors.constituency}>
-            {constituencies.length > 0
-              ? <select style={inp(errors.constituency)} value={form.constituency} onChange={set('constituency')}>
-                  <option value="">Select Constituency…</option>
-                  {constituencies.map(c => <option key={c}>{c}</option>)}
-                </select>
-              : <input style={inp(errors.constituency)} value={form.constituency} onChange={set('constituency')} placeholder="Type your constituency" disabled={!form.county} />
-            }
+            <input style={inp(errors.constituency)} value={form.constituency} onChange={set('constituency')} placeholder="Type your constituency" />
           </Field>
 
           <Field label="Ward" error={errors.ward}>
-            {wards.length > 0
-              ? <select style={inp(errors.ward)} value={form.ward} onChange={set('ward')}>
-                  <option value="">Select Ward…</option>
-                  {wards.map(w => <option key={w}>{w}</option>)}
-                </select>
-              : <input style={inp(errors.ward)} value={form.ward} onChange={set('ward')} placeholder="Type your ward" disabled={!form.constituency} />
-            }
+            <input style={inp(errors.ward)} value={form.ward} onChange={set('ward')} placeholder="Type your ward" />
           </Field>
 
           <Field label="Your Role" error={errors.category}>
