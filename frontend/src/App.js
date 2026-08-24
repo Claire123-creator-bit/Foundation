@@ -93,7 +93,7 @@ function App() {
 
   // Admin dashboards
   if (role && role !== 'member' && admin)
-    return <AdminDashboard adminName={admin.full_name || admin.username} onLogout={handleLogout} />;
+    return <AdminDashboard adminName={admin.full_name || admin.username} adminRole={admin.role} onLogout={handleLogout} />;
 
   // Approved member
   if (role === 'member' && member && status === 'approved')

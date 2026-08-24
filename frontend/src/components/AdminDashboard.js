@@ -11,10 +11,11 @@ import LeadershipManagement from './LeadershipManagement';
 import { apiFetch } from '../utils/apiClient';
 
 
-function AdminDashboard({ adminName, onLogout }) {
+function AdminDashboard({ adminName, adminRole, onLogout }) {
 
 
   const [tab, setTab] = useState('members');
+  const isSuperAdmin = (adminRole || '').toLowerCase() === 'superadmin';
   const [stats, setStats] = useState({ total: 0, meetings: 0, pending: 0 });
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
@@ -43,7 +44,7 @@ function AdminDashboard({ adminName, onLogout }) {
     { id: 'donate',   label: ' Donate' },
     { id: 'media',    label: ' Media' },
     { id: 'leadership', label: ' Leadership' },
-    { id: 'settings', label: ' Settings' },
+    ...(isSuperAdmin ? [{ id: 'settings', label: ' Settings' }] : []),
   ];
 
   return (
@@ -126,7 +127,7 @@ function AdminDashboard({ adminName, onLogout }) {
         {tab === 'donate'   && <Donate />}
         {tab === 'media'    && <MediaGallery />}
         {tab === 'leadership' && <LeadershipManagement />}
-        {tab === 'settings' && <AdminManagement />}
+        {isSuperAdmin && tab === 'settings' && <AdminManagement />}
 
 
 

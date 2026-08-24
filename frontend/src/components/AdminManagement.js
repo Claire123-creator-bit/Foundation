@@ -5,7 +5,8 @@ function AdminManagement() {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ full_name: '', username: '', email: '', phone: '', password: '', role: 'admin' });
+  const [editingId, setEditingId] = useState(null);
+  const [form, setForm] = useState({ full_name: '', username: '', email: '', phone: '', password: '', role: 'admin', is_active: true });
   const [msg, setMsg] = useState('');
   const [error, setError] = useState('');
 
@@ -17,24 +18,49 @@ function AdminManagement() {
 
   useEffect(() => { fetchAdmins(); }, [fetchAdmins]);
 
+  const resetForm = () => {
+    setForm({ full_name: '', username: '', email: '', phone: '', password: '', role: 'admin', is_active: true });
+    setEditingId(null);
+    setShowForm(false);
+  };
+
   const handleCreate = (e) => {
     e.preventDefault();
     setMsg(''); setError('');
-    apiFetch('/admin-register', {
-      method: 'POST',
-      body: JSON.stringify(form),
+
+    const payload = { ...form };
+    const endpoint = editingId ? `/admin/update-admin/${editingId}` : '/admin-register';
+    const method = editingId ? 'PUT' : 'POST';
+
+    apiFetch(endpoint, {
+      method,
+      body: JSON.stringify(payload),
     })
       .then(d => {
         if (d.success) {
-          setMsg('Admin created successfully');
-          setShowForm(false);
-          setForm({ full_name: '', username: '', email: '', phone: '', password: '', role: 'admin' });
+          setMsg(editingId ? 'Admin updated successfully' : 'Admin created successfully');
+          resetForm();
           fetchAdmins();
         } else {
           setError(d.message || d.error || 'Failed');
         }
       })
       .catch(() => setError('Cannot connect to server'));
+  };
+
+  const handleEdit = (admin) => {
+    setEditingId(admin.id);
+    setForm({
+      full_name: admin.full_name || '',
+      username: admin.username || '',
+      email: admin.email || '',
+      phone: admin.phone || '',
+      password: '',
+      role: admin.role || 'admin',
+      is_active: admin.is_active !== false,
+    });
+    setShowForm(true);
+    setMsg(''); setError('');
   };
 
   const handleDelete = (id, name) => {
@@ -60,7 +86,7 @@ function AdminManagement() {
 
       {showForm && (
         <div className="card" style={{ marginBottom: 20 }}>
-          <h3 style={{ marginBottom: 16 }}>Create New Admin</h3>
+          <h3 style={{ marginBottom: 16 }}>{editingId ? 'Edit Admin' : 'Create New Admin'}</h3>
           <form onSubmit={handleCreate}>
             <div style={{ display: 'flex', gap: 16 }}>
               <div style={{ flex: 1 }}>
@@ -83,10 +109,12 @@ function AdminManagement() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 16 }}>
-              <div style={{ flex: 1 }}>
-                <label>Password</label>
-                <input type="password" value={form.password} onChange={set('password')} required />
-              </div>
+              {!editingId && (
+                <div style={{ flex: 1 }}>
+                  <label>Password</label>
+                  <input type="password" value={form.password} onChange={set('password')} required={!editingId} />
+                </div>
+              )}
               <div style={{ flex: 1 }}>
                 <label>Role</label>
                 <select value={form.role} onChange={set('role')}>
@@ -96,8 +124,20 @@ function AdminManagement() {
                   <option value="communication">Communication</option>
                 </select>
               </div>
+              {editingId && (
+                <div style={{ flex: 1 }}>
+                  <label>Status</label>
+                  <select value={String(form.is_active)} onChange={(e) => setForm({ ...form, is_active: e.target.value === 'true' })}>
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                  </select>
+                </div>
+              )}
             </div>
-            <button type="submit">Create Admin</button>
+            <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
+              <button type="submit">{editingId ? 'Save Changes' : 'Create Admin'}</button>
+              {editingId && <button type="button" className="small" onClick={resetForm}>Cancel</button>}
+            </div>
           </form>
         </div>
       )}
@@ -113,13 +153,22 @@ function AdminManagement() {
             <p> <span style={{ background: a.role === 'superadmin' ? '#0A2463' : '#eef1fa', color: a.role === 'superadmin' ? '#fff' : '#0A2463', padding: '2px 10px', fontSize: 12, fontWeight: 600 }}>{a.role}</span></p>
             <p style={{ fontSize: 12, color: '#999', marginTop: 4 }}>Last login: {a.last_login ? new Date(a.last_login).toLocaleString() : 'Never'}</p>
           </div>
-          {a.role !== 'superadmin' && (
-            <button
-              onClick={() => handleDelete(a.id, a.full_name)}
-              style={{ width: 'auto', height: 36, padding: '0 16px', background: '#b00020', color: '#fff', border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-              Remove
-            </button>
-          )}
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            {a.role !== 'superadmin' && (
+              <>
+                <button
+                  onClick={() => handleEdit(a)}
+                  style={{ width: 'auto', height: 36, padding: '0 16px', background: '#0A2463', color: '#fff', border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(a.id, a.full_name)}
+                  style={{ width: 'auto', height: 36, padding: '0 16px', background: '#b00020', color: '#fff', border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                  Remove
+                </button>
+              </>
+            )}
+          </div>
         </div>
       ))}
     </div>

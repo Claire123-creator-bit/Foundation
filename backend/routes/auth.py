@@ -86,6 +86,55 @@ def list_admins():
     return jsonify([a.to_dict() for a in admins]), 200
 
 
+@auth_bp.route("/admin/update-admin/<int:admin_id>", methods=["PUT"])
+def update_admin(admin_id):
+    token = get_auth_token()
+    if not token:
+        return json_api_error("Missing token", 401)
+    decoded = decode_token(token)
+    if not decoded or decoded.get("role") != "superadmin":
+        return json_api_error("Forbidden", 403)
+
+    admin = Admin.query.get(admin_id)
+    if not admin:
+        return json_api_error("Admin not found", 404)
+    if admin.role == "superadmin":
+        return json_api_error("Cannot edit superadmin", 403)
+
+    data = request.get_json(silent=True) or {}
+    full_name = (data.get("full_name") or admin.full_name or "").strip()
+    username = (data.get("username") or admin.username or "").strip()
+    email = (data.get("email") or admin.email or "").strip()
+    phone = data.get("phone", admin.phone or "")
+    role = (data.get("role") or admin.role or "admin").strip()
+    is_active = data.get("is_active", admin.is_active)
+
+    if not full_name or not username or not email:
+        return json_api_error("Missing fields", 400)
+
+    if Admin.query.filter(Admin.id != admin_id, Admin.username == username).first():
+        return json_api_error("Username already in use", 400)
+    if Admin.query.filter(Admin.id != admin_id, Admin.email == email).first():
+        return json_api_error("Email already in use", 400)
+
+    admin.full_name = full_name
+    admin.username = username
+    admin.email = email
+    admin.phone = phone or ""
+    admin.role = role
+    admin.is_active = bool(is_active)
+
+    if data.get("password"):
+        admin.password = generate_password_hash(data["password"])
+
+    try:
+        db.session.commit()
+        return jsonify({"success": True, "admin": admin.to_dict()}), 200
+    except Exception as exc:
+        db.session.rollback()
+        return json_api_error(f"Update failed: {str(exc)}", 500)
+
+
 @auth_bp.route("/admin/delete-admin/<int:admin_id>", methods=["DELETE"])
 def delete_admin(admin_id):
     token = get_auth_token()
