@@ -3,6 +3,7 @@ import json
 import threading
 import urllib.parse
 import urllib.request
+import urllib.error
 from typing import List, Dict, Any, Optional
 
 from logger import app_logger
@@ -72,9 +73,19 @@ def _send_http(to_list: List[str], message: str) -> Dict[str, Any]:
         method='POST',
     )
 
-    with urllib.request.urlopen(req, timeout=25) as resp:
-        raw = resp.read().decode('utf-8')
-        return json.loads(raw)
+    try:
+        with urllib.request.urlopen(req, timeout=25) as resp:
+            raw = resp.read().decode('utf-8')
+    except urllib.error.HTTPError as exc:
+        raw = exc.read().decode('utf-8', errors='replace')
+        try:
+            provider_error = json.loads(raw)
+            provider_message = provider_error.get('SMSMessageData', {}).get('Message')
+        except (ValueError, AttributeError):
+            provider_message = raw or str(exc)
+        raise RuntimeError(f"Africa's Talking HTTP {exc.code}: {provider_message}") from exc
+
+    return json.loads(raw)
 
 
 def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
@@ -117,6 +128,7 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
 
                 sms_data = response.get('SMSMessageData', {}) if isinstance(response, dict) else {}
                 recipients = sms_data.get('Recipients', []) if isinstance(sms_data, dict) else []
+                provider_message = sms_data.get('Message') if isinstance(sms_data, dict) else None
 
                 batch_sent = 0
                 provider_failures = []
@@ -143,6 +155,7 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
                         'batch_index': (i // batch_size) + 1,
                         'sent': batch_sent,
                         'total_in_batch': len(batch),
+                        'provider_message': provider_message,
                         'provider_failures': provider_failures[:5],
                     },
                 )
@@ -159,7 +172,7 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
         if sent_total == 0:
             return {
                 'success': False,
-                'reason': first_error or 'Africa\'s Talking accepted no recipients',
+                'reason': first_error or "Africa's Talking accepted no recipients; check provider response in logs",
                 'sent': 0,
                 'total': total,
             }
