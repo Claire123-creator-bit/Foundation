@@ -6,7 +6,6 @@ import MemberDashboard from './components/MemberDashboard';
 import MemberRegister from './components/MemberRegister';
 import LandingPage from './components/LandingPage';
 import AwaitingApproval from './components/AwaitingApproval';
-import JoinChoice from './components/JoinChoice';
 import { getToken, me, setToken, clearNonTokenAuthState } from './utils/auth';
 
 function App() {
@@ -114,18 +113,8 @@ function App() {
   if (page === 'member-register')
     return <MemberRegister onBack={() => setPage('home')} onLogin={() => setPage('member-login')} onRegistered={handleMemberRegistered} />;
 
-  // Default: render landing page. When page === 'join-choice' show a dedicated JoinChoice page
-  if (page === 'join-choice')
-    return (
-      <JoinChoice
-        onBack={() => setPage('home')}
-        onRegister={() => setPage('member-register')}
-        onSignIn={() => setPage('member-login')}
-        onAdminLogin={() => setPage('admin-login')}
-      />
-    );
-
-  return <LandingPage onJoinUs={() => setPage('join-choice')} onAdminLogin={() => setPage('admin-login')} />;
+  // Default: render landing page
+  return <LandingPage onJoinUs={() => setPage('member-register')} onAdminLogin={() => setPage('admin-login')} />;
 }
 
 export default App;
