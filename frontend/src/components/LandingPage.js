@@ -141,15 +141,30 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
             <h2 style={s.sectionTitle}>Meet Our Leadership</h2>
             <div style={{ ...s.grid, marginTop: 12 }}>
               {leadership.map((person) => (
-                <div key={person.id} style={{ ...s.card, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                <div
+                  key={person.id}
+                  style={{
+                    ...s.card,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    alignSelf: 'start',
+                    width: '100%',
+                    height: 'auto',
+                    minHeight: 0,
+                    padding: '20px 18px',
+                    boxSizing: 'border-box',
+                  }}
+                >
                   <img
                     src={person.photo_url || '/mbogo-background.jpeg'}
                     alt={person.full_name}
-                    style={{ width: 180, height: 180, objectFit: 'cover', borderRadius: '50%', marginBottom: 16, border: '4px solid #dbeafe' }}
+                    style={{ width: 180, height: 180, objectFit: 'cover', borderRadius: '50%', marginBottom: 12, border: '4px solid #dbeafe' }}
                   />
                   <h3 style={{ ...s.cardTitle, marginBottom: 4 }}>{person.full_name}</h3>
-                  <p style={{ ...s.cardText, marginBottom: 10, fontWeight: 700, color: '#0f3d73' }}>{person.position}</p>
-                  <p style={{ ...s.cardText, margin: 0 }}>{person.bio}</p>
+                  <p style={{ ...s.cardText, marginBottom: 8, fontWeight: 700, color: '#0f3d73' }}>{person.position}</p>
+                  <p style={{ ...s.cardText, margin: 0, width: '100%' }}>{person.bio}</p>
                 </div>
               ))}
             </div>
