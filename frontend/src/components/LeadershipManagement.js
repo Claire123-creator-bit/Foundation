@@ -71,9 +71,9 @@ function LeadershipManagement() {
       setMessage('');
 
       const payload = new FormData();
-      payload.append('full_name', form.full_name.trim());
-      payload.append('position', form.position.trim());
-      payload.append('bio', form.bio.trim());
+      payload.append('full_name', form.full_name);
+      payload.append('position', form.position);
+      payload.append('bio', form.bio);
       payload.append('sort_order', String(form.sort_order || 0));
       if (photo) payload.append('photo', photo);
 
@@ -205,7 +205,7 @@ function LeadershipManagement() {
                 <div>
                   <div style={{ fontWeight: 700, color: '#0f172a', fontSize: 18 }}>{profile.full_name}</div>
                   <div style={{ color: '#0f3d73', fontWeight: 600, marginBottom: 4 }}>{profile.position}</div>
-                  <div style={{ color: '#475569', lineHeight: 1.5 }}>{profile.bio}</div>
+                  <div style={{ color: '#475569', lineHeight: 1.5, whiteSpace: 'pre-line' }}>{profile.bio}</div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <button type="button" onClick={() => handleEdit(profile)} style={secondaryButtonStyle}>Edit</button>

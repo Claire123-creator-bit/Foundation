@@ -164,7 +164,7 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
                   />
                   <h3 style={{ ...s.cardTitle, marginBottom: 4 }}>{person.full_name}</h3>
                   <p style={{ ...s.cardText, marginBottom: 8, fontWeight: 700, color: '#0f3d73' }}>{person.position}</p>
-                  <p style={{ ...s.cardText, margin: 0, width: '100%' }}>{person.bio}</p>
+                  <p style={{ ...s.cardText, margin: 0, width: '100%', whiteSpace: 'pre-line' }}>{person.bio}</p>
                 </div>
               ))}
             </div>

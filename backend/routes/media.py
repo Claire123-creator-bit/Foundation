@@ -109,10 +109,10 @@ def create_leadership_profile():
     if decoded.get("role", "").lower() not in ["admin", "superadmin"]:
         return json_api_error("Forbidden", 403)
 
-    full_name = (request.form.get("full_name") or "").strip()
-    position = (request.form.get("position") or "").strip()
-    bio = (request.form.get("bio") or "").strip()
-    if not full_name or not position or not bio:
+    full_name = request.form.get("full_name") or ""
+    position = request.form.get("position") or ""
+    bio = request.form.get("bio") or ""
+    if not full_name.strip() or not position.strip() or not bio.strip():
         return json_api_error("Name, position, and biography are required", 400)
 
     photo_file = request.files.get("photo")
@@ -159,14 +159,14 @@ def update_leadership_profile(profile_id):
         return json_api_error("Leadership profile not found", 404)
 
     if "full_name" in request.form:
-        profile.full_name = (request.form.get("full_name") or "").strip()
+        profile.full_name = request.form.get("full_name") or ""
     if "position" in request.form:
-        profile.position = (request.form.get("position") or "").strip()
+        profile.position = request.form.get("position") or ""
     if "bio" in request.form:
-        profile.bio = (request.form.get("bio") or "").strip()
+        profile.bio = request.form.get("bio") or ""
     if "sort_order" in request.form:
-        value = (request.form.get("sort_order") or "0").strip()
-        profile.sort_order = int(value) if value else 0
+        value = request.form.get("sort_order") or "0"
+        profile.sort_order = int(value) if str(value).strip() else 0
 
     photo_file = request.files.get("photo")
     if photo_file and photo_file.filename:
