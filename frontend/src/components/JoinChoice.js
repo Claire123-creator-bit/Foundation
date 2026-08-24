@@ -55,8 +55,25 @@ const JoinChoice = ({ onBack, onRegister, onSignIn, onAdminLogin }) => {
         </div>
       </main>
 
-      <footer style={{ padding: 24, textAlign: 'center' }}>
-        <small style={{ color: '#666' }}>© Mbogo Welfare Empowerment Foundation</small>
+      <footer className="footer">
+        <div className="footer-inner">
+          <div className="footer-top">
+            <div className="footer-brand">
+              <img
+                src="/mbogo-background.jpeg"
+                alt="logo"
+                style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: '50%', border: '3px solid rgba(255,255,255,0.4)' }}
+              />
+              <div>
+                <div className="footer-name">Mbogo Welfare Empowerment Foundation</div>
+                <div className="footer-tagline">Empowering Communities Through Unity</div>
+              </div>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p className="footer-copy">© {new Date().getFullYear()} Mbogo Welfare Empowerment Foundation. All rights reserved.</p>
+          </div>
+        </div>
       </footer>
     </div>
   );
