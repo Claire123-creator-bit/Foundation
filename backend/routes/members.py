@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request
 from website_models import Member, db
 from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token, create_member_token
-from sms_service import send_bulk_sms, send_sms
+from sms_service import send_bulk_sms, send_sms, send_member_approval_sms
 
 members_bp = Blueprint("members", __name__)
 
@@ -175,6 +175,8 @@ def approve_member(member_id):
     if not member:
         return json_api_error("Member not found", 404)
 
+    previous_status = member.status
+
     if action == "approve":
         member.status = "approved"
         member.is_verified = True
@@ -186,13 +188,9 @@ def approve_member(member_id):
 
     try:
         db.session.commit()
-        if action == "approve" and member.phone_number:
+        if action == "approve" and previous_status != "approved" and member.phone_number:
             name = member.full_names.strip().title()
-            send_sms(
-                member.phone_number,
-                f"Karibu Mbogo Foundation, {name}! Your membership has been "
-                f"officially approved. You can now sign in to your member portal anytime."
-            )
+            send_member_approval_sms(name, member.phone_number)
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
         db.session.rollback()

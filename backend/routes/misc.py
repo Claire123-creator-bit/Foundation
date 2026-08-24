@@ -114,11 +114,13 @@ def create_meeting():
         db.session.commit()
         meeting_dict = meeting.to_dict()
 
-        # Send SMS to all approved members in background
-        phones = [m.phone_number for m in Member.query.filter_by(status='approved').all() if m.phone_number]
-        if phones:
+        # Send SMS to all approved members and active admins in background.
+        member_phones = [m.phone_number for m in Member.query.filter(Member.status.in_(['approved', 'active'])).all() if m.phone_number]
+        admin_phones = [a.phone for a in Admin.query.filter_by(is_active=True).all() if a.phone]
+        recipients = list(dict.fromkeys(member_phones + admin_phones))
+        if recipients:
             msg = build_meeting_alert_message(data["title"], data["date"], data["time"], data.get("venue", ""))
-            threading.Thread(target=send_bulk_sms, args=(phones, msg), daemon=True).start()
+            threading.Thread(target=send_bulk_sms, args=(recipients, msg), daemon=True).start()
 
         return jsonify({"success": True, "meeting": meeting_dict}), 200
     except Exception as e:

@@ -190,3 +190,46 @@ def build_meeting_alert_message(title: str, date: str, time: str, venue: str) ->
         'Mbogo Welfare Empowerment Foundation'
     )
 
+
+def send_member_approval_sms(member_name: str, phone: str) -> Dict[str, Any]:
+    message = (
+        f"Welcome to Mbogo Welfare Empowerment Foundation! Dear {member_name.strip() or 'Member'}, "
+        "your membership has been approved. We are grateful to have you join us in empowering communities. "
+        "Warm regards, Mbogo Welfare Empowerment Foundation."
+    )
+    result = send_sms(phone, message)
+    if result.get('success'):
+        app_logger.info('Member approval welcome SMS sent', extra={'name': member_name, 'phone': phone})
+    else:
+        app_logger.warning('Member approval welcome SMS failed', extra={'name': member_name, 'phone': phone, 'result': result})
+    return result
+
+
+def send_admin_welcome_sms(admin_name: str, phone: str) -> Dict[str, Any]:
+    message = (
+        f"Welcome to the Mbogo Welfare Empowerment Foundation team! Dear {admin_name.strip() or 'Admin'}, "
+        "your admin account is now active. We are excited to have you join us in serving our community. "
+        "Warm regards, Mbogo Welfare Empowerment Foundation."
+    )
+    result = send_sms(phone, message)
+    if result.get('success'):
+        app_logger.info('Admin welcome SMS sent', extra={'name': admin_name, 'phone': phone})
+    else:
+        app_logger.warning('Admin welcome SMS failed', extra={'name': admin_name, 'phone': phone, 'result': result})
+    return result
+
+
+def send_meeting_invitation_sms(phone: str, name: str, title: str, date: str, time: str, venue: str, details: str) -> Dict[str, Any]:
+    venue_text = venue or 'TBD'
+    details_text = details.strip() if details else 'Please join us for this important gathering.'
+    message = (
+        f"Mbogo Foundation Meeting: {title}. Date: {date}, Time: {time}, Venue: {venue_text}. "
+        f"Dear {name.strip() or 'Member'}, {details_text} We look forward to seeing you there. Warm regards, Mbogo Welfare Empowerment Foundation."
+    )
+    result = send_sms(phone, message)
+    if result.get('success'):
+        app_logger.info('Meeting invitation SMS sent', extra={'name': name, 'phone': phone, 'title': title})
+    else:
+        app_logger.warning('Meeting invitation SMS failed', extra={'name': name, 'phone': phone, 'title': title, 'result': result})
+    return result
+

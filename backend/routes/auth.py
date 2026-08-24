@@ -4,6 +4,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from website_models import Admin, db
 from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token, create_admin_token
+from sms_service import send_admin_welcome_sms
+from logger import app_logger
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -71,6 +73,13 @@ def admin_register():
     )
     db.session.add(admin)
     db.session.commit()
+
+    if admin.phone:
+        try:
+            send_admin_welcome_sms(admin.full_name, admin.phone)
+        except Exception:
+            app_logger.exception("Admin welcome SMS failed")
+
     return jsonify({"success": True, "admin": admin.to_dict()}), 200
 
 
