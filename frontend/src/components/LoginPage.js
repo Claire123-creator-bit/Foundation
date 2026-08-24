@@ -36,14 +36,6 @@ function LoginPage({ onLogin, onBack }) {
 
   return (
     <div style={s.page}>
-      <div style={s.left}>
-        <img src="/mbogo-background.jpeg" alt="Mbogo Foundation" style={{ width: 80, height: 80, objectFit: 'cover', marginBottom: 20, border: '3px solid #fff' }} />
-        <h1 style={s.brand}>Mbogo Foundation</h1>
-        <p style={s.tagline}>Empowering Communities Through Unity</p>
-        <div style={s.line} />
-        <p style={s.quote}>"Together we grow, together we thrive."</p>
-      </div>
-
       <div style={s.right}>
         <div style={s.card}>
           <div style={s.cardHeader}>
