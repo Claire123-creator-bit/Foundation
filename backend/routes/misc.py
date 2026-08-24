@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import text
 import threading
 
-from website_models import Activity, Meeting, Admin, Member, db
+from website_models import Activity, Meeting, MeetingAttendance, Admin, Member, db
 from utils.responses import json_api_error
 from utils.auth import get_auth_token, decode_token
 from sms_service import send_bulk_sms, build_meeting_alert_message
@@ -184,6 +184,8 @@ def delete_meeting(meeting_id):
         return json_api_error("Meeting not found", 404)
 
     try:
+        for attendance in list(meeting.attendances):
+            db.session.delete(attendance)
         db.session.delete(meeting)
         db.session.commit()
         return jsonify({"success": True}), 200

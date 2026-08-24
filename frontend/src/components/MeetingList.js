@@ -44,7 +44,7 @@ function MeetingList() {
           }
           resetForm();
         } else {
-          setMsg(data.error || 'Imeshindwa');
+          setMsg(data.message || data.error || 'Imeshindwa');
         }
       })
       .catch(() => setMsg('Cannot connect to server'));
@@ -71,7 +71,7 @@ function MeetingList() {
           setMeetings(prev => prev.filter(m => m.id !== meetingId));
           setMsg('Meeting deleted successfully!');
         } else {
-          setMsg(data.error || 'Failed to delete meeting');
+          setMsg(data.message || data.error || 'Failed to delete meeting');
         }
       })
       .catch(() => setMsg('Cannot connect to server'));
