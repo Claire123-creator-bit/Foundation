@@ -1,5 +1,4 @@
 import React from 'react';
-import mbogoBackground from '../utils/apiConfig';
 import './LandingPage.css';
 
 const JoinChoice = ({ onBack, onRegister, onSignIn, onAdminLogin }) => {
