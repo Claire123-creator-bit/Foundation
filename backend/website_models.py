@@ -252,3 +252,41 @@ class Organization(db.Model):
         }
 
 
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    recipient_id = db.Column(db.Integer, nullable=False, index=True)
+    recipient_type = db.Column(db.String(50), nullable=False, index=True)  # 'member' or 'admin'
+    channel = db.Column(db.String(20), nullable=False, default='email')  # 'sms' or 'email'
+    event_type = db.Column(db.String(100), nullable=False, index=True)
+    event_id = db.Column(db.Integer, nullable=False, index=True)
+    template = db.Column(db.String(100))
+    payload = db.Column(db.Text)  # rendered message or JSON payload
+    status = db.Column(db.String(20), default='pending', index=True)  # pending, sent, failed, opted_out
+    attempts = db.Column(db.Integer, default=0)
+    last_error = db.Column(db.Text)
+    provider_message_id = db.Column(db.String(200))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    sent_at = db.Column(db.DateTime)
+
+    __table_args__ = (
+        db.UniqueConstraint('event_type', 'event_id', 'recipient_id', name='uq_notification_event_recipient'),
+    )
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'recipient_id': self.recipient_id,
+            'recipient_type': self.recipient_type,
+            'channel': self.channel,
+            'event_type': self.event_type,
+            'event_id': self.event_id,
+            'template': self.template or '',
+            'payload': self.payload or '',
+            'status': self.status,
+            'attempts': self.attempts,
+            'last_error': self.last_error or '',
+            'provider_message_id': self.provider_message_id or '',
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'sent_at': self.sent_at.isoformat() if self.sent_at else None,
+        }
+
