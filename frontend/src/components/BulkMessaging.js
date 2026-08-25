@@ -90,7 +90,7 @@ function BulkMessaging() {
               />
             </div>
 
-            <div style={s.counter}>
+            <div className="sms-counter" style={s.counter}>
               <small>{message.length} characters</small>
               <small>{parts} SMS part{parts !== 1 ? 's' : ''} per recipient</small>
             </div>

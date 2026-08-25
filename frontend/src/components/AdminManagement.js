@@ -89,7 +89,7 @@ function AdminManagement() {
         <div className="card" style={{ marginBottom: 20 }}>
           <h3 style={{ marginBottom: 16 }}>{editingId ? 'Edit Admin' : 'Create New Admin'}</h3>
           <form onSubmit={handleCreate}>
-            <div style={{ display: 'flex', gap: 16 }}>
+            <div className="admin-form-row" style={{ display: 'flex', gap: 16 }}>
               <div style={{ flex: 1 }}>
                 <label>Full Name</label>
                 <input value={form.full_name} onChange={set('full_name')} required />
@@ -99,7 +99,7 @@ function AdminManagement() {
                 <input value={form.username} onChange={set('username')} required />
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 16 }}>
+            <div className="admin-form-row" style={{ display: 'flex', gap: 16 }}>
               <div style={{ flex: 1 }}>
                 <label>Email</label>
                 <input type="email" value={form.email} onChange={set('email')} required />
@@ -109,7 +109,7 @@ function AdminManagement() {
                 <input value={form.phone} onChange={set('phone')} placeholder="07XXXXXXXX" />
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 16 }}>
+            <div className="admin-form-row" style={{ display: 'flex', gap: 16 }}>
               {!editingId && (
                 <div style={{ flex: 1 }}>
                   <label>Password</label>

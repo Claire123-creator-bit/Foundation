@@ -303,8 +303,8 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     transition: 'background 0.2s',
   },
   // Allow the global background image to show through on every section
-  section: { padding: '80px 32px', backgroundColor: 'transparent', flex: '0 0 auto' },
-  sectionAlt: { padding: '80px 32px', backgroundColor: 'transparent', flex: '0 0 auto' },
+  section: { padding: 'clamp(48px, 8vw, 80px) clamp(16px, 4vw, 32px)', backgroundColor: 'transparent', flex: '0 0 auto' },
+  sectionAlt: { padding: 'clamp(48px, 8vw, 80px) clamp(16px, 4vw, 32px)', backgroundColor: 'transparent', flex: '0 0 auto' },
   container: { maxWidth: '1200px', margin: '0 auto' },
   sectionTitle: {
     fontSize: 'clamp(28px, 4vw, 40px)',
@@ -324,7 +324,7 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(250px, 100%), 1fr))',
     gap: '32px',
   },
   card: {
@@ -369,7 +369,7 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
   },
   mediaGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(180px, 100%), 1fr))',
     gap: '24px',
   },
   mediaItem: {
@@ -380,7 +380,7 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
   },
   mediaContent: {
     width: '100%',
-    height: '250px',
+    height: 'clamp(180px, 24vw, 250px)',
     objectFit: 'cover',
   },
   mediaInfo: { padding: '16px' },
@@ -400,7 +400,7 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
   mediaPageLabel: { color: '#0A2463', fontSize: '14px', fontWeight: 700 },
   contactContent: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))',
     gap: '48px',
   },
   contactTitle: {

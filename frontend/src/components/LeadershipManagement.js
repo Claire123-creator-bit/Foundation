@@ -196,18 +196,18 @@ function LeadershipManagement() {
         ) : (
           <div style={{ display: 'grid', gap: 16 }}>
             {profiles.map((profile) => (
-              <div key={profile.id} style={{ display: 'grid', gridTemplateColumns: '90px 1fr auto', gap: 16, alignItems: 'center', border: '1px solid #e5e7eb', borderRadius: 12, padding: 12 }}>
+              <div key={profile.id} className="leadership-profile-row" style={{ display: 'grid', gridTemplateColumns: '90px minmax(0, 1fr) auto', gap: 16, alignItems: 'center', border: '1px solid #e5e7eb', borderRadius: 12, padding: 12 }}>
                 <img
                   src={profile.photo_url || '/mbogo-background.jpeg'}
                   alt={profile.full_name}
                   style={{ width: 90, height: 90, objectFit: 'cover', borderRadius: '50%', border: '2px solid #dbeafe' }}
                 />
-                <div>
+                <div style={{ minWidth: 0, overflowWrap: 'anywhere' }}>
                   <div style={{ fontWeight: 700, color: '#0f172a', fontSize: 18 }}>{profile.full_name}</div>
                   <div style={{ color: '#0f3d73', fontWeight: 600, marginBottom: 4 }}>{profile.position}</div>
                   <div style={{ color: '#475569', lineHeight: 1.5, whiteSpace: 'pre-line' }}>{profile.bio}</div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div className="leadership-profile-actions" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <button type="button" onClick={() => handleEdit(profile)} style={secondaryButtonStyle}>Edit</button>
                   <button type="button" onClick={() => handleDelete(profile.id)} style={{ ...secondaryButtonStyle, background: '#fef2f2', color: '#991b1b', borderColor: '#fecaca' }}>Delete</button>
                 </div>
