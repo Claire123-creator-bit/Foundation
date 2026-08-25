@@ -7,8 +7,8 @@ const mbogoBackground = '/mbogo-background.jpeg';
 
 const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const [media, setMedia] = useState([]);
+  const [mediaPage, setMediaPage] = useState(0);
   const [leadership, setLeadership] = useState([]);
-  const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
 
@@ -19,13 +19,11 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [mediaRes, sectionsRes, leadershipRes] = await Promise.all([
+      const [mediaRes, leadershipRes] = await Promise.all([
         fetch(`${API_BASE}/media`),
-        fetch(`${API_BASE}/activities`),
         fetch(`${API_BASE}/leadership`),
       ]);
       if (mediaRes.ok) { const d = await mediaRes.json(); setMedia(Array.isArray(d) ? d : []); }
-      if (sectionsRes.ok) { const d = await sectionsRes.json(); setSections(Array.isArray(d) ? d : []); }
       if (leadershipRes.ok) { const d = await leadershipRes.json(); setLeadership(Array.isArray(d) ? d : []); }
     } catch (error) {
       console.error('Failed to fetch data:', error);
@@ -33,6 +31,10 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
       setLoading(false);
     }
   };
+
+  const mediaPageSize = 5;
+  const mediaPageCount = Math.ceil(media.length / mediaPageSize);
+  const visibleMedia = media.slice(mediaPage * mediaPageSize, (mediaPage + 1) * mediaPageSize);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -179,18 +181,10 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
             <p style={s.text}>Loading media...</p>
           ) : media.length === 0 ? (
             <p style={s.text}>No media available yet.</p>
-          ) : (() => {
-            const grouped = {};
-            const unsectioned = [];
-            media.forEach(item => {
-              if (item.activity_id) {
-                if (!grouped[item.activity_id]) grouped[item.activity_id] = [];
-                grouped[item.activity_id].push(item);
-              } else { unsectioned.push(item); }
-            });
-            const renderGrid = (items) => (
+          ) : (
+            <div>
               <div style={s.mediaGrid}>
-                {items.map(item => (
+                {visibleMedia.map(item => (
                   <div key={item.id} style={s.mediaItem}>
                     {item.media_type === 'video' ? (
                       <video controls style={s.mediaContent}>
@@ -205,25 +199,15 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
                   </div>
                 ))}
               </div>
-            );
-            return (
-              <>
-                {sections.map(sec => (grouped[sec.id] || []).length > 0 && (
-                  <div key={sec.id} style={{ marginBottom: 48 }}>
-                    <h3 style={s.sectionSubTitle}>{sec.title}</h3>
-                    {sec.description && <p style={{ ...s.text, marginBottom: 16 }}>{sec.description}</p>}
-                    {renderGrid(grouped[sec.id])}
-                  </div>
-                ))}
-                {unsectioned.length > 0 && (
-                  <div style={{ marginBottom: 48 }}>
-                    <h3 style={s.sectionSubTitle}>General</h3>
-                    {renderGrid(unsectioned)}
-                  </div>
-                )}
-              </>
-            );
-          })()}
+              {mediaPageCount > 1 && (
+                <div style={s.mediaControls}>
+                  <button type="button" style={s.mediaButton} disabled={mediaPage === 0} onClick={() => setMediaPage(page => page - 1)} aria-label="Previous media">← Previous</button>
+                  <span style={s.mediaPageLabel}>{mediaPage + 1} / {mediaPageCount}</span>
+                  <button type="button" style={s.mediaButton} disabled={mediaPage === mediaPageCount - 1} onClick={() => setMediaPage(page => page + 1)} aria-label="Next media">Next →</button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
@@ -269,7 +253,7 @@ const s = {
 page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', display: 'flex', flexDirection: 'column' },
   hero: {
     height: '90vh',
-    backgroundImage: 'linear-gradient(rgba(10,36,99,0.6), rgba(10,36,99,0.6)),(url("/mbogo-background.jpeg"))',
+    backgroundImage: 'linear-gradient(rgba(10,36,99,0.42), rgba(10,36,99,0.42)), url("/mbogo-background.jpeg")',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     display: 'flex',
@@ -385,7 +369,7 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
   },
   mediaGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
     gap: '24px',
   },
   mediaItem: {
@@ -411,6 +395,9 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     color: '#666',
     lineHeight: 1.5,
   },
+  mediaControls: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', marginTop: '28px' },
+  mediaButton: { background: '#0A2463', color: '#fff', border: 'none', borderRadius: '6px', padding: '10px 16px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' },
+  mediaPageLabel: { color: '#0A2463', fontSize: '14px', fontWeight: 700 },
   contactContent: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',

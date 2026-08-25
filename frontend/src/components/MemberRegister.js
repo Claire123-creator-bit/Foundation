@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import API_BASE from '../utils/apiConfig';
+import { locations } from '../data/kenyanLocations';
 
 const CATEGORIES = [
   'Church Leader', 'Pastor', 'Village Elder', 'Agent', 'Youth Leader',
@@ -27,9 +28,21 @@ function MemberRegister({ onBack, onLogin, onRegistered }) {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
+  const counties = Object.keys(locations);
+  const constituencies = form.county ? Object.keys(locations[form.county] || {}) : [];
+  const wards = form.county && form.constituency
+    ? locations[form.county]?.[form.constituency] || []
+    : [];
+
   const set = k => e => {
     const v = e.target.value;
     const next = { ...form, [k]: v };
+    if (k === 'county') {
+      next.constituency = '';
+      next.ward = '';
+    } else if (k === 'constituency') {
+      next.ward = '';
+    }
     setForm(next);
     setErrors(prev => { const n = { ...prev }; delete n[k]; return n; });
   };
@@ -122,15 +135,24 @@ function MemberRegister({ onBack, onLogin, onRegistered }) {
           </Field>
 
           <Field label="County" error={errors.county}>
-            <input style={inp(errors.county)} value={form.county} onChange={set('county')} placeholder="Type your county" />
+            <select style={inp(errors.county)} value={form.county} onChange={set('county')}>
+              <option value="">Select county</option>
+              {counties.map(county => <option key={county} value={county}>{county}</option>)}
+            </select>
           </Field>
 
           <Field label="Constituency" error={errors.constituency}>
-            <input style={inp(errors.constituency)} value={form.constituency} onChange={set('constituency')} placeholder="Type your constituency" />
+            <select style={inp(errors.constituency)} value={form.constituency} onChange={set('constituency')} disabled={!form.county}>
+              <option value="">Select constituency</option>
+              {constituencies.map(constituency => <option key={constituency} value={constituency}>{constituency}</option>)}
+            </select>
           </Field>
 
           <Field label="Ward" error={errors.ward}>
-            <input style={inp(errors.ward)} value={form.ward} onChange={set('ward')} placeholder="Type your ward" />
+            <select style={inp(errors.ward)} value={form.ward} onChange={set('ward')} disabled={!form.constituency}>
+              <option value="">Select ward</option>
+              {wards.map(ward => <option key={ward} value={ward}>{ward}</option>)}
+            </select>
           </Field>
 
           <Field label="Your Role" error={errors.category}>
