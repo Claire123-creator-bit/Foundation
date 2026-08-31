@@ -73,22 +73,26 @@ def member_register():
         db.session.add(member)
         db.session.commit()
 
-        # Send confirmation SMS to the member
         name = member.full_names.strip().title()
-        send_sms(
-            member.phone_number,
-            f"Welcome to Mbogo Welfare Empowerment Foundation! Dear {name}, "
-            f"your registration has been received and is pending admin approval. "
-            f"You will receive a welcome message once approved. Thank you!"
-        )
-        
-        # Also notify admin
-        if ADMIN_PHONE:
+        try:
             send_sms(
-                ADMIN_PHONE,
-                f"Mbogo Foundation Alert: {name} ({member.phone_number}) "
-                f"has registered and is awaiting your approval."
+                member.phone_number,
+                f"Welcome to Mbogo Welfare Empowerment Foundation! Dear {name}, "
+                f"your registration has been received and is pending admin approval. "
+                f"You will receive a welcome message once approved. Thank you!"
             )
+        except Exception:
+            app_logger.warning("Member registration SMS failed", extra={'member_id': member.id, 'phone': member.phone_number})
+
+        if ADMIN_PHONE:
+            try:
+                send_sms(
+                    ADMIN_PHONE,
+                    f"Mbogo Foundation Alert: {name} ({member.phone_number}) "
+                    f"has registered and is awaiting your approval."
+                )
+            except Exception:
+                app_logger.warning("Admin registration alert SMS failed", extra={'member_id': member.id, 'phone': ADMIN_PHONE})
 
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
@@ -162,11 +166,13 @@ def admin_register_member():
         db.session.add(member)
         db.session.commit()
         
-        # Send welcome SMS to member if created with approved status
         if member.status == "approved" and member.phone_number:
             name = member.full_names.strip().title()
-            send_member_approval_sms(name, member.phone_number)
-        
+            try:
+                send_member_approval_sms(name, member.phone_number)
+            except Exception:
+                app_logger.warning("Approved member SMS failed", extra={'member_id': member.id, 'phone': member.phone_number})
+
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
         db.session.rollback()
@@ -206,7 +212,10 @@ def approve_member(member_id):
         db.session.commit()
         if action == "approve" and previous_status != "approved" and member.phone_number:
             name = member.full_names.strip().title()
-            send_member_approval_sms(name, member.phone_number)
+            try:
+                send_member_approval_sms(name, member.phone_number)
+            except Exception:
+                app_logger.warning("Approve member SMS failed", extra={'member_id': member.id, 'phone': member.phone_number})
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
         db.session.rollback()

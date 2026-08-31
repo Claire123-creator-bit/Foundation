@@ -5182,3 +5182,30 @@ sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) unable to open datab
 [2026-08-24 23:05:32] INFO     [foundation] Using DATABASE_URL=sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db
 [2026-08-24 23:30:00] INFO     [foundation] Using DATABASE_URL=sqlite:///instance/foundation_complete.db
 [2026-08-24 23:30:00] INFO     [foundation] Using DATABASE_URL=sqlite:///instance/foundation_complete.db
+[2026-08-25 00:17:51] INFO     [foundation] Africa's Talking SMS service initialized
+[2026-08-25 00:17:51] INFO     [foundation] Africa's Talking SMS service initialized
+[2026-08-25 00:17:51] INFO     [foundation] Africa's Talking SMS batch result
+[2026-08-25 00:17:51] INFO     [foundation] Africa's Talking SMS batch result
+[2026-08-25 00:24:36] INFO     [foundation] Africa's Talking SMS service initialized
+[2026-08-25 00:24:36] INFO     [foundation] Africa's Talking SMS service initialized
+[2026-08-25 00:24:36] INFO     [foundation] Africa's Talking SMS batch result
+[2026-08-25 00:24:36] INFO     [foundation] Africa's Talking SMS batch result
+[2026-08-25 00:27:34] INFO     [foundation] Africa's Talking SMS service initialized
+[2026-08-25 00:27:34] INFO     [foundation] Africa's Talking SMS service initialized
+[2026-08-25 00:27:34] INFO     [foundation] Africa's Talking SMS batch result
+[2026-08-25 00:27:34] INFO     [foundation] Africa's Talking SMS batch result
+[2026-08-25 00:27:34] INFO     [foundation] Africa's Talking SMS batch result
+[2026-08-25 00:27:34] INFO     [foundation] Africa's Talking SMS batch result
+[2026-08-31 18:52:58] INFO     [foundation] Using DATABASE_URL=sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db
+[2026-08-31 18:52:58] INFO     [foundation] Using DATABASE_URL=sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db
+[2026-08-31 18:52:58] INFO     [werkzeug] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.100.95:5000
+[2026-08-31 18:52:58] INFO     [werkzeug] [33mPress CTRL+C to quit[0m
+[2026-08-31 19:54:38] INFO     [foundation] Using DATABASE_URL=sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db
+[2026-08-31 19:54:38] INFO     [foundation] Using DATABASE_URL=sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db
+[2026-08-31 19:55:59] INFO     [foundation] Using DATABASE_URL=sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db
+[2026-08-31 19:55:59] INFO     [foundation] Using DATABASE_URL=sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db
+[2026-08-31 19:56:45] INFO     [foundation] Using DATABASE_URL=sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db
+[2026-08-31 19:56:45] INFO     [foundation] Using DATABASE_URL=sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db

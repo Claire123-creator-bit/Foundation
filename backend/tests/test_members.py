@@ -30,6 +30,27 @@ class TestMemberRegistration:
         data = json.loads(response.data)
         assert data['success'] is False
 
+    def test_member_register_succeeds_without_sms_credentials(self, client, monkeypatch):
+        monkeypatch.delenv('AFRICASTALKING_USERNAME', raising=False)
+        monkeypatch.delenv('AFRICASTALKING_API_KEY', raising=False)
+        monkeypatch.delenv('AFRICASTALKING_SENDER_ID', raising=False)
+
+        response = client.post('/member-register', json={
+            'full_names': 'No SMS Person',
+            'national_id': '98765432',
+            'phone_number': '254711111111',
+            'gender': 'Male',
+            'category': 'Community Member',
+            'county': 'Nairobi',
+            'constituency': 'Langata',
+            'ward': 'Kilimani',
+            'physical_location': 'Kilimani'
+        })
+
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert data['success'] is True
+
     def test_member_register_duplicate_id(self, client, sample_member):
         response = client.post('/member-register', json={
             'full_names': 'Another Person',
