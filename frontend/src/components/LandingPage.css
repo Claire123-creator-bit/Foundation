@@ -40,26 +40,27 @@
 .landing-nav-links {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  justify-content: flex-end;
   flex: 1;
-  justify-content: center;
+  padding-right: 8px;
 }
 
 .landing-nav-link {
-  background: none;
-  border: none;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.25);
   color: #fff;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  padding: 8px 10px;
-  border-radius: 20px;
+  padding: 7px 14px;
+  border-radius: 4px;
   transition: background 0.2s, color 0.2s;
   white-space: nowrap;
 }
 
 .landing-nav-link:hover {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.25);
 }
 
 .landing-join-button {
