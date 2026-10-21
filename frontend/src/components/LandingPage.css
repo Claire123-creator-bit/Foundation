@@ -55,8 +55,11 @@
   cursor: pointer;
   padding: 7px 14px;
   border-radius: 4px;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .landing-nav-link:hover {
