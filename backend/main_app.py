@@ -37,7 +37,7 @@ CORS(
 @app.before_request
 def _force_json_cors_and_options():
     if request.method == "OPTIONS":
-        return ("", 204)
+        return app.make_response(("", 204))
 
 
 db.init_app(app)
