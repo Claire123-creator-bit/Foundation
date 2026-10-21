@@ -8,6 +8,8 @@ _db_url = os.getenv(
 # Render/Heroku set postgres:// which SQLAlchemy 1.4+ rejects
 if _db_url and _db_url.startswith("postgres://"):
     _db_url = _db_url.replace("postgres://", "postgresql://", 1)
+if _db_url and _db_url.startswith("postgresql://") and "sslmode" not in _db_url:
+    _db_url += "?sslmode=require"
 SQLALCHEMY_DATABASE_URI = _db_url
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False

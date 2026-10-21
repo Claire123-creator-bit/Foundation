@@ -71,7 +71,7 @@ def init_db():
                 ))
             db.session.commit()
     except Exception:
-        pass
+        app_logger.exception("init_db failed")
 
 
 init_db()
