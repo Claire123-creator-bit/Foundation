@@ -5,6 +5,8 @@ _db_url = os.getenv(
     "DATABASE_URL",
     "sqlite:////home/claire/Foundation/backend/instance/foundation_complete.db",
 )
+if _db_url:
+    _db_url = _db_url.strip()
 # Render/Heroku set postgres:// which SQLAlchemy 1.4+ rejects
 if _db_url and _db_url.startswith("postgres://"):
     _db_url = _db_url.replace("postgres://", "postgresql://", 1)
