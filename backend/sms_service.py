@@ -131,6 +131,7 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
             batch = normalized[i:i + batch_size]
             try:
                 response = _send_http(batch, message)
+                app_logger.info("AT raw response", extra={'response': response})
 
                 sms_data = response.get('SMSMessageData', {}) if isinstance(response, dict) else {}
                 recipients = sms_data.get('Recipients', []) if isinstance(sms_data, dict) else []
