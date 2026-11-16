@@ -204,14 +204,8 @@ const s = {
   sub:         { fontSize: 13, color: '#64748B', textAlign: 'center', margin: '0 0 24px' },
   btn:         { width: '100%', height: 48, background: '#0A2463', color: '#fff', border: 'none', borderRadius: 8, fontSize: 16, fontWeight: 700, cursor: 'pointer', marginTop: 8, marginBottom: 16 },
   err:         { color: '#DC2626', fontSize: 13, margin: '0 0 12px' },
-  consentRow:  { display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 4 },
-  consentLabel:{ fontSize: 12.5, color: '#64748B', lineHeight: 1.6 },
   link:        { background: 'none', border: 'none', color: '#0A2463', fontWeight: 600, fontSize: 'inherit', cursor: 'pointer', textDecoration: 'underline', padding: 0 },
   switchText:  { textAlign: 'center', fontSize: 13, color: '#64748B', margin: 0 },
-  overlay:     { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: 24 },
-  modal:       { background: '#fff', borderRadius: 12, padding: '32px 28px', maxWidth: 480, width: '100%', position: 'relative', maxHeight: '80vh', overflowY: 'auto' },
-  modalClose:  { position: 'absolute', top: 12, right: 14, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#64748B' },
-  modalText:   { fontSize: 14, color: '#475569', lineHeight: 1.7, marginBottom: 12 },
   successIcon: { width: 56, height: 56, background: '#DCFCE7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: 26, color: '#059669' },
 };
 

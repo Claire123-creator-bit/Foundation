@@ -70,11 +70,6 @@ function LoginPage({ onLogin, onBack }) {
 
 const s = {
   page:      { display: 'flex', minHeight: '100vh', backgroundImage: 'url(/mbogo-background.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' },
-  left:      { width: 320, background: 'rgba(10,36,99,0.75)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 48, flexShrink: 0 },
-  brand:     { color: '#fff', fontSize: 20, fontWeight: 700, textAlign: 'center', marginBottom: 8 },
-  tagline:   { color: 'rgba(255,255,255,0.65)', fontSize: 13, textAlign: 'center', fontWeight: 300, marginBottom: 28 },
-  line:      { width: 40, height: 2, background: 'rgba(255,255,255,0.3)', marginBottom: 20 },
-  quote:     { color: 'rgba(255,255,255,0.45)', fontSize: 13, textAlign: 'center', fontStyle: 'italic', fontWeight: 300 },
   right:     { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 },
   card:      { background: '#fff', border: '2px solid #0A2463', width: '100%', maxWidth: 420 },
   cardHeader:{ background: '#0A2463', padding: '24px 32px' },

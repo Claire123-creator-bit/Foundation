@@ -1,7 +1,6 @@
 import logging
 import logging.handlers
 import os
-from datetime import datetime
 
 LOGS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'logs')
 os.makedirs(LOGS_DIR, exist_ok=True)
@@ -12,22 +11,6 @@ AUTH_LOG_FILE  = os.path.join(LOGS_DIR, 'auth.log')
 
 FMT = '[%(asctime)s] %(levelname)-8s [%(name)s] %(message)s'
 DATE = '%Y-%m-%d %H:%M:%S'
-
-
-class JSONFormatter(logging.Formatter):
-    def format(self, record):
-        log_data = {
-            'timestamp': datetime.utcnow().isoformat(),
-            'level': record.levelname,
-            'logger': record.name,
-            'message': record.getMessage(),
-            'module': record.module,
-            'function': record.funcName,
-            'line': record.lineno,
-        }
-        if record.exc_info:
-            log_data['exception'] = self.formatException(record.exc_info)
-        return str(log_data)
 
 
 def _rotating(path, level, fmt=FMT):

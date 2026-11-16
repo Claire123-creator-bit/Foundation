@@ -13,9 +13,6 @@ class Admin(db.Model):
     phone = db.Column(db.String(20))
     role = db.Column(db.String(50), default='admin')
     is_active = db.Column(db.Boolean, default=True, index=True)
-    email_verified = db.Column(db.Boolean, default=False)
-    verification_token = db.Column(db.String(100), nullable=True)
-    verification_token_expires = db.Column(db.DateTime, nullable=True)
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
 
@@ -224,69 +221,4 @@ class LeadershipProfile(db.Model):
             'updated_date': self.updated_date.isoformat(),
         }
 
-
-class Organization(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False, unique=True)
-    email = db.Column(db.String(100))
-    phone = db.Column(db.String(20))
-    website = db.Column(db.String(200))
-    address = db.Column(db.Text)
-    description = db.Column(db.Text)
-    logo_path = db.Column(db.String(500))
-    created_date = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'email': self.email or '',
-            'phone': self.phone or '',
-            'website': self.website or '',
-            'address': self.address or '',
-            'description': self.description or '',
-            'logo_path': self.logo_path or '',
-            'created_date': self.created_date.isoformat(),
-            'updated_date': self.updated_date.isoformat(),
-        }
-
-
-class Notification(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    recipient_id = db.Column(db.Integer, nullable=False, index=True)
-    recipient_type = db.Column(db.String(50), nullable=False, index=True)  # 'member' or 'admin'
-    channel = db.Column(db.String(20), nullable=False, default='email')  # 'sms' or 'email'
-    event_type = db.Column(db.String(100), nullable=False, index=True)
-    event_id = db.Column(db.Integer, nullable=False, index=True)
-    template = db.Column(db.String(100))
-    payload = db.Column(db.Text)  # rendered message or JSON payload
-    status = db.Column(db.String(20), default='pending', index=True)  # pending, sent, failed, opted_out
-    attempts = db.Column(db.Integer, default=0)
-    last_error = db.Column(db.Text)
-    provider_message_id = db.Column(db.String(200))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    sent_at = db.Column(db.DateTime)
-
-    __table_args__ = (
-        db.UniqueConstraint('event_type', 'event_id', 'recipient_id', name='uq_notification_event_recipient'),
-    )
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'recipient_id': self.recipient_id,
-            'recipient_type': self.recipient_type,
-            'channel': self.channel,
-            'event_type': self.event_type,
-            'event_id': self.event_id,
-            'template': self.template or '',
-            'payload': self.payload or '',
-            'status': self.status,
-            'attempts': self.attempts,
-            'last_error': self.last_error or '',
-            'provider_message_id': self.provider_message_id or '',
-            'created_at': self.created_at.isoformat() if self.created_at else None,
-            'sent_at': self.sent_at.isoformat() if self.sent_at else None,
-        }
 

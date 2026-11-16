@@ -281,17 +281,3 @@ def send_admin_welcome_sms(admin_name: str, phone: str) -> Dict[str, Any]:
     return result
 
 
-def send_meeting_invitation_sms(phone: str, name: str, title: str, date: str, time: str, venue: str, details: str) -> Dict[str, Any]:
-    venue_text = venue or 'TBD'
-    details_text = details.strip() if details else 'Please join us for this important gathering.'
-    message = (
-        f"Mbogo Foundation Meeting: {title}. Date: {date}, Time: {time}, Venue: {venue_text}. "
-        f"Dear {name.strip() or 'Member'}, {details_text} We look forward to seeing you there. Warm regards, Mbogo Welfare Empowerment Foundation."
-    )
-    result = send_sms(phone, message)
-    if result.get('success'):
-        app_logger.info('Meeting invitation SMS sent', extra={'name': name, 'phone': phone, 'title': title})
-    else:
-        app_logger.warning('Meeting invitation SMS failed', extra={'name': name, 'phone': phone, 'title': title, 'result': result})
-    return result
-

@@ -227,12 +227,7 @@ const LandingPage = ({ onJoinUs, onAdminLogin }) => {
               </div>
             </div>
             <div style={s.contactForm}>
-              <form style={s.form}>
-                <input type="text" placeholder="Your Name" style={s.input} />
-                <input type="email" placeholder="Your Email" style={s.input} />
-                <textarea placeholder="Your Message" rows="4" style={s.textarea}></textarea>
-                <button type="submit" style={s.submitButton}>Send Message</button>
-              </form>
+              <p style={s.text}>Reach out to us via email or phone above.</p>
             </div>
           </div>
         </div>
@@ -345,28 +340,6 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     lineHeight: 1.6,
     color: '#666',
   },
-  activityCard: {
-    background: '#f8f9fa',
-    padding: '24px',
-    borderRadius: '12px',
-    borderLeft: '4px solid #0A2463',
-    transition: 'transform 0.2s',
-  },
-  smallText: {
-    fontSize: '13px',
-    color: '#666',
-    margin: '8px 0',
-  },
-  sectionSubTitle: {
-    fontSize: 'clamp(20px, 3vw, 28px)',
-    fontWeight: 700,
-    color: '#0A2463',
-    marginBottom: '20px',
-    paddingBottom: '8px',
-    borderBottom: '3px solid #0A2463',
-    textTransform: 'capitalize',
-    textShadow: '0 1px 3px rgba(255,255,255,0.7)',
-  },
   mediaGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(min(180px, 100%), 1fr))',
@@ -384,12 +357,6 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     objectFit: 'cover',
   },
   mediaInfo: { padding: '16px' },
-  mediaTitle: {
-    fontSize: '18px',
-    fontWeight: 700,
-    color: '#0A2463',
-    marginBottom: '8px',
-  },
   mediaDescription: {
     fontSize: '14px',
     color: '#666',
@@ -419,33 +386,6 @@ page: { minHeight: '100vh', backgroundImage: `url(${mbogoBackground})`, backgrou
     alignItems: 'center',
     gap: '8px',
     textShadow: '0 1px 2px rgba(255,255,255,0.5)',
-  },
-  form: { display: 'flex', flexDirection: 'column', gap: '16px' },
-  input: {
-    padding: '12px 16px',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    fontSize: '15px',
-    fontFamily: 'inherit',
-  },
-  textarea: {
-    padding: '12px 16px',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    fontSize: '15px',
-    fontFamily: 'inherit',
-    resize: 'vertical',
-  },
-  submitButton: {
-    background: '#0A2463',
-    color: '#fff',
-    border: 'none',
-    padding: '14px 32px',
-    borderRadius: '8px',
-    fontSize: '16px',
-    fontWeight: 600,
-    cursor: 'pointer',
-    alignSelf: 'flex-start',
   },
   footer: {
     backgroundColor: '#0A2463',

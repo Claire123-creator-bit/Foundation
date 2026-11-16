@@ -30,7 +30,7 @@ body {
   overflow-x: hidden;
 }
 
-input:focus, select:focus, textarea:focus { background: #eef1fa; }
+input:focus, select:focus, textarea:focus { background: #eef1fa; outline: 2px solid rgba(10,36,99,0.2); outline-offset: 1px; }
 
 /* ── Buttons ── */
 button {
@@ -57,7 +57,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 .stat-card {
   width: 100px; height: 100px; background: var(--white);
-  border: 2px solid var(--white);
+  border: 2px solid var(--white); border-radius: 8px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center; text-align: center;
 }
@@ -101,8 +101,9 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   width: auto; height: 32px; padding: 0 14px;
   background: rgba(255,255,255,0.12); color: var(--white);
   border: 1px solid rgba(255,255,255,0.3); font-size: 12px; font-weight: 500;
-  border-radius: 20px;
+  border-radius: 20px; transition: background 0.2s;
 }
+.btn-logout:hover { background: rgba(255,255,255,0.22); }
 
 /* Hamburger */
 .hamburger {
@@ -142,6 +143,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 table { width: 100%; border-collapse: collapse; }
 th { background: var(--blue); color: var(--white); padding: 12px; font-size: 13px; font-weight: 600; text-align: left; }
 td { padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 13px; color: var(--blue); font-weight: 300; }
+tr:hover td { background: #f0f4ff; }
 
 /* ── Layout ── */
 .layout { min-height: 100vh; display: flex; flex-direction: column; }
