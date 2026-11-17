@@ -171,7 +171,8 @@ def send_bulk_sms(phone_list: List[str], message: str) -> Dict[str, Any]:
                         'sent': batch_sent,
                         'total_in_batch': len(batch),
                         'provider_message': provider_message,
-                        'provider_failures': batch_failures[:5],
+                        'provider_failures': batch_failures,
+                        'all_recipients': recipients,
                     },
                 )
 
