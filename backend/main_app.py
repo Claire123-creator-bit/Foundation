@@ -44,7 +44,7 @@ db.init_app(app)
 
 
 def init_db():
-    app_logger.info(f"Using DATABASE_URL={app.config.get('SQLALCHEMY_DATABASE_URI')}")
+    app_logger.info("Initializing database")
 
     try:
         with app.app_context():
