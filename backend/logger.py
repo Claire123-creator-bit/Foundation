@@ -1,3 +1,4 @@
+import json
 import logging
 import logging.handlers
 import os
@@ -13,10 +14,36 @@ FMT = '[%(asctime)s] %(levelname)-8s [%(name)s] %(message)s'
 DATE = '%Y-%m-%d %H:%M:%S'
 
 
+class AppLogFormatter(logging.Formatter):
+    _reserved = {
+        'args', 'asctime', 'created', 'exc_info', 'exc_text', 'filename', 'funcName',
+        'levelname', 'levelno', 'lineno', 'message', 'module', 'msecs', 'msg', 'name',
+        'pathname', 'process', 'processName', 'relativeCreated', 'stack_info', 'thread',
+        'threadName', 'taskName'
+    }
+
+    def format(self, record):
+        message = super().format(record)
+        extra_fields = {}
+        for key, value in record.__dict__.items():
+            if key in self._reserved or key.startswith('_'):
+                continue
+            extra_fields[key] = value
+
+        if not extra_fields:
+            return message
+
+        try:
+            extra_json = json.dumps(extra_fields, default=str, sort_keys=True)
+        except TypeError:
+            extra_json = str(extra_fields)
+        return f"{message} | extra={extra_json}"
+
+
 def _rotating(path, level, fmt=FMT):
     h = logging.handlers.RotatingFileHandler(path, maxBytes=10_485_760, backupCount=10)
     h.setLevel(level)
-    h.setFormatter(logging.Formatter(fmt, DATE))
+    h.setFormatter(AppLogFormatter(fmt, DATE))
     return h
 
 
@@ -28,7 +55,7 @@ def setup_logging():
 
     console = logging.StreamHandler()
     console.setLevel(logging.INFO)
-    console.setFormatter(logging.Formatter(FMT, DATE))
+    console.setFormatter(AppLogFormatter(FMT, DATE))
     root_logger.addHandler(console)
     root_logger.addHandler(_rotating(APP_LOG_FILE, logging.DEBUG))
     root_logger.addHandler(_rotating(ERROR_LOG_FILE, logging.ERROR))
