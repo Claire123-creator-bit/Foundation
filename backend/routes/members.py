@@ -1,4 +1,5 @@
 import os
+import threading
 from flask import Blueprint, jsonify, request
 
 from website_models import Member, db
@@ -74,25 +75,30 @@ def member_register():
         db.session.commit()
 
         name = member.full_names.strip().title()
-        try:
-            send_sms(
-                member.phone_number,
-                f"Welcome to Mbogo Welfare Empowerment Foundation! Dear {name}, "
-                f"your registration has been received and is pending admin approval. "
-                f"You will receive a welcome message once approved. Thank you!"
-            )
-        except Exception:
-            app_logger.warning("Member registration SMS failed", extra={'member_id': member.id, 'phone': member.phone_number})
+        member_phone = member.phone_number
+        member_id = member.id
 
-        if ADMIN_PHONE:
+        def send_registration_sms():
             try:
                 send_sms(
-                    ADMIN_PHONE,
-                    f"Mbogo Foundation Alert: {name} ({member.phone_number}) "
-                    f"has registered and is awaiting your approval."
+                    member_phone,
+                    f"Welcome to Mbogo Welfare Empowerment Foundation! Dear {name}, "
+                    f"your registration has been received and is pending admin approval. "
+                    f"You will receive a welcome message once approved. Thank you!"
                 )
             except Exception:
-                app_logger.warning("Admin registration alert SMS failed", extra={'member_id': member.id, 'phone': ADMIN_PHONE})
+                app_logger.warning("Member registration SMS failed", extra={'member_id': member_id, 'phone': member_phone})
+            if ADMIN_PHONE:
+                try:
+                    send_sms(
+                        ADMIN_PHONE,
+                        f"Mbogo Foundation Alert: {name} ({member_phone}) "
+                        f"has registered and is awaiting your approval."
+                    )
+                except Exception:
+                    app_logger.warning("Admin registration alert SMS failed", extra={'member_id': member_id, 'phone': ADMIN_PHONE})
+
+        threading.Thread(target=send_registration_sms, daemon=True).start()
 
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
@@ -168,10 +174,13 @@ def admin_register_member():
         
         if member.status == "approved" and member.phone_number:
             name = member.full_names.strip().title()
-            try:
-                send_member_approval_sms(name, member.phone_number)
-            except Exception:
-                app_logger.warning("Approved member SMS failed", extra={'member_id': member.id, 'phone': member.phone_number})
+            member_phone = member.phone_number
+            member_id = member.id
+            threading.Thread(
+                target=send_member_approval_sms,
+                args=(name, member_phone),
+                daemon=True
+            ).start()
 
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
@@ -212,10 +221,12 @@ def approve_member(member_id):
         db.session.commit()
         if action == "approve" and previous_status != "approved" and member.phone_number:
             name = member.full_names.strip().title()
-            try:
-                send_member_approval_sms(name, member.phone_number)
-            except Exception:
-                app_logger.warning("Approve member SMS failed", extra={'member_id': member.id, 'phone': member.phone_number})
+            member_phone = member.phone_number
+            threading.Thread(
+                target=send_member_approval_sms,
+                args=(name, member_phone),
+                daemon=True
+            ).start()
         return jsonify({"success": True, "member": member.to_dict()}), 200
     except Exception as e:
         db.session.rollback()
